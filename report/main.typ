@@ -1,11 +1,11 @@
 #import "lib/style.typ": setup
 #import "cover.typ": cover
 
-#let doc_title = "<Title>"
-#let authors_portrait = ("Rubén Agustín",)
-#let authors_header = "Rubén Agustín"
-#let course = "<Course>"
-#let date = "<Date>"
+#let doc_title = "LabVIEW"
+#let authors_portrait = ("Inés Menchero", "Javier del Río Tarque", "Mercedes Ramos", "Rubén Agustín")
+#let authors_header = "Inés Menchero, Javier del Río, Mercedes Ramos, Rubén Agustín"
+#let course = "Electronic instrumentation and optoelectronics"
+#let date = "April 2026"
 
 #show heading: set block(above: 1.2em, below: 1em)
 #set heading(numbering: "1.")
