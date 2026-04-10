@@ -12,8 +12,6 @@
 
 #set par(justify: true)
 
-#set figure(supplement: [Figura])
-
 #cover(title: doc_title, course: course, authors: authors_portrait, date: date, img_path: "img/cover.png")
 #pagebreak()
 
