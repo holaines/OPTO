@@ -22,4 +22,8 @@
   doc_title,
 )
 
+#outline()
+#outline(title: "Table of Figures", target: figure.where(kind: image))
+#pagebreak()
+
 #include "chap/placeholder.typ"
