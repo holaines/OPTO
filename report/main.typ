@@ -2,7 +2,7 @@
 #import "cover.typ": cover
 
 #let doc_title = "LabVIEW"
-#let authors_portrait = ("Inés Menchero", "Javier del Río Tarque", "Mercedes Ramos", "Rubén Agustín")
+#let authors_portrait = ("Inés Menchero", "Javier del Río", "Mercedes Ramos", "Rubén Agustín")
 #let authors_header = "Inés Menchero, Javier del Río, Mercedes Ramos, Rubén Agustín"
 #let course = "Electronic instrumentation and optoelectronics"
 #let date = "April 2026"
