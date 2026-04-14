@@ -2,7 +2,9 @@
 #let img_path = "../img/session-1/"
 
 
-//Nos piden esto: MAX AI, MAX AO, VI express AI, VI DAQmx AI, continuous, AO [75%] • Measurements in Pa or dB-SPL, different frequencies [25%] • Extra: VI display similar to sound level meter [25%]
+//Nos piden haber hecho esto para tener la puntuacion completa de la sesion: 1. MAX AI, MAX AO, VI express AI, VI DAQmx AI, continuous, AO [75%] 2. Measurements in Pa or dB-SPL, different frequencies [25%] 3. Extra: VI display similar to sound level meter [25%]
+
+// nos falta por hacer bien lo  de dbSPL y lo de Pa !
 
 In this session we wanted to learn how to use the NI-USB-6009 acquisition board together with Measurement and Automation Explorer (MAX) and LabVIEW to acquire and generate analog signals. 
 
