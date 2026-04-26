@@ -97,3 +97,71 @@ Now for the second microphone, and while producing noise, we obtained the follow
   ]
 )
 
+We now measured the amplitude of the acquired signals at the output of the amplifier and at the output of the microphone, and we obtained the following values:
+
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 1cm,
+  [
+    #figure(
+      image(
+        img_path + "fotomicroines.jpeg",
+        width: 100%,
+        height: 7cm,
+        fit: "cover",
+      ),
+      caption: [Signal acquired with the second microphone while producing noise]
+    )
+  ],
+  [
+    #figure(
+      image(
+        img_path + "fotomicroagusyjavi.jpeg",
+        width: 120%,
+        height: 7cm,
+        fit: "cover",
+      ),
+      caption: [Signal acquired with the second microphone while not producing noise]
+    )
+  ]
+)
+
+We were now looking to be able to represent the information we obtained in and present it in a useful form:
+
+#grid(
+  columns: (0.4fr, 1.6fr),
+  gutter: 1cm,
+
+  [
+    #align(left,
+      figure(
+        image(
+          img_path + "705HZ.jpeg",
+          width: 100%,
+          height: 7cm,
+          fit: "cover",
+        ),
+        caption: [Inserted frequency = 705 Hz]
+      )
+    )
+  ],
+
+  [
+    #figure(
+      image(
+        img_path + "foto con el medidor.png",
+        width: 100%,
+        height: 13cm,
+        fit: "cover",
+      ),
+      caption: [Signal acquired with the first microphone while not producing noise]
+    )
+  ]
+)
+We can properly see in the images the LabVIEW interface and there are three different plots displayed:
+
+The Waveform Chart (top) represents the real-time evolution of the acquired signal amplitude over time.
+The Waveform Graph (middle) shows a zoomed time-domain segment of the signal, allowing clearer observation of its oscillatory behaviour.
+The Waveform Graph 2 (bottom) corresponds to the frequency-domain representation (spectrum), where the dominant frequency components of the signal can be identified (705 Hz).
+
+When introducing a pure tone of 705 Hz, a clear spectral peak appears around this frequency in the spectrum plot, confirming correct acquisition of the injected signal through the microphone and the conditioning circuit. The meter indicator also reflects this detected frequency value.
