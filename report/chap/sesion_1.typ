@@ -12,7 +12,7 @@ The acquired voltage signals were also converted into acoustic pressure (Pa) and
 
 Test frequencies used during the session were 100 Hz, 1 kHz and 10 kHz, which are representative audio frequencies.
 
-The first thing we did, was to create two different tasks in MAX (Measurement and Automation Explorer):one for analog output signal generation (AO_GEN1) and another for analog input signal acquisition (AI_ACQ1). The generated signal was then measured using continuous acquired mode through channel AI0 and the adquired one through the AO0 channel.
+The first thing we did, was to create two different tasks in MAX (Measurement and Automation Explorer): one for analog output signal generation (AO_GEN1) and another for analog input signal acquisition (AI_ACQ1). The generated signal was then measured using continuous acquired mode through channel AI0 and the adquired one through the AO0 channel.
 
 
 
