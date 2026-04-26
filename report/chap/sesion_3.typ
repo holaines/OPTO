@@ -6,7 +6,7 @@ In the previous sessions, basic acquisition programs were developed in LabVIEW f
 
 The objective of this session is to acquire signals from one or more conditioned sensors, process the obtained data, and present the results in a useful format. 
 
-In this session we will be using two different MEMS microphones:
+In this session we will be using two different MEMS microphones ( in the previous session we already tried with the analog microphone):
 
 #grid(
   columns: 2,
@@ -34,7 +34,7 @@ We make sure both circuits are properly connected before doing any Measurements,
 
 #figure(
   image(img_path + "amboscircuitos.jpeg", width: 70%),
-  caption: [AI0 configuration in MAX]
+  caption: [Both circuits properly connected]
 )
 
 
@@ -110,7 +110,7 @@ We now measured the amplitude of the acquired signals at the output of the ampli
         height: 7cm,
         fit: "cover",
       ),
-      caption: [Signal acquired with the second microphone while producing noise]
+      caption: [Signal acquired with the first microphone while producing noise]
     )
   ],
   [
@@ -121,7 +121,7 @@ We now measured the amplitude of the acquired signals at the output of the ampli
         height: 7cm,
         fit: "cover",
       ),
-      caption: [Signal acquired with the second microphone while not producing noise]
+      caption: [Signal acquired with the second microphone while producing noise]
     )
   ]
 )
@@ -154,7 +154,7 @@ We were now looking to be able to represent the information we obtained in and p
         height: 13cm,
         fit: "cover",
       ),
-      caption: [Signal acquired with the first microphone while not producing noise]
+      caption: [Different charts in LabVIEW interface]
     )
   ]
 )
@@ -165,3 +165,40 @@ The Waveform Graph (middle) shows a zoomed time-domain segment of the signal, al
 The Waveform Graph 2 (bottom) corresponds to the frequency-domain representation (spectrum), where the dominant frequency components of the signal can be identified (705 Hz).
 
 When introducing a pure tone of 705 Hz, a clear spectral peak appears around this frequency in the spectrum plot, confirming correct acquisition of the injected signal through the microphone and the conditioning circuit. The meter indicator also reflects this detected frequency value.
+
+We noticed that we could connect both circuits to the same computer and see the acquired signals from both microphones simultaneously in LabVIEW, which is a very useful feature for comparing the performance of different sensors under the same conditions, or even by aproaching the emited frequency to one micorphone or to another to see the different delays.
+
+
+#figure(
+  image(img_path + "comparacion masfuerte ines.png", width: 100%),
+  caption: [Signal acquired while aproaching the emitted frequency to the first microphone]
+)
+
+In this figure, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the second microphone. This indicates that this microphone was positioned closer to the acoustic source. Also sound pressure level (SPL) decreases with distance due to propagation losses in air.
+
+The FFT spectrum shows a clear dominant peak around the excitation frequency (≈705 Hz), confirming correct detection of the injected tone. The higher spectral magnitude at this frequency also reflects the stronger received signal energy.
+
+The SPL representation further supports this observation, showing larger pressure variations (higher dB-SPL values), which are consistent with a shorter distance between the microphone and the sound source.
+
+Compared with the second microphone, a slight phase advance can also be observed, suggesting a smaller propagation delay, again consistent with a closer position relative to the emitter. We will se this further on more clearly. 
+
+#figure(
+  image(img_path + "comparacion masfuerte agus.png", width: 100%),
+  caption: [Signal acquired while aproaching the emitted frequency to the second microphone]
+)
+
+In this figure we can see the same results, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the first microphone. This indicates that this microphone was positioned closer to  the acoustic source. 
+
+We now want to take a deeper look into the delay: 
+#figure(
+  image(img_path + "comp masfuerte con desafse en medio.png", width: 100%),
+  caption: [Signal acquired while putting the emitted frequency in the middle of both microphones]
+)
+
+This figure shows the simultaneous acquisition of the signals from both microphones in the time domain, allowing comparison of their relative phase. Since the excitation frequency (705 Hz) was generated closer to the second microphone, a noticeable phase shift between the signals is expected. As observed in the waveform graph, the peaks of the two signals are not aligned, indicating a propagation delay between sensors caused by the difference in distance from the sound source.
+
+In addition to the phase shift, a difference in signal amplitude can also be observed. The microphone located closer to the source presents a higher amplitude and higher SPL values, which is consistent with the expected attenuation of acoustic pressure with distance.
+
+The FFT representation confirms that both microphones detect the same dominant frequency component at approximately 705 Hz, proving that the difference between signals is due to spatial positioning, not to frequency variation.
+
+Therefore, the observed phase displacement and amplitude difference are consistent with the sound source being positioned closer to one microphone than the other.
