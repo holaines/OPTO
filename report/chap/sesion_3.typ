@@ -6,7 +6,7 @@ In the previous sessions, basic acquisition programs were developed in LabVIEW f
 
 The objective of this session is to acquire signals from one or more conditioned sensors, process the obtained data, and present the results in a useful format. 
 
-In this session we will be using two different MEMS microphones ( in the previous session we already tried with the analog microphone):
+In this session we will be using two different analog MEMS microphones:
 
 #grid(
   columns: 2,
@@ -96,6 +96,7 @@ Now for the second microphone, and while producing noise, we obtained the follow
     )
   ]
 )
+When external acoustic excitation is present, the oscilloscope shows a clear periodic waveform corresponding to the injected tone. In contrast, when no intentional sound is generated, only low-amplitude background noise is observed. This confirms that both conditioning circuits correctly amplify the microphone output and allow detection of external acoustic signals above the noise floor
 
 We now measured the amplitude of the acquired signals at the output of the amplifier and at the output of the microphone, and we obtained the following values:
 
@@ -125,6 +126,7 @@ We now measured the amplitude of the acquired signals at the output of the ampli
     )
   ]
 )
+The signal amplitude measured at the amplifier output is higher than at the microphone output, confirming the expected gain introduced by the conditioning stage. This amplification improves the signal-to-noise ratio and allows reliable acquisition with the NI-USB6009 DAQ.
 
 We were now looking to be able to represent the information we obtained in and present it in a useful form:
 
@@ -192,7 +194,7 @@ In this figure we can see the same results, the acquired signal presents a notic
 We now want to take a deeper look into the delay: 
 #figure(
   image(img_path + "comp masfuerte con desafse en medio.png", width: 100%),
-  caption: [Signal acquired while putting the emitted frequency in the middle of both microphones]
+  caption: [Signal acquired while putting the emitted frequency closer to the second microphone]
 )
 
 This figure shows the simultaneous acquisition of the signals from both microphones in the time domain, allowing comparison of their relative phase. Since the excitation frequency (705 Hz) was generated closer to the second microphone, a noticeable phase shift between the signals is expected. As observed in the waveform graph, the peaks of the two signals are not aligned, indicating a propagation delay between sensors caused by the difference in distance from the sound source.
