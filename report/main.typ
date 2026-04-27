@@ -26,6 +26,7 @@
 #outline(title: "Table of Figures", target: figure.where(kind: image))
 #pagebreak()
 
-#include "chap/placeholder.typ"
-
 #include "chap/sesion_1.typ"
+#include "chap/sesion_2.typ"
+#include "chap/sesion_3.typ"
+#include "chap/sesion_4.typ"
