@@ -2,6 +2,7 @@
 = Session 2
 #let img_path = "../img/session-2/"
 
+<<<<<<< HEAD
 In this session, we built and tested the analog conditioning circuit for a MEMS microphone. The circuit was implemented with the INA131 instrumentation amplifier and checked using the oscilloscope.
 
 The main goal was to verify that the microphone signal could be detected and amplified correctly before using it with the DAQ in the next session.
@@ -75,3 +76,5 @@ Finally, we tested the complete circuit. The oscilloscope showed a clear signal,
 )
 
 In this session, we verified with the measurements shown in the oscilloscope that the MEMS microphone detected the sound and that the INA131 amplified the signal correctly.
+=======
+>>>>>>> refs/remotes/origin/main
