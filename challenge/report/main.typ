@@ -27,12 +27,12 @@
 #outline(title: "Table of Figures", target: figure.where(kind: image))
 #pagebreak()
 
-#include "chap/introduction.typ"
-#include "chap/requirements.typ"
-#include "chap/architecture.typ"
-#include "chap/front-end.typ"
-#include "chap/acquisition.typ"
-#include "chap/FPGA.typ"
-#include "chap/power_supply.typ"
-#include "chap/data_handling.typ"
-#include "chap/verification.typ"
+#include "chap/1_introduction.typ"
+#include "chap/2_requirements.typ"
+#include "chap/3_architecture.typ"
+#include "chap/4_front-end.typ"
+#include "chap/5_acquisition.typ"
+#include "chap/6_FPGA.typ"
+#include "chap/7_power_supply.typ"
+#include "chap/8_data_handling.typ"
+#include "chap/9_verification.typ"
