@@ -37,7 +37,7 @@
         text(size: 11pt, subtitle),
 
         v(15mm),
-        if img_path != "" { image(img_path, width: 60%, fit: "cover") },
+        if img_path != "" { image(img_path, width: 55%, fit: "cover") },
         v(1fr),
 
         stack(
