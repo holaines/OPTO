@@ -1,3 +1,0 @@
-= Introduction
-
-#lorem(100)
