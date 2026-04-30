@@ -1,0 +1,39 @@
+[package]
+name = "m7"
+version = "0.1.0"
+edition = "2024"
+autobins = false
+
+[dependencies]
+ipc = { path = "../ipc" }
+cortex-m = { version = "0.7.7", features = ["inline-asm", "critical-section-single-core"] }
+cortex-m-rt = "0.7.5"
+defmt = "1.0.1"
+defmt-rtt = "1.1.0"
+embassy-executor = { version = "0.9.1", features = ["arch-cortex-m", "executor-thread", "defmt"] }
+embassy-stm32 = { version = "0.5.0", features = ["defmt", "stm32h755zi-cm7", "time-driver-tim2", "exti", "unstable-pac"] }
+embassy-time = { version = "0.5.0", features = ["defmt", "defmt-timestamp-uptime"] }
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+embassy-sync = "0.7.2"
+
+[[bin]]
+name = "m7"
+path = "src/main.rs"
+test = false
+harness = false
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = false
+opt-level = 's'
+overflow-checks = false
+
+[profile.dev]
+debug = 2
+debug-assertions = true
+incremental = false
+# opt-level = 'g'
+overflow-checks = true

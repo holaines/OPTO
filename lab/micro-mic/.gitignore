@@ -1,0 +1,6 @@
+.direnv/
+.cargo/
+target/
+.git/
+.vscode/
+.codex

@@ -1,0 +1,25 @@
+[package]
+name = "micro-read"
+version = "0.1.0"
+edition = "2024"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+
+[dependencies]
+cortex-m = "0.7.7"
+cortex-m-rt = "0.7.5"
+stm32h7xx-hal = { version = "0.15.1", features = ["stm32h747cm7", "rt", "ethernet"] }
+rtic = { version = "2.2.0", features = ["thumbv7-backend", "cortex-m"] }
+panic-halt = "0.2.0"
+smoltcp = { version = "0.10.0", default-features = false, features = ["medium-ethernet", "proto-ipv4", "socket-udp"] }
+
+[[bin]]
+name = "micro-read"
+path = "src/main.rs"
+test = false
+harness = false
+
+[build-dependencies]
+# No build dependencies needed for the current build.rs logic that uses std
