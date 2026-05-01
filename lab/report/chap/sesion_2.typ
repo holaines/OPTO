@@ -1,4 +1,3 @@
-
 = Session 2
 #let img_path = "../img/session-2/"
 
@@ -75,4 +74,3 @@ Finally, we tested the complete circuit. The oscilloscope showed a clear signal,
 )
 
 In this session, we verified with the measurements shown in the oscilloscope that the MEMS microphone detected the sound and that the INA131 amplified the signal correctly.
-
