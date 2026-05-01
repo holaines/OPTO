@@ -83,19 +83,16 @@ class Visualizer(QMainWindow):
         # Docks
         self.dock_ctrl = Dock("Control Panel", size=(300, 600))
         self.dock_time = Dock("Time Domain (Oscilloscope)", size=(800, 300))
-        self.dock_audio = Dock("Audio Waveform", size=(800, 200))
         self.dock_fft = Dock("Frequency Domain (FFT)", size=(800, 300))
         self.dock_clock = Dock("PA0 Clock Monitor", size=(800, 200))
 
         self.area.addDock(self.dock_ctrl, "left")
         self.area.addDock(self.dock_time, "right", self.dock_ctrl)
-        self.area.addDock(self.dock_audio, "bottom", self.dock_time)
-        self.area.addDock(self.dock_fft, "bottom", self.dock_audio)
+        self.area.addDock(self.dock_fft, "bottom", self.dock_time)
         self.area.addDock(self.dock_clock, "bottom", self.dock_fft)
 
         self.setup_ctrl_dock()
         self.setup_time_dock()
-        self.setup_audio_dock()
         self.setup_fft_dock()
         self.setup_clock_dock()
 
@@ -136,7 +133,7 @@ class Visualizer(QMainWindow):
         self.combo_trig_mode.setCurrentIndex(1)  # Auto by default
 
         self.combo_trig_ch = QComboBox()
-        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (PC0)", "Ch 2 (PC3)"])
+        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (Audio)", "Ch 2 (PC3)"])
 
         self.combo_trig_edge = QComboBox()
         self.combo_trig_edge.addItems(["Rising", "Falling"])
@@ -156,13 +153,19 @@ class Visualizer(QMainWindow):
         grp_fft = QGroupBox("Math / FFT")
         form_fft = QFormLayout(grp_fft)
         self.combo_fft_ch = QComboBox()
-        self.combo_fft_ch.addItems(["Ch 0", "Ch 1", "Ch 2", "Audio"])
+        self.combo_fft_ch.addItems(["Ch 0", "Ch 1 (Audio)", "Ch 2"])
 
         self.combo_fft_win = QComboBox()
         self.combo_fft_win.addItems(["Hanning", "Hamming", "Blackman", "Rectangular"])
 
+        self.spin_fft_max = QSpinBox()
+        self.spin_fft_max.setRange(10, 50000)
+        self.spin_fft_max.setSingleStep(100)
+        self.spin_fft_max.setValue(50000)
+
         form_fft.addRow("Source:", self.combo_fft_ch)
         form_fft.addRow("Window:", self.combo_fft_win)
+        form_fft.addRow("Max Freq (Hz):", self.spin_fft_max)
         layout.addWidget(grp_fft)
 
         # Stats
@@ -200,7 +203,7 @@ class Visualizer(QMainWindow):
         self.plot_time.setMouseEnabled(x=False, y=True)
 
         self.curve_ch0 = self.plot_time.plot(pen=pg.mkPen("y", width=2), name="Ch 0")
-        self.curve_ch1 = self.plot_time.plot(pen=pg.mkPen("c", width=2), name="Ch 1")
+        self.curve_ch1 = self.plot_time.plot(pen=pg.mkPen("w", width=1), name="Ch 1 (Audio)")
         self.curve_ch2 = self.plot_time.plot(pen=pg.mkPen("m", width=2), name="Ch 2")
 
         # Vertical trigger marker line
@@ -209,17 +212,6 @@ class Visualizer(QMainWindow):
         )
         self.plot_time.addItem(self.trigger_line)
         self.dock_time.addWidget(self.plot_time)
-
-    def setup_audio_dock(self):
-        self.plot_audio = pg.PlotWidget()
-        self.plot_audio.setLabel("left", "Voltage", units="V")
-        self.plot_audio.setLabel("bottom", "Time", units="s")
-        self.plot_audio.showGrid(x=True, y=True, alpha=0.5)
-        self.plot_audio.setMouseEnabled(x=False, y=True)
-        self.plot_audio.setYRange(0, 3.4)
-
-        self.curve_audio = self.plot_audio.plot(pen=pg.mkPen("w", width=1), name="Audio (PC0)")
-        self.dock_audio.addWidget(self.plot_audio)
 
     def setup_fft_dock(self):
         self.plot_fft = pg.PlotWidget()
@@ -262,14 +254,13 @@ class Visualizer(QMainWindow):
             return self.data_ch1
         return self.data_ch2
 
-    def find_trigger(self, search_start, search_end, pre_trig, post_trig):
+    def find_trigger_in_array(self, data, search_start, search_end, pre_trig, post_trig):
         start = max(pre_trig, search_start)
         end = search_end - post_trig
 
         if end <= start:
             return -1
 
-        data = self._get_ch_data(self.combo_trig_ch.currentIndex())
         lvl = self.spin_trig_lvl.value()
         rising = self.combo_trig_edge.currentIndex() == 0
 
@@ -392,101 +383,133 @@ class Visualizer(QMainWindow):
         pre_trig = win_samples - post_trig
 
         trig_mode = self.combo_trig_mode.currentIndex()
+        trig_ch = self.combo_trig_ch.currentIndex()
         now = time.time()
-        plot_start = -1
-        plot_end = -1
+        plot_start_ls = -1
+        plot_end_ls = -1
+        plot_start_audio = -1
+        plot_end_audio = -1
 
-        # 1. Determine plot range based on mode
+        dt_ls = self.last_sample_period / 1000.0 if self.last_sample_period > 0 else 0.01
+        dt_audio = 0.00001
+        
+        win_ls = int(total_time_s / dt_ls)
+        pre_ls = win_ls // 2
+        post_ls = win_ls - pre_ls
+        
+        win_aud = int(total_time_s / dt_audio)
+        pre_aud = win_aud // 2
+        post_aud = win_aud - pre_aud
+
         if trig_mode == 0:  # Roll Mode (Free Run)
-            plot_end = self.idx
-            plot_start = max(0, plot_end - win_samples)
+            plot_end_ls = self.idx
+            plot_start_ls = max(0, plot_end_ls - win_ls)
+            plot_end_audio = self.audio_idx
+            plot_start_audio = max(0, plot_end_audio - win_aud)
+
             self.trigger_line.hide()
             self.plot_time.setXRange(-total_time_s, 0, padding=0)
             self.plot_clk.setXRange(-total_time_s, 0, padding=0)
             self.plot_duty.setXRange(-total_time_s, 0, padding=0)
-
-        else:  # Auto or Normal Triggered Sweep
+        else:
             self.trigger_line.show()
             self.plot_time.setXRange(-total_time_s / 2, total_time_s / 2, padding=0)
             self.plot_clk.setXRange(-total_time_s / 2, total_time_s / 2, padding=0)
             self.plot_duty.setXRange(-total_time_s / 2, total_time_s / 2, padding=0)
 
-            search_start = max(pre_trig, prev_idx - win_samples)
-            trig_idx = self.find_trigger(search_start, self.idx, pre_trig, post_trig)
-
-            if trig_idx != -1:
-                self.last_trigger_idx = trig_idx
-                self.last_plot_time = now
-                plot_start = trig_idx - pre_trig
-                plot_end = trig_idx + post_trig
+            found_trigger = False
+            
+            if trig_ch == 1:
+                search_start = max(pre_aud, self.audio_idx - 10000)
+                trig_idx_aud = self.find_trigger_in_array(self.data_audio, search_start, self.audio_idx, pre_aud, post_aud)
+                
+                if trig_idx_aud != -1:
+                    if not hasattr(self, 'last_audio_trigger_idx'):
+                        self.last_audio_trigger_idx = trig_idx_aud
+                    self.last_audio_trigger_idx = trig_idx_aud
+                    self.last_plot_time = now
+                    offset_sec = (self.audio_idx - trig_idx_aud) * dt_audio
+                    trig_idx_ls = self.idx - int(offset_sec / dt_ls)
+                    self.last_trigger_idx = trig_idx_ls
+                    found_trigger = True
             else:
+                search_start = max(pre_ls, prev_idx - win_ls)
+                data_array = self.data_ch0 if trig_ch == 0 else self.data_ch2
+                trig_idx_ls = self.find_trigger_in_array(data_array, search_start, self.idx, pre_ls, post_ls)
+                
+                if trig_idx_ls != -1:
+                    self.last_trigger_idx = trig_idx_ls
+                    self.last_plot_time = now
+                    offset_sec = (self.idx - trig_idx_ls) * dt_ls
+                    trig_idx_aud = self.audio_idx - int(offset_sec / dt_audio)
+                    if not hasattr(self, 'last_audio_trigger_idx'):
+                        self.last_audio_trigger_idx = trig_idx_aud
+                    self.last_audio_trigger_idx = trig_idx_aud
+                    found_trigger = True
+
+            if not found_trigger:
                 if trig_mode == 1 and (now - self.last_plot_time > 0.1):
-                    # Auto mode: force sweep if no trigger in 100ms
-                    plot_end = self.idx
-                    plot_start = max(0, plot_end - win_samples)
+                    plot_end_ls = self.idx
+                    plot_start_ls = max(0, plot_end_ls - win_ls)
+                    plot_end_audio = self.audio_idx
+                    plot_start_audio = max(0, plot_end_audio - win_aud)
                     self.last_plot_time = now
                 elif trig_mode == 2:
-                    # Normal mode: hold the last valid triggered sweep
-                    if (
-                        self.last_trigger_idx != -1
-                        and self.last_trigger_idx + post_trig <= self.idx
-                    ):
-                        plot_start = self.last_trigger_idx - pre_trig
-                        plot_end = self.last_trigger_idx + post_trig
+                    if self.last_trigger_idx != -1 and hasattr(self, 'last_audio_trigger_idx'):
+                        trig_idx_ls = self.last_trigger_idx
+                        trig_idx_aud = self.last_audio_trigger_idx
+                        plot_start_ls = trig_idx_ls - pre_ls
+                        plot_end_ls = trig_idx_ls + post_ls
+                        plot_start_audio = trig_idx_aud - pre_aud
+                        plot_end_audio = trig_idx_aud + post_aud
+            else:
+                plot_start_ls = trig_idx_ls - pre_ls
+                plot_end_ls = trig_idx_ls + post_ls
+                plot_start_audio = trig_idx_aud - pre_aud
+                plot_end_audio = trig_idx_aud + post_aud
 
         # 2. Extract and Plot Data
-        if plot_start != -1 and plot_end != -1 and plot_end > plot_start:
-            actual_samples = plot_end - plot_start
+        if plot_start_ls != -1 and plot_end_ls != -1 and plot_end_ls > plot_start_ls:
+            actual_samples_ls = plot_end_ls - plot_start_ls
+            actual_samples_audio = plot_end_audio - plot_start_audio
 
-            if trig_mode == 0:  # Roll Mode: time ends at 0
-                x = (np.arange(actual_samples) - actual_samples) * dt
-            else:  # Triggered Mode: time revolves around pre_trig (0s)
-                # If we don't have full history at startup, pre_trig is clamped
-                effective_pre_trig = min(pre_trig, actual_samples)
-                x = (np.arange(actual_samples) - effective_pre_trig) * dt
-
-            y0 = self.data_ch0[plot_start:plot_end]
-            y1 = self.data_ch1[plot_start:plot_end]
-            y2 = self.data_ch2[plot_start:plot_end]
-            yc = self.data_clock[plot_start:plot_end]
-            yd = self.data_duty[plot_start:plot_end]
-
-            self.curve_ch0.setData(x, y0)
-            self.curve_ch1.setData(x, y1)
-            self.curve_ch2.setData(x, y2)
-            self.curve_clk.setData(x, yc)
-            self.curve_duty.setData(x, yd)
-
-        if new_audio_data and self.audio_idx > 0:
-            audio_win_samples = int(total_time_s / 0.00001)
-            if audio_win_samples > self.audio_buffer_size:
-                audio_win_samples = self.audio_buffer_size
+            if trig_mode == 0:
+                x_ls = (np.arange(actual_samples_ls) - actual_samples_ls) * dt_ls
+                x_audio = (np.arange(actual_samples_audio) - actual_samples_audio) * dt_audio
+            else:
+                effective_pre_ls = min(pre_ls, actual_samples_ls)
+                x_ls = (np.arange(actual_samples_ls) - effective_pre_ls) * dt_ls
                 
-            audio_start = max(0, self.audio_idx - audio_win_samples)
-            actual_audio_samples = self.audio_idx - audio_start
+                effective_pre_aud = min(pre_aud, actual_samples_audio)
+                x_audio = (np.arange(actual_samples_audio) - effective_pre_aud) * dt_audio
+
+            y0 = self.data_ch0[plot_start_ls:plot_end_ls]
+            y2 = self.data_ch2[plot_start_ls:plot_end_ls]
+            yc = self.data_clock[plot_start_ls:plot_end_ls]
+            yd = self.data_duty[plot_start_ls:plot_end_ls]
             
-            x_audio = (np.arange(actual_audio_samples) - actual_audio_samples) * 0.00001
-            y_audio = self.data_audio[audio_start : self.audio_idx]
-            
-            self.curve_audio.setData(x_audio, y_audio)
-            self.plot_audio.setXRange(-total_time_s, 0, padding=0)
+            y_audio = self.data_audio[max(0, plot_start_audio):plot_end_audio]
+            if plot_start_audio < 0:
+                x_audio = x_audio[abs(plot_start_audio):]
+
+            self.curve_ch0.setData(x_ls, y0)
+            self.curve_ch1.setData(x_audio, y_audio)
+            self.curve_ch2.setData(x_ls, y2)
+            self.curve_clk.setData(x_ls, yc)
+            self.curve_duty.setData(x_ls, yd)
 
         # 3. Update FFT
         fft_ch_idx = self.combo_fft_ch.currentIndex()
-        if fft_ch_idx == 3:
-            if self.audio_idx > 0:
-                audio_win_samples = int(total_time_s / 0.00001)
-                audio_start = max(0, self.audio_idx - min(audio_win_samples, self.audio_buffer_size))
-                y_fft = self.data_audio[audio_start : self.audio_idx]
+        if fft_ch_idx == 1:
+            if plot_start_audio != -1 and plot_end_audio != -1 and plot_end_audio > plot_start_audio:
+                y_fft = self.data_audio[max(0, plot_start_audio) : plot_end_audio]
                 fs = 100000.0
             else:
                 y_fft = []
                 fs = 100000.0
         else:
-            if plot_start != -1 and plot_end != -1 and plot_end > plot_start:
-                if fft_ch_idx == 0: y_fft = y0
-                elif fft_ch_idx == 1: y_fft = y1
-                else: y_fft = y2
+            if plot_start_ls != -1 and plot_end_ls != -1 and plot_end_ls > plot_start_ls:
+                y_fft = y0 if fft_ch_idx == 0 else y2
                 fs = (1000.0 / self.last_sample_period if self.last_sample_period > 0 else 100.0)
             else:
                 y_fft = []
@@ -510,8 +533,9 @@ class Visualizer(QMainWindow):
 
             xf = np.fft.rfftfreq(len(y_fft), 1.0 / fs)
             self.curve_fft.setData(xf, fft_mag)
+            self.plot_fft.setXRange(0, self.spin_fft_max.value(), padding=0)
 
-            color = "y" if fft_ch_idx == 0 else ("c" if fft_ch_idx == 1 else ("m" if fft_ch_idx == 2 else "w"))
+            color = "y" if fft_ch_idx == 0 else ("w" if fft_ch_idx == 1 else "m")
             self.curve_fft.setPen(pg.mkPen(color, width=1.5))
 
     def update_stats(self):
@@ -543,8 +567,12 @@ class Visualizer(QMainWindow):
             self.lbl_ch0_mean.setText(
                 f"{np.mean(self.data_ch0[start : self.idx]):.3f} V"
             )
+            win_size_audio = min(10000, self.audio_idx)
+            start_audio = max(0, self.audio_idx - win_size_audio)
+            
             self.lbl_ch1_mean.setText(
-                f"{np.mean(self.data_ch1[start : self.idx]):.3f} V"
+                f"{np.mean(self.data_audio[start_audio : self.audio_idx]):.3f} V"
+                if win_size_audio > 0 else "0.0 V"
             )
             self.lbl_ch2_mean.setText(
                 f"{np.mean(self.data_ch2[start : self.idx]):.3f} V"
