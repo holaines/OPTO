@@ -19,7 +19,7 @@ pub struct Storage<'a> {
     udp_rx_meta: [udp::PacketMetadata; 4],
     udp_tx_meta: [udp::PacketMetadata; 4],
     udp_rx_data: [u8; 256],
-    udp_tx_data: [u8; 512],
+    udp_tx_data: [u8; 1536],
 }
 
 pub enum SendResult {
@@ -135,7 +135,7 @@ pub fn init_storage() -> &'static mut Storage<'static> {
         addr_of_mut!((*store).udp_rx_meta).write([udp::PacketMetadata::EMPTY; 4]);
         addr_of_mut!((*store).udp_tx_meta).write([udp::PacketMetadata::EMPTY; 4]);
         addr_of_mut!((*store).udp_rx_data).write([0; 256]);
-        addr_of_mut!((*store).udp_tx_data).write([0; 512]);
+        addr_of_mut!((*store).udp_tx_data).write([0; 1536]);
 
         &mut *store
     }

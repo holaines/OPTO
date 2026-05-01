@@ -4,3 +4,4 @@ target/
 .git/
 .vscode/
 .codex
+__pycache__/

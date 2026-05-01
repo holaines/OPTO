@@ -79,21 +79,12 @@
           '';
         };
 
-        micro-middleware = pkgs.writeShellApplication {
-          name = "micro-middleware";
-          runtimeInputs = [ pkgs.nodejs ];
-          text = ''
-            node middleware/server.js "$@"
-          '';
-        };
-
-        micro-stack = pkgs.writeShellApplication {
-          name = "micro-stack";
-          runtimeInputs = [ pkgs.podman-compose ];
-          text = ''
-            podman-compose up --build -d "$@"
-          '';
-        };
+        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
+          pyqt6
+          (pyqtgraph.overridePythonAttrs (old: { doCheck = false; }))
+          numpy
+          scipy
+        ]);
 
         micro-net-up = pkgs.writeShellApplication {
           name = "micro-net-up";
@@ -114,20 +105,6 @@
             ip -brief addr show "$iface"
             ip -s link show dev "$iface"
             ip -s neigh show dev "$iface"
-          '';
-        };
-
-        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
-          pyqt6
-          (pyqtgraph.overridePythonAttrs (old: { doCheck = false; }))
-          numpy
-        ]);
-
-        micro-visualizer = pkgs.writeShellApplication {
-          name = "micro-visualizer";
-          runtimeInputs = [ pythonEnv ];
-          text = ''
-            python3 visualizer/main.py "$@"
           '';
         };
 
@@ -161,13 +138,9 @@
           micro-run
           micro-run-release
           micro-size
-          micro-middleware
-          micro-stack
           micro-net-up
           micro-net-status
-          micro-visualizer
           micro-oscilloscope
-          podman-compose
         ] ++ lib.optionals stdenv.isDarwin [
           darwin.apple_sdk.frameworks.Security
           darwin.apple_sdk.frameworks.CoreFoundation
@@ -186,10 +159,7 @@
             echo "  micro-run            flash/run debug build with probe-rs"
             echo "  micro-run-release    flash/run release build with probe-rs"
             echo "  micro-size           show section sizes"
-            echo "  micro-middleware     run UDP keepalive and Prometheus metrics endpoint"
-            echo "  micro-visualizer     run high-performance PyQtGraph real-time visualizer"
             echo "  micro-oscilloscope   run BOTH the middleware and the visualizer"
-            echo "  micro-stack          run Grafana/Prometheus stack via podman-compose"
             echo "  micro-net-up         configure direct link (use sudo if needed)"
             echo "  micro-net-status     show direct link counters and ARP"
           '';

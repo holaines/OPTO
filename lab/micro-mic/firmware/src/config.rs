@@ -1,5 +1,7 @@
 pub const SAMPLE_PERIOD_MS: u32 = 10;
-pub const CLOCK_HZ: u32 = 2_200_000;
+pub const AUDIO_SAMPLE_RATE_HZ: u32 = 100_000;
+pub const AUDIO_FRAME_SAMPLES: usize = 256;
+pub const CLOCK_HZ: u32 = 2_000;
 pub const VREF_MV: u16 = 3300;
 
 pub const MCU_IP: [u8; 4] = [192, 168, 88, 99];
