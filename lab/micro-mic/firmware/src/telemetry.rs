@@ -64,8 +64,13 @@ pub fn encode_audio(
     packet[29] = 16;
     packet[30..32].copy_from_slice(&flags.to_le_bytes());
 
-    for (index, sample) in samples.iter().enumerate() {
-        let offset = AUDIO_HEADER_LEN + index * 2;
-        packet[offset..offset + 2].copy_from_slice(&sample.to_le_bytes());
+    // STM32H7 is little-endian, matching the wire format.
+    let sample_bytes = config::AUDIO_FRAME_SAMPLES * core::mem::size_of::<u16>();
+    unsafe {
+        core::ptr::copy_nonoverlapping(
+            samples.as_ptr().cast::<u8>(),
+            packet[AUDIO_HEADER_LEN..].as_mut_ptr(),
+            sample_bytes,
+        );
     }
 }
