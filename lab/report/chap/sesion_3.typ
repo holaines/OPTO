@@ -6,6 +6,8 @@ In the previous sessions, basic acquisition programs were developed in LabVIEW f
 
 The objective of this session is to acquire signals from one or more conditioned sensors, process the obtained data, and present the results in a useful format. 
 
+== Microphones used
+
 In this session we will be using two different analog MEMS microphones:
 
 #grid(
@@ -31,6 +33,8 @@ In this session we will be using two different analog MEMS microphones:
 )
 
 We make sure both circuits are properly connected before doing any Measurements, and then we proceed to acquire signals from both microphones while producing noise and while not producing noise.
+
+== Acquisition with and without noise
 
 #figure(
   image(img_path + "amboscircuitos.jpeg", width: 70%),
@@ -98,6 +102,8 @@ Now for the second microphone, and while producing noise, we obtained the follow
 )
 When external acoustic excitation is present, the oscilloscope shows a clear periodic waveform corresponding to the injected tone. In contrast, when no intentional sound is generated, only low-amplitude background noise is observed. This confirms that both conditioning circuits correctly amplify the microphone output and allow detection of external acoustic signals above the noise floor
 
+== Output amplitude measurements
+
 We now measured the amplitude of the acquired signals at the output of the amplifier and at the output of the microphone, and we obtained the following values:
 
 #grid(
@@ -127,6 +133,8 @@ We now measured the amplitude of the acquired signals at the output of the ampli
   ]
 )
 The signal amplitude measured at the amplifier output is higher than at the microphone output, confirming the expected gain introduced by the conditioning stage. This amplification improves the signal-to-noise ratio and allows reliable acquisition with the NI-USB6009 DAQ.
+
+== LabVIEW signal representation
 
 We were now looking to be able to represent the information we obtained in and present it in a useful form:
 
@@ -168,6 +176,8 @@ The Waveform Graph 2 (bottom) corresponds to the frequency-domain representation
 
 When introducing a pure tone of 705 Hz, a clear spectral peak appears around this frequency in the spectrum plot, confirming correct acquisition of the injected signal through the microphone and the conditioning circuit. The meter indicator also reflects this detected frequency value.
 
+== Simultaneous acquisition of both microphones
+
 We noticed that we could connect both circuits to the same computer and see the acquired signals from both microphones simultaneously in LabVIEW, which is a very useful feature for comparing the performance of different sensors under the same conditions, or even by aproaching the emited frequency to one micorphone or to another to see the different delays.
 
 
@@ -190,6 +200,8 @@ Compared with the second microphone, a slight phase advance can also be observed
 )
 
 In this figure we can see the same results, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the first microphone. This indicates that this microphone was positioned closer to  the acoustic source. 
+
+== Delay between microphones
 
 We now want to take a deeper look into the delay: 
 #figure(
