@@ -1,23 +1,64 @@
 = Session 1
 #let img_path = "../img/session-1/"
 
+In this session, we used the NI-USB-6009 DAQ with MAX and LabVIEW. The main goal was to acquire and generate simple analog signals and check that the programs worked correctly.
 
-//Nos piden haber hecho esto para tener la puntuacion completa de la sesion: 1. MAX AI, MAX AO, VI express AI, VI DAQmx AI, continuous, AO [75%] 2. Measurements in Pa or dB-SPL, different frequencies [25%] 3. Extra: VI display similar to sound level meter [25%]
+== MAX tests
 
-// nos falta por hacer bien lo  de dbSPL y lo de Pa !
-
-In this session we wanted to learn how to use the NI-USB-6009 acquisition board together with Measurement and Automation Explorer (MAX) and LabVIEW to acquire and generate analog signals. 
-
-The acquired voltage signals were also converted into acoustic pressure (Pa) and sound pressure level (dB-SPL), assuming a microphone sensitivity of 5 mV/Pa.
-
-Test frequencies used during the session were 100 Hz, 1 kHz and 10 kHz, which are representative audio frequencies.
-
-The first thing we did, was to create two different tasks in MAX (Measurement and Automation Explorer): one for analog output signal generation (AO_GEN1) and another for analog input signal acquisition (AI_ACQ1). The generated signal was then measured using continuous acquired mode through channel AI0 and the adquired one through the AO0 channel.
-
-
+First, we created tasks in MAX to test the DAQ. One task was used for analog input acquisition and another one for analog output generation. With these tests, we verified that the DAQ was working correctly.
 
 #figure(
-  image(img_path + "E0.png", width: 70%),
-  caption: [AI0 configuration in MAX]
+  image(img_path + "E0.png", width: 75%),
+  caption: [Analog input acquisition task in MAX]
 )
 
+#figure(
+  image(img_path + "E1.png", width: 75%),
+  caption: [Analog output generation task in MAX]
+)
+
+== LabVIEW acquisition
+
+Once the DAQ had been tested in MAX, we repeated the acquisition in LabVIEW. The first VI was used to read the analog input signal and display the waveform.
+
+#figure(
+  image(img_path + "Ej6.png", width: 75%),
+  caption: [LabVIEW VI for analog input acquisition]
+)
+
+We also used a continuous acquisition VI, where the waveform was refreshed while the program was running.
+
+#figure(
+  image(img_path + "E7.png", width: 75%),
+  caption: [Continuous analog input acquisition in LabVIEW]
+)
+
+== Analog output generation
+
+We also tested the analog output of the DAQ using LabVIEW. A simple signal was generated and measured to check that the output was working correctly.
+
+#figure(
+  image(img_path + "E8.png", width: 75%),
+  caption: [Analog output generation and acquisition test]
+)
+
+== Acoustic units
+
+Finally, the acquired voltage signal was converted into acoustic pressure and sound pressure level. For this conversion, we assumed a sensitivity of 5 mV/Pa, as indicated in class.
+
+#figure(
+  grid(
+    columns: (1fr,),
+    gutter: 1em,
+    image(img_path + "Pascales.png", width: 75%),
+    image(img_path + "dBspl.png", width: 75%),
+  ),
+  caption: [Signal represented in Pa and dB-SPL]
+)
+
+We also displayed the FFT to observe the main frequency component of the acquired signal.
+
+#figure(
+  image(img_path + "3Hz spl.png", width: 75%),
+  caption: [FFT representation of the acquired signal]
+)
