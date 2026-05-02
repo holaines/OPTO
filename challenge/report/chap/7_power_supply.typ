@@ -1,8 +1,9 @@
-#let pblock(title, body) = box(
+#let pblock(title, body, color: none) = box(
   width: 100%,
   inset: 6pt,
   stroke: 0.7pt,
   radius: 4pt,
+  fill: if color == none { blue.lighten(75%) } else { color }
 )[
   #strong[#title] \
   #text(size: 8.5pt)[#body]
