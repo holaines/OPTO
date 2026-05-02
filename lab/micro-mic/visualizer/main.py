@@ -52,9 +52,10 @@ class Visualizer(QMainWindow):
 
         # Audio buffers
         self.audio_buffer_size = 1000000
-        self.data_audio = np.zeros(self.audio_buffer_size)
-        self.audio_idx = 0
-        self.audio_packet_count = 0
+        self.audio_buffers = {}
+        self.audio_indices = {}
+        self.audio_packet_counts = {}
+        self.audio_sample_rates = {}
         self.last_vref = 3300.0
 
         # Stats & Display variables
@@ -106,6 +107,9 @@ class Visualizer(QMainWindow):
         self.combo_time_div = QComboBox()
         self.combo_time_div.addItems(
             [
+                "1 ms/div",
+                "2 ms/div",
+                "5 ms/div",
                 "10 ms/div",
                 "20 ms/div",
                 "50 ms/div",
@@ -133,7 +137,7 @@ class Visualizer(QMainWindow):
         self.combo_trig_mode.setCurrentIndex(1)  # Auto by default
 
         self.combo_trig_ch = QComboBox()
-        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (Audio)", "Ch 2 (PC3)"])
+        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (PC0)", "Ch 2 (PC2)", "Ch 3 (SPI1 PDM)"])
 
         self.combo_trig_edge = QComboBox()
         self.combo_trig_edge.addItems(["Rising", "Falling"])
@@ -152,19 +156,31 @@ class Visualizer(QMainWindow):
         # FFT Config
         grp_fft = QGroupBox("Math / FFT")
         form_fft = QFormLayout(grp_fft)
-        self.combo_fft_ch = QComboBox()
-        self.combo_fft_ch.addItems(["Ch 0", "Ch 1 (Audio)", "Ch 2"])
+        self.chk_fft_ch0 = QCheckBox("Ch 0 (PA3)")
+        self.chk_fft_ch1 = QCheckBox("Ch 1 (PC0)")
+        self.chk_fft_ch1.setChecked(True)
+        self.chk_fft_ch2 = QCheckBox("Ch 2 (PC2)")
+        self.chk_fft_ch2.setChecked(True)
+        self.chk_fft_ch3 = QCheckBox("Ch 3 (SPI1 PDM)")
 
         self.combo_fft_win = QComboBox()
         self.combo_fft_win.addItems(["Hanning", "Hamming", "Blackman", "Rectangular"])
 
-        self.spin_fft_max = QSpinBox()
-        self.spin_fft_max.setRange(10, 50000)
-        self.spin_fft_max.setSingleStep(100)
-        self.spin_fft_max.setValue(50000)
+        self.combo_fft_len = QComboBox()
+        self.combo_fft_len.addItems(["4096", "8192", "16384", "32768", "65536", "131072", "262144"])
+        self.combo_fft_len.setCurrentText("65536")
 
-        form_fft.addRow("Source:", self.combo_fft_ch)
+        self.spin_fft_max = QSpinBox()
+        self.spin_fft_max.setRange(10, 500000)
+        self.spin_fft_max.setSingleStep(100)
+        self.spin_fft_max.setValue(15000)
+
+        form_fft.addRow("Sources:", self.chk_fft_ch0)
+        form_fft.addRow("", self.chk_fft_ch1)
+        form_fft.addRow("", self.chk_fft_ch2)
+        form_fft.addRow("", self.chk_fft_ch3)
         form_fft.addRow("Window:", self.combo_fft_win)
+        form_fft.addRow("Samples (N):", self.combo_fft_len)
         form_fft.addRow("Max Freq (Hz):", self.spin_fft_max)
         layout.addWidget(grp_fft)
 
@@ -178,6 +194,8 @@ class Visualizer(QMainWindow):
         self.lbl_ch0_mean = QLabel("0.0 V")
         self.lbl_ch1_mean = QLabel("0.0 V")
         self.lbl_ch2_mean = QLabel("0.0 V")
+        self.lbl_ch3_mean = QLabel("0.0 V")
+        self.lbl_pdm_debug = QLabel("0x00000000")
 
         form_stats.addRow("Packet Rate:", self.lbl_pkts)
         form_stats.addRow("PA0 Clock Freq:", self.lbl_clock)
@@ -186,6 +204,8 @@ class Visualizer(QMainWindow):
         form_stats.addRow("Ch 0 Mean:", self.lbl_ch0_mean)
         form_stats.addRow("Ch 1 Mean:", self.lbl_ch1_mean)
         form_stats.addRow("Ch 2 Mean:", self.lbl_ch2_mean)
+        form_stats.addRow("Ch 3 Mean:", self.lbl_ch3_mean)
+        form_stats.addRow("PDM Debug:", self.lbl_pdm_debug)
         layout.addWidget(grp_stats)
 
         layout.addStretch()
@@ -203,8 +223,9 @@ class Visualizer(QMainWindow):
         self.plot_time.setMouseEnabled(x=False, y=True)
 
         self.curve_ch0 = self.plot_time.plot(pen=pg.mkPen("y", width=2), name="Ch 0")
-        self.curve_ch1 = self.plot_time.plot(pen=pg.mkPen("w", width=1), name="Ch 1 (Audio)")
-        self.curve_ch2 = self.plot_time.plot(pen=pg.mkPen("m", width=2), name="Ch 2")
+        self.curve_ch1 = self.plot_time.plot(pen=pg.mkPen("w", width=1), name="Ch 1 (PC0)")
+        self.curve_ch2 = self.plot_time.plot(pen=pg.mkPen("m", width=1), name="Ch 2 (PC2)")
+        self.curve_ch3 = self.plot_time.plot(pen=pg.mkPen("g", width=1), name="Ch 3 (SPI1 PDM)")
 
         # Vertical trigger marker line
         self.trigger_line = pg.InfiniteLine(
@@ -220,7 +241,10 @@ class Visualizer(QMainWindow):
         self.plot_fft.showGrid(x=True, y=True, alpha=0.5)
         self.plot_fft.setMouseEnabled(x=True, y=True)
 
-        self.curve_fft = self.plot_fft.plot(pen=pg.mkPen("y", width=1.5), name="FFT")
+        self.curve_fft_ch0 = self.plot_fft.plot(pen=pg.mkPen("y", width=1.5), name="Ch 0")
+        self.curve_fft_ch1 = self.plot_fft.plot(pen=pg.mkPen("w", width=1.5), name="Ch 1")
+        self.curve_fft_ch2 = self.plot_fft.plot(pen=pg.mkPen("m", width=1.5), name="Ch 2")
+        self.curve_fft_ch3 = self.plot_fft.plot(pen=pg.mkPen("g", width=1.5), name="Ch 3")
         self.dock_fft.addWidget(self.plot_fft)
 
     def setup_clock_dock(self):
@@ -304,8 +328,9 @@ class Visualizer(QMainWindow):
             try:
                 data, addr = self.sock.recvfrom(2048)
                 if len(data) >= 56 and data[:4] == b"MMIC":
-                    unpacked = struct.unpack("<4s B x H I I H H H B B I H H I I I I H B B 4x", data[:56])
+                    unpacked = struct.unpack("<4s B x H I I H H H B B I H H I I I I H B B I", data[:56])
 
+                    self.last_pdm_debug = unpacked[-1]
                     raw0 = unpacked[5]
                     raw1 = unpacked[6]
                     raw2 = unpacked[7]
@@ -341,23 +366,40 @@ class Visualizer(QMainWindow):
                         prev_idx = max(0, prev_idx - shift)
                         self.last_trigger_idx -= shift
 
-                elif len(data) >= 544 and data[:4] == b"MAUD":
-                    unpacked = struct.unpack("<4s B B H I I Q I B B H 256H", data[:544])
-                    audio_samples = unpacked[11:]
-                    
-                    volts = (np.array(audio_samples) * self.last_vref) / 65535000.0
-                    n_samp = len(volts)
-                    
-                    if self.audio_idx + n_samp > self.audio_buffer_size:
-                        shift = self.audio_buffer_size // 2
-                        self.data_audio[:-shift] = self.data_audio[shift:]
-                        self.audio_idx -= shift
+                elif len(data) >= 32 and data[:4] == b"MAUD":
+                    packet_len = struct.unpack("<H", data[6:8])[0]
+                    num_samples = (packet_len - 32) // 2
+                    if len(data) >= packet_len and num_samples > 0:
+                        fmt = f"<4s B B H I I Q I B B H {num_samples}H"
+                        unpacked = struct.unpack(fmt, data[:packet_len])
                         
-                    self.data_audio[self.audio_idx : self.audio_idx + n_samp] = volts
-                    self.audio_idx += n_samp
-                    
-                    self.audio_packet_count += 1
-                    new_audio_data = True
+                        channel_id = unpacked[8]
+                        sample_rate = unpacked[7]
+                        audio_samples = unpacked[11:]
+                        
+                        if channel_id not in self.audio_buffers:
+                            self.audio_buffers[channel_id] = np.zeros(self.audio_buffer_size)
+                            self.audio_indices[channel_id] = 0
+                            self.audio_packet_counts[channel_id] = 0
+                            
+                        self.audio_sample_rates[channel_id] = sample_rate
+                        
+                        volts = (np.array(audio_samples) * self.last_vref) / 65535000.0
+                        n_samp = len(volts)
+                        idx = self.audio_indices[channel_id]
+                        
+                        if idx + n_samp > self.audio_buffer_size:
+                            shift = self.audio_buffer_size // 2
+                            self.audio_buffers[channel_id][:-shift] = self.audio_buffers[channel_id][shift:]
+                            idx -= shift
+                            if getattr(self, 'last_audio_trigger_channel', -1) == channel_id:
+                                self.last_audio_trigger_idx -= shift
+                            
+                        self.audio_buffers[channel_id][idx : idx + n_samp] = volts
+                        self.audio_indices[channel_id] = idx + n_samp
+                        
+                        self.audio_packet_counts[channel_id] += 1
+                        new_audio_data = True
 
             except BlockingIOError:
                 break
@@ -365,7 +407,7 @@ class Visualizer(QMainWindow):
                 break
             pkts += 1
 
-        if (not new_data and not new_audio_data) or (self.idx == 0 and self.audio_idx == 0):
+        if (not new_data and not new_audio_data) or (self.idx == 0 and not self.audio_indices):
             return
 
         # Calculate time properties
@@ -387,25 +429,27 @@ class Visualizer(QMainWindow):
         now = time.time()
         plot_start_ls = -1
         plot_end_ls = -1
-        plot_start_audio = -1
-        plot_end_audio = -1
+        
+        audio_id_map = {1: 1, 2: 3, 3: 4} # UI combo -> MAUD ID
+        active_audio_ids = list(self.audio_buffers.keys())
+        
+        plot_audio_ranges = {cid: (-1, -1) for cid in active_audio_ids}
 
         dt_ls = self.last_sample_period / 1000.0 if self.last_sample_period > 0 else 0.01
-        dt_audio = 0.00001
         
         win_ls = int(total_time_s / dt_ls)
         pre_ls = win_ls // 2
         post_ls = win_ls - pre_ls
-        
-        win_aud = int(total_time_s / dt_audio)
-        pre_aud = win_aud // 2
-        post_aud = win_aud - pre_aud
 
         if trig_mode == 0:  # Roll Mode (Free Run)
             plot_end_ls = self.idx
             plot_start_ls = max(0, plot_end_ls - win_ls)
-            plot_end_audio = self.audio_idx
-            plot_start_audio = max(0, plot_end_audio - win_aud)
+            
+            for cid in active_audio_ids:
+                aidx = self.audio_indices[cid]
+                dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                win_aud = int(total_time_s / dt_audio)
+                plot_audio_ranges[cid] = (max(0, aidx - win_aud), aidx)
 
             self.trigger_line.hide()
             self.plot_time.setXRange(-total_time_s, 0, padding=0)
@@ -419,19 +463,26 @@ class Visualizer(QMainWindow):
 
             found_trigger = False
             
-            if trig_ch == 1:
-                search_start = max(pre_aud, self.audio_idx - 10000)
-                trig_idx_aud = self.find_trigger_in_array(self.data_audio, search_start, self.audio_idx, pre_aud, post_aud)
-                
-                if trig_idx_aud != -1:
-                    if not hasattr(self, 'last_audio_trigger_idx'):
+            if trig_ch in audio_id_map:
+                cid = audio_id_map[trig_ch]
+                if cid in self.audio_buffers:
+                    aidx = self.audio_indices[cid]
+                    dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                    win_aud = int(total_time_s / dt_audio)
+                    pre_aud = win_aud // 2
+                    post_aud = win_aud - pre_aud
+                    
+                    search_start = max(pre_aud, aidx - 10000)
+                    trig_idx_aud = self.find_trigger_in_array(self.audio_buffers[cid], search_start, aidx, pre_aud, post_aud)
+                    
+                    if trig_idx_aud != -1:
+                        self.last_audio_trigger_channel = cid
                         self.last_audio_trigger_idx = trig_idx_aud
-                    self.last_audio_trigger_idx = trig_idx_aud
-                    self.last_plot_time = now
-                    offset_sec = (self.audio_idx - trig_idx_aud) * dt_audio
-                    trig_idx_ls = self.idx - int(offset_sec / dt_ls)
-                    self.last_trigger_idx = trig_idx_ls
-                    found_trigger = True
+                        self.last_plot_time = now
+                        offset_sec = (aidx - trig_idx_aud) * dt_audio
+                        trig_idx_ls = self.idx - int(offset_sec / dt_ls)
+                        self.last_trigger_idx = trig_idx_ls
+                        found_trigger = True
             else:
                 search_start = max(pre_ls, prev_idx - win_ls)
                 data_array = self.data_ch0 if trig_ch == 0 else self.data_ch2
@@ -440,103 +491,153 @@ class Visualizer(QMainWindow):
                 if trig_idx_ls != -1:
                     self.last_trigger_idx = trig_idx_ls
                     self.last_plot_time = now
-                    offset_sec = (self.idx - trig_idx_ls) * dt_ls
-                    trig_idx_aud = self.audio_idx - int(offset_sec / dt_audio)
-                    if not hasattr(self, 'last_audio_trigger_idx'):
-                        self.last_audio_trigger_idx = trig_idx_aud
-                    self.last_audio_trigger_idx = trig_idx_aud
                     found_trigger = True
 
             if not found_trigger:
                 if trig_mode == 1 and (now - self.last_plot_time > 0.1):
                     plot_end_ls = self.idx
                     plot_start_ls = max(0, plot_end_ls - win_ls)
-                    plot_end_audio = self.audio_idx
-                    plot_start_audio = max(0, plot_end_audio - win_aud)
+                    for cid in active_audio_ids:
+                        aidx = self.audio_indices[cid]
+                        dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                        win_aud = int(total_time_s / dt_audio)
+                        plot_audio_ranges[cid] = (max(0, aidx - win_aud), aidx)
                     self.last_plot_time = now
                 elif trig_mode == 2:
-                    if self.last_trigger_idx != -1 and hasattr(self, 'last_audio_trigger_idx'):
+                    if self.last_trigger_idx != -1:
                         trig_idx_ls = self.last_trigger_idx
-                        trig_idx_aud = self.last_audio_trigger_idx
                         plot_start_ls = trig_idx_ls - pre_ls
                         plot_end_ls = trig_idx_ls + post_ls
-                        plot_start_audio = trig_idx_aud - pre_aud
-                        plot_end_audio = trig_idx_aud + post_aud
+                        
+                        offset_sec = (self.idx - trig_idx_ls) * dt_ls
+                        for cid in active_audio_ids:
+                            aidx = self.audio_indices[cid]
+                            dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                            win_aud = int(total_time_s / dt_audio)
+                            pre_aud = win_aud // 2
+                            post_aud = win_aud - pre_aud
+                            
+                            trig_idx_aud = aidx - int(offset_sec / dt_audio)
+                            start = trig_idx_aud - pre_aud
+                            end = trig_idx_aud + post_aud
+                            if end > aidx: end = aidx
+                            plot_audio_ranges[cid] = (start, end)
             else:
                 plot_start_ls = trig_idx_ls - pre_ls
                 plot_end_ls = trig_idx_ls + post_ls
-                plot_start_audio = trig_idx_aud - pre_aud
-                plot_end_audio = trig_idx_aud + post_aud
+                
+                offset_sec = (self.idx - trig_idx_ls) * dt_ls
+                for cid in active_audio_ids:
+                    aidx = self.audio_indices[cid]
+                    dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                    win_aud = int(total_time_s / dt_audio)
+                    pre_aud = win_aud // 2
+                    post_aud = win_aud - pre_aud
+                    
+                    trig_idx_aud = aidx - int(offset_sec / dt_audio)
+                    start = trig_idx_aud - pre_aud
+                    end = trig_idx_aud + post_aud
+                    if end > aidx: end = aidx
+                    plot_audio_ranges[cid] = (start, end)
 
         # 2. Extract and Plot Data
         if plot_start_ls != -1 and plot_end_ls != -1 and plot_end_ls > plot_start_ls:
             actual_samples_ls = plot_end_ls - plot_start_ls
-            actual_samples_audio = plot_end_audio - plot_start_audio
 
             if trig_mode == 0:
                 x_ls = (np.arange(actual_samples_ls) - actual_samples_ls) * dt_ls
-                x_audio = (np.arange(actual_samples_audio) - actual_samples_audio) * dt_audio
             else:
                 effective_pre_ls = min(pre_ls, actual_samples_ls)
                 x_ls = (np.arange(actual_samples_ls) - effective_pre_ls) * dt_ls
-                
-                effective_pre_aud = min(pre_aud, actual_samples_audio)
-                x_audio = (np.arange(actual_samples_audio) - effective_pre_aud) * dt_audio
+
+            if plot_start_ls < 0:
+                x_ls = x_ls[abs(plot_start_ls):]
+                plot_start_ls = 0
 
             y0 = self.data_ch0[plot_start_ls:plot_end_ls]
             y2 = self.data_ch2[plot_start_ls:plot_end_ls]
             yc = self.data_clock[plot_start_ls:plot_end_ls]
             yd = self.data_duty[plot_start_ls:plot_end_ls]
-            
-            y_audio = self.data_audio[max(0, plot_start_audio):plot_end_audio]
-            if plot_start_audio < 0:
-                x_audio = x_audio[abs(plot_start_audio):]
 
             self.curve_ch0.setData(x_ls, y0)
-            self.curve_ch1.setData(x_audio, y_audio)
             self.curve_ch2.setData(x_ls, y2)
             self.curve_clk.setData(x_ls, yc)
             self.curve_duty.setData(x_ls, yd)
+            
+            for cid in active_audio_ids:
+                dt_audio = 1.0 / self.audio_sample_rates.get(cid, 100000.0)
+                win_aud = int(total_time_s / dt_audio)
+                pre_aud = win_aud // 2
+                
+                start, end = plot_audio_ranges[cid]
+                if start != -1 and end != -1 and end > start:
+                    actual = end - start
+                    if trig_mode == 0: x = (np.arange(actual) - actual) * dt_audio
+                    else: x = (np.arange(actual) - min(pre_aud, actual)) * dt_audio
+                    y = self.audio_buffers[cid][max(0, start):end]
+                    if start < 0: x = x[abs(start):]
+                    
+                    if cid == 1: self.curve_ch1.setData(x, y)
+                    elif cid == 3: self.curve_ch2.setData(x, y)
+                    elif cid == 4: self.curve_ch3.setData(x, y)
 
         # 3. Update FFT
-        fft_ch_idx = self.combo_fft_ch.currentIndex()
-        if fft_ch_idx == 1:
-            if plot_start_audio != -1 and plot_end_audio != -1 and plot_end_audio > plot_start_audio:
-                y_fft = self.data_audio[max(0, plot_start_audio) : plot_end_audio]
-                fs = 100000.0
+        self.curve_fft_ch0.setData([], [])
+        self.curve_fft_ch1.setData([], [])
+        self.curve_fft_ch2.setData([], [])
+        self.curve_fft_ch3.setData([], [])
+
+        fft_curves = {
+            0: self.curve_fft_ch0,
+            1: self.curve_fft_ch1,
+            3: self.curve_fft_ch2,
+            4: self.curve_fft_ch3
+        }
+
+        active_fft = []
+        if self.chk_fft_ch0.isChecked(): active_fft.append(0)
+        if self.chk_fft_ch1.isChecked(): active_fft.append(1)
+        if self.chk_fft_ch2.isChecked(): active_fft.append(3)
+        if self.chk_fft_ch3.isChecked(): active_fft.append(4)
+
+        fft_len = int(self.combo_fft_len.currentText())
+
+        for cid in active_fft:
+            if cid == 0:
+                end = self.idx
+                start = max(0, end - fft_len)
+                if end > start:
+                    y_fft = self.data_ch0[start:end]
+                    fs = (1000.0 / self.last_sample_period if self.last_sample_period > 0 else 100.0)
+                else:
+                    continue
             else:
-                y_fft = []
-                fs = 100000.0
-        else:
-            if plot_start_ls != -1 and plot_end_ls != -1 and plot_end_ls > plot_start_ls:
-                y_fft = y0 if fft_ch_idx == 0 else y2
-                fs = (1000.0 / self.last_sample_period if self.last_sample_period > 0 else 100.0)
-            else:
-                y_fft = []
-                fs = 100.0
+                if cid in active_audio_ids:
+                    end = self.audio_indices[cid]
+                    start = max(0, end - fft_len)
+                    if end > start:
+                        y_fft = self.audio_buffers[cid][start:end]
+                        fs = float(self.audio_sample_rates.get(cid, 100000.0))
+                    else:
+                        continue
+                else:
+                    continue
 
-        if len(y_fft) > 10:
-            y_fft = y_fft - np.mean(y_fft)  # Remove DC
+            if len(y_fft) > 10:
+                y_fft = y_fft - np.mean(y_fft)
+                win_type = self.combo_fft_win.currentIndex()
+                if win_type == 0: window = np.hanning(len(y_fft))
+                elif win_type == 1: window = np.hamming(len(y_fft))
+                elif win_type == 2: window = np.blackman(len(y_fft))
+                else: window = np.ones(len(y_fft))
 
-            win_type = self.combo_fft_win.currentIndex()
-            if win_type == 0:
-                window = np.hanning(len(y_fft))
-            elif win_type == 1:
-                window = np.hamming(len(y_fft))
-            elif win_type == 2:
-                window = np.blackman(len(y_fft))
-            else:
-                window = np.ones(len(y_fft))
+                fft_vals = np.fft.rfft(y_fft * window)
+                fft_mag = 20 * np.log10(np.abs(fft_vals) + 1e-9)
 
-            fft_vals = np.fft.rfft(y_fft * window)
-            fft_mag = 20 * np.log10(np.abs(fft_vals) + 1e-9)
+                xf = np.fft.rfftfreq(len(y_fft), 1.0 / fs)
+                fft_curves[cid].setData(xf, fft_mag)
 
-            xf = np.fft.rfftfreq(len(y_fft), 1.0 / fs)
-            self.curve_fft.setData(xf, fft_mag)
-            self.plot_fft.setXRange(0, self.spin_fft_max.value(), padding=0)
-
-            color = "y" if fft_ch_idx == 0 else ("w" if fft_ch_idx == 1 else "m")
-            self.curve_fft.setPen(pg.mkPen(color, width=1.5))
+        self.plot_fft.setXRange(0, self.spin_fft_max.value(), padding=0)
 
     def update_stats(self):
         now = time.time()
@@ -544,10 +645,11 @@ class Visualizer(QMainWindow):
         if dt > 0:
             pps = self.packet_count / dt
             self.lbl_pkts.setText(f"{pps:.1f} pps")
-            audio_pps = self.audio_packet_count / dt
+            audio_pps = sum(self.audio_packet_counts.values()) / dt
             self.lbl_audio_pkts.setText(f"{audio_pps:.1f} pps")
         self.packet_count = 0
-        self.audio_packet_count = 0
+        for k in self.audio_packet_counts:
+            self.audio_packet_counts[k] = 0
         self.last_fps_time = now
 
         if self.idx > 0:
@@ -555,28 +657,26 @@ class Visualizer(QMainWindow):
             start = self.idx - win_size
 
             clock_val = np.mean(self.data_clock[start : self.idx])
-            self.lbl_clock.setText(
-                f"{clock_val / 1e6:.3f} MHz"
-                if clock_val > 100000
-                else f"{clock_val:.0f} Hz"
-            )
-
+            self.lbl_clock.setText(f"{clock_val / 1e6:.3f} MHz" if clock_val > 100000 else f"{clock_val:.0f} Hz")
             duty_val = np.mean(self.data_duty[start : self.idx])
             self.lbl_duty.setText(f"{duty_val:.1f} %")
 
-            self.lbl_ch0_mean.setText(
-                f"{np.mean(self.data_ch0[start : self.idx]):.3f} V"
-            )
-            win_size_audio = min(10000, self.audio_idx)
-            start_audio = max(0, self.audio_idx - win_size_audio)
+            self.lbl_ch0_mean.setText(f"{np.mean(self.data_ch0[start : self.idx]):.3f} V")
             
-            self.lbl_ch1_mean.setText(
-                f"{np.mean(self.data_audio[start_audio : self.audio_idx]):.3f} V"
-                if win_size_audio > 0 else "0.0 V"
-            )
-            self.lbl_ch2_mean.setText(
-                f"{np.mean(self.data_ch2[start : self.idx]):.3f} V"
-            )
+            def get_audio_mean(cid):
+                if cid in self.audio_buffers:
+                    aidx = self.audio_indices[cid]
+                    ws = min(10000, aidx)
+                    if ws > 0:
+                        return f"{np.mean(self.audio_buffers[cid][aidx-ws : aidx]):.3f} V"
+                return "0.0 V"
+                
+            self.lbl_ch1_mean.setText(get_audio_mean(1))
+            self.lbl_ch2_mean.setText(get_audio_mean(3))
+            self.lbl_ch3_mean.setText(get_audio_mean(4))
+            
+            if hasattr(self, 'last_pdm_debug'):
+                self.lbl_pdm_debug.setText(f"0x{self.last_pdm_debug:08X}")
 
 
 if __name__ == "__main__":

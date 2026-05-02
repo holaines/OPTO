@@ -2,6 +2,7 @@ use core::mem::MaybeUninit;
 use core::ptr::addr_of_mut;
 
 use smoltcp::iface::{Config, Interface, SocketHandle, SocketSet, SocketStorage};
+use smoltcp::phy::{Checksum, Device, DeviceCapabilities};
 use smoltcp::socket::udp;
 use smoltcp::time::Instant;
 use smoltcp::wire::{HardwareAddress, IpAddress, IpCidr, IpEndpoint};
@@ -44,7 +45,10 @@ impl<'a> Net<'a> {
         now: Instant,
     ) -> Self {
         let config = Config::new(ethernet_addr);
-        let mut iface = Interface::new(config, &mut ethdev, now);
+        let mut iface = {
+            let mut device = UdpNoChecksumDevice(&mut ethdev);
+            Interface::new(config, &mut device, now)
+        };
         iface.update_ip_addrs(|addrs| {
             let _ = addrs.push(IpCidr::new(
                 IpAddress::v4(
@@ -120,6 +124,35 @@ impl<'a> Net<'a> {
 
         self.poll(now_ms);
         result
+    }
+}
+
+struct UdpNoChecksumDevice<'a, const TD: usize, const RD: usize>(
+    &'a mut ethernet::EthernetDMA<TD, RD>,
+);
+
+impl<const TD: usize, const RD: usize> Device for UdpNoChecksumDevice<'_, TD, RD> {
+    type RxToken<'a>
+        = <ethernet::EthernetDMA<TD, RD> as Device>::RxToken<'a>
+    where
+        Self: 'a;
+    type TxToken<'a>
+        = <ethernet::EthernetDMA<TD, RD> as Device>::TxToken<'a>
+    where
+        Self: 'a;
+
+    fn receive(&mut self, timestamp: Instant) -> Option<(Self::RxToken<'_>, Self::TxToken<'_>)> {
+        self.0.receive(timestamp)
+    }
+
+    fn transmit(&mut self, timestamp: Instant) -> Option<Self::TxToken<'_>> {
+        self.0.transmit(timestamp)
+    }
+
+    fn capabilities(&self) -> DeviceCapabilities {
+        let mut caps = self.0.capabilities();
+        caps.checksum.udp = Checksum::None;
+        caps
     }
 }
 
