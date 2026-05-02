@@ -6,6 +6,7 @@ mod audio;
 mod clock_capture;
 mod config;
 mod net;
+mod pdm;
 mod telemetry;
 mod timebase;
 
@@ -21,7 +22,7 @@ mod app {
             Alternate, Analog, Input, Output, PushPull,
             gpioa::{PA0, PA3},
             gpiob::PB0,
-            gpioc::{PC3, PC13},
+            gpioc::PC13,
         },
         hal::adc::{Channel, OneShot},
         pac::{ADC2, TIM1},
@@ -36,6 +37,7 @@ mod app {
         clock_capture::ClockCapture,
         config, net,
         net::Net,
+        pdm::{self, PdmSampler},
         telemetry, timebase,
     };
 
@@ -64,17 +66,20 @@ mod app {
         audio_trigger: AudioTrigger,
         audio_pc0: AudioSamplerAdc1,
         audio_pc2: AudioSamplerAdc3,
+        pdm_mic: PdmSampler,
         audio_pc0_packet: [u8; telemetry::AUDIO_PACKET_LEN],
         audio_pc2_packet: [u8; telemetry::AUDIO_PACKET_LEN],
+        pdm_packet: [u8; telemetry::AUDIO_PACKET_LEN],
         audio_pc0_sequence: u32,
         audio_pc0_sample_index: u64,
         audio_pc2_sequence: u32,
         audio_pc2_sample_index: u64,
+        pdm_sequence: u32,
+        pdm_sample_index: u64,
         latest_pc0: u16,
         latest_pc2: u16,
         adc_status: adc::Adc<ADC2, adc::Enabled>,
         adc_pa3: PA3<Analog>,
-        _pdm_pc3: PC3<Input>,
         digital_pc13: PC13<Input>,
         sequence: u32,
         last_sample_ms: u32,
@@ -195,14 +200,22 @@ mod app {
         let adc_pa3 = gpioa.pa3.into_analog();
         let adc_pc0 = gpioc.pc0.into_analog();
         let adc_pc2 = gpioc.pc2.into_analog();
-        let pdm_pc3 = gpioc.pc3.into_floating_input();
         let digital_pc13 = gpioc.pc13.into_floating_input();
+        let pdm_sck = gpioa.pa5.into_alternate::<5>();
+        let pdm_mosi = gpiob.pb5.into_alternate::<5>();
 
         let streams = audio::split_dma(cx.device.DMA1, ccdr.peripheral.DMA1);
         let mut audio_trigger =
             AudioTrigger::new(cx.device.TIM6, ccdr.peripheral.TIM6, &ccdr.clocks);
         let audio_pc0 = AudioSamplerAdc1::new(adc1, adc_pc0, streams.0);
         let audio_pc2 = AudioSamplerAdc3::new(adc3, adc_pc2, streams.1);
+        let pdm_mic = PdmSampler::new(
+            cx.device.SPI1,
+            ccdr.peripheral.SPI1,
+            pdm_sck,
+            pdm_mosi,
+            streams.2,
+        );
         audio_trigger.start();
 
         timebase::init(cx.core.SYST, ccdr.clocks);
@@ -219,17 +232,20 @@ mod app {
                 audio_trigger,
                 audio_pc0,
                 audio_pc2,
+                pdm_mic,
                 audio_pc0_packet: [0; telemetry::AUDIO_PACKET_LEN],
                 audio_pc2_packet: [0; telemetry::AUDIO_PACKET_LEN],
+                pdm_packet: [0; telemetry::AUDIO_PACKET_LEN],
                 audio_pc0_sequence: 0,
                 audio_pc0_sample_index: 0,
                 audio_pc2_sequence: 0,
                 audio_pc2_sample_index: 0,
+                pdm_sequence: 0,
+                pdm_sample_index: 0,
                 latest_pc0: 0,
                 latest_pc2: 0,
                 adc_status,
                 adc_pa3,
-                _pdm_pc3: pdm_pc3,
                 digital_pc13,
                 sequence: 0,
                 last_sample_ms: 0,
@@ -246,17 +262,20 @@ mod app {
             audio_trigger,
             audio_pc0,
             audio_pc2,
+            pdm_mic,
             audio_pc0_packet,
             audio_pc2_packet,
+            pdm_packet,
             audio_pc0_sequence,
             audio_pc0_sample_index,
             audio_pc2_sequence,
             audio_pc2_sample_index,
+            pdm_sequence,
+            pdm_sample_index,
             latest_pc0,
             latest_pc2,
             adc_status,
             adc_pa3,
-            _pdm_pc3,
             digital_pc13,
             sequence,
             last_sample_ms
@@ -313,11 +332,32 @@ mod app {
                     .wrapping_add(config::AUDIO_FRAME_SAMPLES as u64);
             }
 
+            let pdm_ready = cx.local.pdm_mic.process_ready_frame(|samples, flags| {
+                telemetry::encode_audio(
+                    cx.local.pdm_packet,
+                    *cx.local.pdm_sequence,
+                    now_ms,
+                    *cx.local.pdm_sample_index,
+                    config::PDM_SAMPLE_RATE_HZ,
+                    pdm::CHANNEL_ID_PDM_SPI1,
+                    flags,
+                    samples,
+                );
+            });
+            if pdm_ready {
+                *cx.local.pdm_sequence = (*cx.local.pdm_sequence).wrapping_add(1);
+                *cx.local.pdm_sample_index =
+                    (*cx.local.pdm_sample_index).wrapping_add(config::AUDIO_FRAME_SAMPLES as u64);
+            }
+
             if pc0_ready {
                 let _ = cx.local.net.send(now_ms, cx.local.audio_pc0_packet);
             }
             if pc2_ready {
                 let _ = cx.local.net.send(now_ms, cx.local.audio_pc2_packet);
+            }
+            if pdm_ready {
+                let _ = cx.local.net.send(now_ms, cx.local.pdm_packet);
             }
 
             if now_ms.wrapping_sub(*cx.local.last_sample_ms) >= config::SAMPLE_PERIOD_MS {
@@ -328,7 +368,7 @@ mod app {
                 let adc2 = *cx.local.latest_pc2;
                 let clock = cx.local.clock_capture.sample();
 
-                let packet = telemetry::encode(
+                let mut packet = telemetry::encode(
                     *cx.local.sequence,
                     now_ms,
                     [adc0, adc1, adc2],
@@ -336,6 +376,7 @@ mod app {
                     link_up,
                     clock,
                 );
+                packet[52..56].copy_from_slice(&cx.local.pdm_mic.debug_word().to_le_bytes());
                 let _ = cx.local.net.send(now_ms, &packet);
                 *cx.local.sequence = cx.local.sequence.wrapping_add(1);
             }

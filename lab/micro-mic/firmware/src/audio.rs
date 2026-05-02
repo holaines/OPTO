@@ -27,14 +27,10 @@ const PC0_ADC_CHANNEL: u8 = 10;
 const PC2_ADC_CHANNEL: u8 = 12;
 const SAMPLE_TIME: adc::AdcSampleTime = adc::AdcSampleTime::T_64;
 
-static mut PC0_BUFFER0: [u16; config::AUDIO_FRAME_SAMPLES] =
-    [0; config::AUDIO_FRAME_SAMPLES];
-static mut PC0_BUFFER1: [u16; config::AUDIO_FRAME_SAMPLES] =
-    [0; config::AUDIO_FRAME_SAMPLES];
-static mut PC2_BUFFER0: [u16; config::AUDIO_FRAME_SAMPLES] =
-    [0; config::AUDIO_FRAME_SAMPLES];
-static mut PC2_BUFFER1: [u16; config::AUDIO_FRAME_SAMPLES] =
-    [0; config::AUDIO_FRAME_SAMPLES];
+static mut PC0_BUFFER0: [u16; config::AUDIO_FRAME_SAMPLES] = [0; config::AUDIO_FRAME_SAMPLES];
+static mut PC0_BUFFER1: [u16; config::AUDIO_FRAME_SAMPLES] = [0; config::AUDIO_FRAME_SAMPLES];
+static mut PC2_BUFFER0: [u16; config::AUDIO_FRAME_SAMPLES] = [0; config::AUDIO_FRAME_SAMPLES];
+static mut PC2_BUFFER1: [u16; config::AUDIO_FRAME_SAMPLES] = [0; config::AUDIO_FRAME_SAMPLES];
 
 pub type DmaStreams = StreamsTuple<DMA1>;
 
@@ -99,8 +95,13 @@ impl AudioSamplerAdc1 {
     ) -> Self {
         configure_adc1(&mut adc);
 
-        let mut transfer: AudioTransferAdc1 =
-            Transfer::init(stream, adc, pc0_buffer0(), Some(pc0_buffer1()), dma_config());
+        let mut transfer: AudioTransferAdc1 = Transfer::init(
+            stream,
+            adc,
+            pc0_buffer0(),
+            Some(pc0_buffer1()),
+            dma_config(),
+        );
 
         transfer.start(|_| start_adc1());
 
@@ -135,8 +136,13 @@ impl AudioSamplerAdc3 {
     ) -> Self {
         configure_adc3(&mut adc);
 
-        let mut transfer: AudioTransferAdc3 =
-            Transfer::init(stream, adc, pc2_buffer0(), Some(pc2_buffer1()), dma_config());
+        let mut transfer: AudioTransferAdc3 = Transfer::init(
+            stream,
+            adc,
+            pc2_buffer0(),
+            Some(pc2_buffer1()),
+            dma_config(),
+        );
 
         transfer.start(|_| start_adc3());
 

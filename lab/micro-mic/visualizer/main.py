@@ -137,7 +137,7 @@ class Visualizer(QMainWindow):
         self.combo_trig_mode.setCurrentIndex(1)  # Auto by default
 
         self.combo_trig_ch = QComboBox()
-        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (PC0)", "Ch 2 (PC2)", "Ch 3 (PC3)"])
+        self.combo_trig_ch.addItems(["Ch 0 (PA3)", "Ch 1 (PC0)", "Ch 2 (PC2)", "Ch 3 (SPI1 PDM)"])
 
         self.combo_trig_edge = QComboBox()
         self.combo_trig_edge.addItems(["Rising", "Falling"])
@@ -161,7 +161,7 @@ class Visualizer(QMainWindow):
         self.chk_fft_ch1.setChecked(True)
         self.chk_fft_ch2 = QCheckBox("Ch 2 (PC2)")
         self.chk_fft_ch2.setChecked(True)
-        self.chk_fft_ch3 = QCheckBox("Ch 3 (PC3)")
+        self.chk_fft_ch3 = QCheckBox("Ch 3 (SPI1 PDM)")
 
         self.combo_fft_win = QComboBox()
         self.combo_fft_win.addItems(["Hanning", "Hamming", "Blackman", "Rectangular"])
@@ -195,6 +195,7 @@ class Visualizer(QMainWindow):
         self.lbl_ch1_mean = QLabel("0.0 V")
         self.lbl_ch2_mean = QLabel("0.0 V")
         self.lbl_ch3_mean = QLabel("0.0 V")
+        self.lbl_pdm_debug = QLabel("0x00000000")
 
         form_stats.addRow("Packet Rate:", self.lbl_pkts)
         form_stats.addRow("PA0 Clock Freq:", self.lbl_clock)
@@ -204,6 +205,7 @@ class Visualizer(QMainWindow):
         form_stats.addRow("Ch 1 Mean:", self.lbl_ch1_mean)
         form_stats.addRow("Ch 2 Mean:", self.lbl_ch2_mean)
         form_stats.addRow("Ch 3 Mean:", self.lbl_ch3_mean)
+        form_stats.addRow("PDM Debug:", self.lbl_pdm_debug)
         layout.addWidget(grp_stats)
 
         layout.addStretch()
@@ -223,7 +225,7 @@ class Visualizer(QMainWindow):
         self.curve_ch0 = self.plot_time.plot(pen=pg.mkPen("y", width=2), name="Ch 0")
         self.curve_ch1 = self.plot_time.plot(pen=pg.mkPen("w", width=1), name="Ch 1 (PC0)")
         self.curve_ch2 = self.plot_time.plot(pen=pg.mkPen("m", width=1), name="Ch 2 (PC2)")
-        self.curve_ch3 = self.plot_time.plot(pen=pg.mkPen("g", width=1), name="Ch 3 (PC3)")
+        self.curve_ch3 = self.plot_time.plot(pen=pg.mkPen("g", width=1), name="Ch 3 (SPI1 PDM)")
 
         # Vertical trigger marker line
         self.trigger_line = pg.InfiniteLine(
@@ -326,8 +328,9 @@ class Visualizer(QMainWindow):
             try:
                 data, addr = self.sock.recvfrom(2048)
                 if len(data) >= 56 and data[:4] == b"MMIC":
-                    unpacked = struct.unpack("<4s B x H I I H H H B B I H H I I I I H B B 4x", data[:56])
+                    unpacked = struct.unpack("<4s B x H I I H H H B B I H H I I I I H B B I", data[:56])
 
+                    self.last_pdm_debug = unpacked[-1]
                     raw0 = unpacked[5]
                     raw1 = unpacked[6]
                     raw2 = unpacked[7]
@@ -671,6 +674,9 @@ class Visualizer(QMainWindow):
             self.lbl_ch1_mean.setText(get_audio_mean(1))
             self.lbl_ch2_mean.setText(get_audio_mean(3))
             self.lbl_ch3_mean.setText(get_audio_mean(4))
+            
+            if hasattr(self, 'last_pdm_debug'):
+                self.lbl_pdm_debug.setText(f"0x{self.last_pdm_debug:08X}")
 
 
 if __name__ == "__main__":
