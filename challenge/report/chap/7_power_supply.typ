@@ -22,7 +22,7 @@ The proposed architecture uses a cascaded supply tree. A first switching convert
 
 #figure(
   align(center)[
-    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt)[
+    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(90%))[
       #grid(
         columns: (1fr,),
         row-gutter: 8pt,
@@ -41,7 +41,7 @@ The proposed architecture uses a cascaded supply tree. A first switching convert
             align: center,
 
             [
-              #box(inset: 6pt, stroke: 0.7pt, radius: 4pt)[
+              #box(inset: 6pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[
                 #strong[Analog branch] \
                 7 V $arrow.r$ low-noise LDO $arrow.r$ $5 V_A$ \
                 #smallcaps[AD7606C-18] AVCC \
@@ -50,11 +50,11 @@ The proposed architecture uses a cascaded supply tree. A first switching convert
               ]
             ],
             [
-              #box(inset: 6pt, stroke: 0.7pt, radius: 4pt)[
+              #box(inset: 6pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[
                 #strong[Digital branch] \
                 7 V $arrow.r$ $5 V_D$ \
                 5 $V_D$ $arrow.r$ 3.3 $V_D$ \
-                5 $V_D$ $arrow.r$ 1.8 V / 1.0 V FPGA rails
+                5 $V_D$ $arrow.r$ 1.8 V / 1.0 V FPGA rails \ $$
               ]
             ],
           )
@@ -120,7 +120,7 @@ Using the components listed in @table:component_list, the input stage provides r
 #figure(
   table(
     columns: (1fr, 1.8fr, 3fr),
-    fill: (col, row) => if row == 0 { gray.lighten(50%) } else { none },
+    fill: (col, row) => {if row == 0 { gray.lighten(50%) } else { if col == 0 {gray.lighten(80%)} }},
     inset: 6pt,
     align: left,
     table.header([Block], [Selected components], [Function]),
@@ -167,7 +167,7 @@ The input capacitors provide local energy storage and differential-mode noise re
 #figure(
 table(
 columns: (1.3fr, 2.1fr, 3fr),
-fill: (col, row) => if row == 0 { gray.lighten(50%) } else { none },
+fill: (col, row) => {if row == 0 { gray.lighten(50%) } else { if col == 0 {gray.lighten(80%)} }},
 inset: 6pt,
 align: left,
 table.header([Component], [Proposed value / part], [Function]),
@@ -195,7 +195,7 @@ The resulting input-stage component list is:
 
 #table(
 columns: (0.8fr, 1.7fr, 2.5fr),
-fill: (col, row) => if row == 0 { gray.lighten(50%) } else { none },
+fill: (col, row) => {if row == 0 { gray.lighten(50%) } else { if col == 0 {gray.lighten(80%)} }},
 inset: 6pt,
 align: left,
 table.header([Ref.], [Part], [Role], repeat: true),
@@ -301,7 +301,7 @@ The FPGA core rails should not be generated using linear regulators from 7 V or 
 
 #table(
 columns: (1.2fr, 2.2fr, 2.5fr),
-fill: (col, row) => if row == 0 { gray.lighten(50%) } else { none },
+fill: (col, row) => {if row == 0 { gray.lighten(50%) } else { if col == 0 {gray.lighten(80%)} }},
 inset: 6pt,
 align: left,
 table.header([Rail], [Main loads], [Design notes]),
