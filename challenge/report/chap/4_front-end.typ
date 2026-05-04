@@ -1,6 +1,43 @@
+#let navy = rgb("#17324D")
+#let blue = rgb("#2F6F9F")
+#let light-blue = rgb("#EAF3F8")
+#let pale-blue = rgb("#F6FAFD")
+#let green = rgb("#3A7D44")
+#let light-green = rgb("#ECF7EF")
+#let orange = rgb("#B86B00")
+#let light-orange = rgb("#FFF4E3")
+#let grey = rgb("#5A5A5A")
+#let light-grey = rgb("#F4F6F8")
+
+#let diagram-box(body) = align(center)[
+  #box(
+    width: 92%,
+    inset: 10pt,
+    stroke: 0.8pt + blue,
+    fill: pale-blue,
+    radius: 6pt,
+  )[
+    #text(font: "Courier", size: 8pt, fill: navy)[#body]
+  ]
+]
+
+#let note-box(title, body, color: blue, fill-color: light-blue) = box(
+  width: 100%,
+  inset: 9pt,
+  stroke: 0.7pt + color,
+  fill: fill-color,
+  radius: 5pt,
+)[
+  #text(fill: color, weight: "bold")[#title] \
+  #body
+]
+
+#set heading(numbering: "1.1")
+
 = Sensor MEMS and analog front-end
 
 == Objective
+
 The objective of the analog front-end is to interface the dual-frequency MEMS microphones with the acquisition stage while preserving the acoustic information in both frequency bands. Each MEMS microphone provides two independent AC-coupled outputs:
 
 - LF output: low-frequency section.
@@ -8,32 +45,42 @@ The objective of the analog front-end is to interface the dual-frequency MEMS mi
 
 Therefore, each physical MEMS microphone generates two analog electrical signals. Since the complete system contains 80 MEMS microphones, the acquisition system must process:
 
-$
-80 " MEMS" dot 2 " outputs/MEMS" = 160 " analog channels"
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + blue,
+    fill: light-blue,
+    radius: 5pt,
+  )[
+    $
+    80 " MEMS" dot 2 " outputs/MEMS" = 160 " analog channels"
+    $
+  ]
+]
 
 The system is divided into 10 identical acquisition zones. Each zone contains 8 MEMS microphones. Therefore, each zone contains:
 
-$
-8 " MEMS" dot 2 " outputs/MEMS" = 16 " analog channels per zone"
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + blue,
+    fill: light-blue,
+    radius: 5pt,
+  )[
+    $
+    8 " MEMS" dot 2 " outputs/MEMS" = 16 " analog channels per zone"
+    $
+  ]
+]
 
 The proposed analog architecture for one zone is:
 
 #figure(
-  align(center)[
-    #box(
-      inset: 8pt,
-      stroke: 0.7pt,
-      radius: 4pt,
-    )[
-      #text(font: "Courier", size: 8pt)[
-        One acquisition zone \
-        8 dual-frequency MEMS microphones \
-        ├── 8 LF outputs → LF analog conditioning → AD7606C-18 LF \
-        └── 8 HF outputs → HF analog conditioning → AD7606C-18 HF
-      ]
-    ]
+  diagram-box[
+    One acquisition zone \
+    8 dual-frequency MEMS microphones \
+    ├── 8 LF outputs → LF analog conditioning → AD7606C-18 LF \
+    └── 8 HF outputs → HF analog conditioning → AD7606C-18 HF
   ],
   caption: [Analog architecture of one acquisition zone.]
 )
@@ -50,32 +97,39 @@ The selected sensing technology is based on dual-frequency piezoelectric MEMS mi
 The LF and HF sections are treated as independent analog outputs. The design assumptions used for this project are summarized in @table:mems_characteristics.
 
 #figure(
-  table(
-    columns: (1.4fr, 1.3fr, 1.3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header(
-      [Parameter],
-      [LF output],
-      [HF output],
-    ),
+    stroke: 0.7pt + blue,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.4fr, 1.3fr, 1.3fr),
+      inset: 7pt,
+      align: center,
 
-    [Useful frequency range],
-    [Up to 10 kHz],
-    [Up to 100 kHz],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Parameter]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[LF output]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[HF output]],
 
-    [Sensitivity],
-    [10 mV/Pa],
-    [5 mV/Pa],
+      [Useful frequency range],
+      [Up to 10 kHz],
+      [Up to 100 kHz],
 
-    [Equivalent capacitance],
-    [1.9 nF],
-    [785 pF],
+      [Sensitivity],
+      [10 mV/Pa],
+      [5 mV/Pa],
 
-    [Equivalent resistance],
-    [90 kΩ],
-    [47 kΩ],
-  ),
+      [Equivalent capacitance],
+      [1.9 nF],
+      [785 pF],
+
+      [Equivalent resistance],
+      [90 kΩ],
+      [47 kΩ],
+    )
+  ],
   caption: [Electrical characteristics assumed for the dual-frequency MEMS outputs.]
 ) <table:mems_characteristics>
 
@@ -86,30 +140,27 @@ The LF output has higher sensitivity, which is useful for low-frequency acoustic
 Each MEMS output is connected to an individual analog conditioning path before the ADC input. The proposed path is:
 
 #figure(
-  align(center)[
-    #box(
-      inset: 8pt,
-      stroke: 0.7pt,
-      radius: 4pt,
-    )[
-      #text(font: "Courier", size: 8pt)[
-        MEMS output \
-        → high-input-impedance low-noise buffer / LNA \
-        → selectable gain or attenuation stage \
-        → protection and small analog input filter \
-        → AD7606C-18 input
-      ]
-    ]
+  diagram-box[
+    MEMS output \
+    → high-input-impedance low-noise buffer / LNA \
+    → selectable gain or attenuation stage \
+    → protection and small analog input filter \
+    → AD7606C-18 input
   ],
   caption: [Proposed analog conditioning chain per MEMS output.]
 )
 
 The analog front-end is required for four reasons:
 
-1. The MEMS outputs are piezoelectric and have a non-negligible equivalent impedance. The ADC must not directly load the sensor.
-2. At low sound pressure levels, the MEMS output voltage is in the microvolt range. A low-noise amplification stage is required to use the ADC resolution efficiently.
-3. At high sound pressure levels, the MEMS output voltage can exceed the ADC input range. Therefore, attenuation or gain control is required to avoid saturation.
-4. The analog input must be protected against overload, electrostatic discharge and out-of-range transients.
+#note-box(
+  [Design rationale],
+  [
+    1. The MEMS outputs are piezoelectric and have a non-negligible equivalent impedance. The ADC must not directly load the sensor.
+    2. At low sound pressure levels, the MEMS output voltage is in the microvolt range. A low-noise amplification stage is required to use the ADC resolution efficiently.
+    3. At high sound pressure levels, the MEMS output voltage can exceed the ADC input range. Therefore, attenuation or gain control is required to avoid saturation.
+    4. The analog input must be protected against overload, electrostatic discharge and out-of-range transients.
+  ],
+)
 
 The AD7606C-18 includes an internal input buffer, PGA and low-pass filter, but these blocks do not completely remove the need for an external analog interface. They simplify the acquisition stage, but the MEMS signal still requires impedance adaptation and range scaling before entering the ADC.
 
@@ -117,9 +168,18 @@ The AD7606C-18 includes an internal input buffer, PGA and low-pass filter, but t
 
 The acoustic sound pressure level is defined as:
 
-$
-"SPL" = 20 log_10(p / p_0)
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + green,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    $
+    "SPL" = 20 log_10(p / p_0)
+    $
+  ]
+]
 
 where:
 
@@ -147,9 +207,18 @@ $
 
 The open-loop MEMS output voltage is approximately:
 
-$
-V_"MEMS" = S dot p
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + green,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    $
+    V_"MEMS" = S dot p
+    $
+  ]
+]
 
 where $S$ is the MEMS sensitivity.
 
@@ -174,24 +243,31 @@ V_"HF,max" = 5 " mV/Pa" dot 6324 " Pa" = 31.62 " V"
 $
 
 #figure(
-  table(
-    columns: (1.5fr, 1.5fr, 1.5fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header(
-      [Case],
-      [LF output, 10 mV/Pa],
-      [HF output, 5 mV/Pa],
-    ),
+    stroke: 0.7pt + green,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.5fr, 1.5fr, 1.5fr),
+      inset: 7pt,
+      align: center,
 
-    [30 dB SPL],
-    [6.32 µV],
-    [3.16 µV],
+      table.cell(fill: green)[#text(fill: white, weight: "bold")[Case]],
+      table.cell(fill: green)[#text(fill: white, weight: "bold")[LF output, 10 mV/Pa]],
+      table.cell(fill: green)[#text(fill: white, weight: "bold")[HF output, 5 mV/Pa]],
 
-    [170 dB SPL],
-    [63.24 V],
-    [31.62 V],
-  ),
+      [30 dB SPL],
+      [6.32 µV],
+      [3.16 µV],
+
+      [170 dB SPL],
+      [63.24 V],
+      [31.62 V],
+    )
+  ],
   caption: [Estimated raw MEMS output voltage at the minimum and maximum WTT SPL levels.]
 ) <table:mems_output_range>
 
@@ -204,28 +280,35 @@ The proposed solution is a selectable-gain analog front-end. The gain state is s
 A practical preliminary strategy is shown in @table:gain_strategy.
 
 #figure(
-  table(
-    columns: (1.2fr, 1.6fr, 2.3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header(
-      [Mode],
-      [Purpose],
-      [Description],
-    ),
+    stroke: 0.7pt + orange,
+    fill: light-orange,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.2fr, 1.6fr, 2.3fr),
+      inset: 7pt,
+      align: left,
 
-    [High-gain mode],
-    [Low SPL acquisition],
-    [Amplifies microvolt-level MEMS signals to improve ADC code utilization.],
+      table.cell(fill: orange)[#text(fill: white, weight: "bold")[Mode]],
+      table.cell(fill: orange)[#text(fill: white, weight: "bold")[Purpose]],
+      table.cell(fill: orange)[#text(fill: white, weight: "bold")[Description]],
 
-    [Unity-gain mode],
-    [Medium SPL acquisition],
-    [Uses the ADC input range without excessive amplification.],
+      [High-gain mode],
+      [Low SPL acquisition],
+      [Amplifies microvolt-level MEMS signals to improve ADC code utilization.],
 
-    [Attenuation mode],
-    [High SPL acquisition],
-    [Prevents ADC saturation when the acoustic pressure is high.],
-  ),
+      [Unity-gain mode],
+      [Medium SPL acquisition],
+      [Uses the ADC input range without excessive amplification.],
+
+      [Attenuation mode],
+      [High SPL acquisition],
+      [Prevents ADC saturation when the acoustic pressure is high.],
+    )
+  ],
   caption: [Proposed gain strategy for the analog front-end.]
 ) <table:gain_strategy>
 
@@ -233,9 +316,18 @@ The selected gain or attenuation value must be stored together with the acquired
 
 The pressure reconstruction can be written as:
 
-$
-p = V_"ADC,in" / (S dot G_"AFE")
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + orange,
+    fill: light-orange,
+    radius: 5pt,
+  )[
+    $
+    p = V_"ADC,in" / (S dot G_"AFE")
+    $
+  ]
+]
 
 where:
 
@@ -256,9 +348,18 @@ A low-noise instrumentation amplifier is required close to the MEMS output. A su
 
 The gain of the AD8429 is set by a resistor according to:
 
-$
-G = 1 + 6 " kΩ" / R_G
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + blue,
+    fill: light-blue,
+    radius: 5pt,
+  )[
+    $
+    G = 1 + 6 " kΩ" / R_G
+    $
+  ]
+]
 
 Therefore:
 
@@ -269,32 +370,39 @@ $
 Example values are shown in @table:ad8429_gain_examples.
 
 #figure(
-  table(
-    columns: (1fr, 1fr, 2fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header(
-      [Target gain],
-      [$R_G$],
-      [Use case],
-    ),
+    stroke: 0.7pt + blue,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1fr, 1fr, 2fr),
+      inset: 7pt,
+      align: left,
 
-    [$G = 1$],
-    [Open circuit],
-    [Unity-gain buffer / medium SPL operation.],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Target gain]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[$R_G$]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Use case]],
 
-    [$G = 2$],
-    [6 kΩ],
-    [Moderate amplification.],
+      [$G = 1$],
+      [Open circuit],
+      [Unity-gain buffer / medium SPL operation.],
 
-    [$G = 10$],
-    [667 Ω],
-    [Low-level signal acquisition.],
+      [$G = 2$],
+      [6 kΩ],
+      [Moderate amplification.],
 
-    [$G = 100$],
-    [60.6 Ω],
-    [Very low-level signal acquisition, only if output swing and bandwidth remain compatible.],
-  ),
+      [$G = 10$],
+      [667 Ω],
+      [Low-level signal acquisition.],
+
+      [$G = 100$],
+      [60.6 Ω],
+      [Very low-level signal acquisition, only if output swing and bandwidth remain compatible.],
+    )
+  ],
   caption: [Example gain-setting resistor values for the AD8429.]
 ) <table:ad8429_gain_examples>
 
@@ -306,9 +414,18 @@ The AD7606C-18 supports several input ranges, including bipolar single-ended ran
 
 Because the raw MEMS voltage can reach tens of volts at the maximum SPL, direct connection to the ADC is not acceptable for the full dynamic range. Therefore, the analog front-end must guarantee:
 
-$
-abs(V_"ADC,in") <= V_"ADC,FS"
-$
+#align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + orange,
+    fill: light-orange,
+    radius: 5pt,
+  )[
+    $
+    abs(V_"ADC,in") <= V_"ADC,FS"
+    $
+  ]
+]
 
 where $V_"ADC,FS"$ is the selected full-scale input range of the AD7606C-18.
 
@@ -347,19 +464,11 @@ Each ADC input should include a small passive network between the analog front-e
 A preliminary implementation is:
 
 #figure(
-  align(center)[
-    #box(
-      inset: 8pt,
-      stroke: 0.7pt,
-      radius: 4pt,
-    )[
-      #text(font: "Courier", size: 8pt)[
-        Analog front-end output \
-        → small series resistor \
-        → optional RC low-pass filter \
-        → AD7606C-18 analog input
-      ]
-    ]
+  diagram-box[
+    Analog front-end output \
+    → small series resistor \
+    → optional RC low-pass filter \
+    → AD7606C-18 analog input
   ],
   caption: [Preliminary protection and input filtering network.]
 )
@@ -376,37 +485,51 @@ The AD7606C-18 already includes an internal analog low-pass filter, so this exte
 The analog component count follows directly from the 10-zone architecture. Each zone contains 8 dual-frequency MEMS microphones, therefore 16 analog signal paths. Each zone uses one AD7606C-18 for the 8 LF channels and one AD7606C-18 for the 8 HF channels.
 
 #figure(
-  table(
-    columns: (1.3fr, 1fr, 1.3fr, 1.5fr, 1.2fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: center,
-    table.header(
-      [System level],
-      [MEMS],
-      [Analog outputs],
-      [Analog conditioning paths],
-      [AD7606C-18],
-    ),
+    stroke: 0.7pt + navy,
+    fill: light-grey,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.3fr, 1fr, 1.3fr, 1.5fr, 1.2fr),
+      inset: 7pt,
+      align: center,
 
-    [One zone],
-    [8],
-    [16],
-    [16],
-    [2],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[System level]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[MEMS]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Analog outputs]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Analog conditioning paths]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[AD7606C-18]],
 
-    [Full system],
-    [80],
-    [160],
-    [160],
-    [20],
-  ),
+      [One zone],
+      [8],
+      [16],
+      [16],
+      [2],
+
+      [Full system],
+      [80],
+      [160],
+      [160],
+      [20],
+    )
+  ],
   caption: [Analog front-end and ADC count per zone and for the full 80-MEMS system.]
 ) <table:component_count_frontend>
 
 == Analog front-end conclusion
 
-The proposed analog front-end keeps the LF and HF outputs separated, preserving the dual-frequency behavior of the MEMS microphones. Each zone contains 16 analog paths: 8 LF paths and 8 HF paths. The external analog multiplexer is not used in the final architecture because each AD7606C-18 already acquires 8 channels simultaneously.
+#note-box(
+  [Conclusion],
+  [
+    The proposed analog front-end keeps the LF and HF outputs separated, preserving the dual-frequency behavior of the MEMS microphones. Each zone contains 16 analog paths: 8 LF paths and 8 HF paths. The external analog multiplexer is not used in the final architecture because each AD7606C-18 already acquires 8 channels simultaneously.
 
-However, the external analog interface is still necessary. The MEMS output spans from microvolts at low SPL to tens of volts at high SPL. Therefore, each channel requires a low-noise buffer/LNA, selectable gain or attenuation, protection and local filtering before the AD7606C-18 input.
+    However, the external analog interface is still necessary. The MEMS output spans from microvolts at low SPL to tens of volts at high SPL. Therefore, each channel requires a low-noise buffer/LNA, selectable gain or attenuation, protection and local filtering before the AD7606C-18 input.
 
-The main design limitation is the very wide acoustic dynamic range. The front-end must be calibrated and the selected gain state must be stored with the acquired data so that the acoustic pressure can be reconstructed accurately during post-processing.
+    The main design limitation is the very wide acoustic dynamic range. The front-end must be calibrated and the selected gain state must be stored with the acquired data so that the acoustic pressure can be reconstructed accurately during post-processing.
+  ],
+  color: navy,
+  fill-color: light-grey,
+)
