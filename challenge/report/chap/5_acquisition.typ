@@ -460,19 +460,48 @@ The AD7606C-18 supports both parallel and serial digital interfaces. For this sy
 The parallel interface provides faster readout but requires more FPGA pins per ADC. The serial interface reduces the number of FPGA pins but requires higher serial clock frequency and careful timing management.
 
 For a system with 20 ADC devices, the recommended preliminary choice is to use the serial interface with shared control signals where possible:
-
 #figure(
-  diagram-box[
-    Shared signals: \
-    - CONVST \
-    - RESET \
-    - SCLK \
-    - SDI / configuration lines, if used \
-    \
-    Per-ADC or grouped signals: \
-    - CS \
-    - BUSY \
-    - DOUT lines
+  align(center)[
+    #box(
+      width: 92%,
+      inset: 10pt,
+      stroke: 0.8pt + blue,
+      fill: pale-blue,
+      radius: 6pt,
+    )[
+      #grid(
+        columns: (1fr, 1fr),
+        column-gutter: 24pt,
+        align: top,
+
+        [
+          #text(fill: navy, weight: "bold")[Shared signals] \
+          #table(
+            columns: (1fr,),
+            inset: 4pt,
+            stroke: none,
+            align: left,
+            [CONVST],
+            [RESET],
+            [SCLK],
+            [SDI / configuration lines, if used],
+          )
+        ],
+
+        [
+          #text(fill: navy, weight: "bold")[Per-ADC or grouped signals] \
+          #table(
+            columns: (1fr,),
+            inset: 4pt,
+            stroke: none,
+            align: left,
+            [CS],
+            [BUSY],
+            [DOUT lines],
+          )
+        ],
+      )
+    ]
   ],
   caption: [Preliminary digital interface signal allocation.]
 )
