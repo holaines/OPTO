@@ -140,14 +140,92 @@ The LF output has higher sensitivity, which is useful for low-frequency acoustic
 Each MEMS output is connected to an individual analog conditioning path before the ADC input. The proposed path is:
 
 #figure(
-  diagram-box[
-    MEMS output \
-    → high-input-impedance low-noise buffer / LNA \
-    → selectable gain or attenuation stage \
-    → protection and small analog input filter \
-    → AD7606C-18 input
+  align(center)[
+    #grid(
+      columns: (1fr,),
+      row-gutter: 6pt,
+      align: center,
+
+      [
+        #box(
+          width: 65%,
+          inset: 8pt,
+          stroke: 0.9pt + navy,
+          fill: rgb("#EAF3F8"),
+          radius: 6pt,
+        )[
+          #align(center)[
+            #text(weight: "bold", fill: navy)[MEMS LF/HF output]
+          ]
+        ]
+      ],
+
+      [#text(size: 15pt, fill: blue)[↓]],
+
+      [
+        #box(
+          width: 65%,
+          inset: 8pt,
+          stroke: 0.9pt + green,
+          fill: rgb("#ECF7EF"),
+          radius: 6pt,
+        )[
+          #align(center)[
+            #text(weight: "bold", fill: green)[High-impedance buffer / LNA]
+          ]
+        ]
+      ],
+
+      [#text(size: 15pt, fill: blue)[↓]],
+
+      [
+        #box(
+          width: 65%,
+          inset: 8pt,
+          stroke: 0.9pt + orange,
+          fill: rgb("#FFF4E3"),
+          radius: 6pt,
+        )[
+          #align(center)[
+            #text(weight: "bold", fill: orange)[Gain or attenuation stage]
+          ]
+        ]
+      ],
+
+      [#text(size: 15pt, fill: blue)[↓]],
+
+      [
+        #box(
+          width: 65%,
+          inset: 8pt,
+          stroke: 0.9pt + blue,
+          fill: rgb("#F6FAFD"),
+          radius: 6pt,
+        )[
+          #align(center)[
+            #text(weight: "bold", fill: blue)[Protection + small RC filter]
+          ]
+        ]
+      ],
+
+      [#text(size: 15pt, fill: blue)[↓]],
+
+      [
+        #box(
+          width: 65%,
+          inset: 8pt,
+          stroke: 1pt + red,
+          fill: rgb("#FDECEC"),
+          radius: 6pt,
+        )[
+          #align(center)[
+            #text(weight: "bold", fill: red)[AD7606C-18 input]
+          ]
+        ]
+      ],
+    )
   ],
-  caption: [Proposed analog conditioning chain per MEMS output.]
+  caption: [Proposed analog front-end per MEMS output.]
 )
 
 The analog front-end is required for four reasons:
