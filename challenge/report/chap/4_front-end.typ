@@ -1,5 +1,6 @@
 = Sensor MEMS and analog front-end
 
+== Objective
 The objective of the analog front-end is to interface the dual-frequency MEMS microphones with the acquisition stage while preserving the acoustic information in both frequency bands. Each MEMS microphone provides two independent AC-coupled outputs:
 
 - LF output: low-frequency section.
