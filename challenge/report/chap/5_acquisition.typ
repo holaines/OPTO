@@ -84,26 +84,84 @@ Each acquisition zone contains 8 dual-frequency MEMS microphones. Therefore, eac
   $
 ]
 
-Since the AD7606C-18 has 8 input channels, two ADC devices are required per zone:
+Since the AD7606C-18 has 8 input channels, two ADC devices are required per zone: one converter for the 8 LF channels and one converter for the 8 HF channels. The resulting acquisition structure for one zone is:
 
 #figure(
-  diagram-box[
-    8 LF outputs → 1 × AD7606C-18 \
-    8 HF outputs → 1 × AD7606C-18
-  ],
-  caption: [ADC allocation for the LF and HF outputs of one zone.]
-)
+  align(center)[
+    #box(
+      width: 95%,
+      inset: 12pt,
+      stroke: 0.8pt + blue,
+      fill: pale-blue,
+      radius: 6pt,
+    )[
+      #grid(
+        columns: (1fr, 0.25fr, 1.3fr),
+        column-gutter: 10pt,
+        row-gutter: 10pt,
+        align: center,
 
-The resulting acquisition structure for one zone is:
+        // Left block: MEMS
+        grid.cell(rowspan: 2)[
+          #box(
+            width: 100%,
+            inset: 10pt,
+            stroke: 0.9pt + navy,
+            fill: rgb("#EAF3F8"),
+            radius: 6pt,
+          )[
+            #align(center)[
+              #text(weight: "bold", fill: navy)[8 MEMS microphones] \
+              #text(size: 8pt, fill: navy)[dual-frequency outputs]
+            ]
+          ]
+        ],
 
-#figure(
-  diagram-box[
-    Zone i \
-    8 MEMS microphones \
-    ├── 8 LF conditioned outputs → AD7606C-18 LF \
-    └── 8 HF conditioned outputs → AD7606C-18 HF
+        // LF arrow
+        [
+          #text(size: 15pt, fill: blue)[→]
+        ],
+
+        // LF branch
+        [
+          #box(
+            width: 100%,
+            inset: 8pt,
+            stroke: 0.9pt + blue,
+            fill: rgb("#EAF3F8"),
+            radius: 6pt,
+          )[
+            #align(center)[
+              #text(weight: "bold", fill: blue)[8 LF conditioned outputs] \
+              #text(size: 8pt, fill: blue)[→ AD7606C-18 LF]
+            ]
+          ]
+        ],
+
+        // HF arrow
+        [
+          #text(size: 15pt, fill: orange)[→]
+        ],
+
+        // HF branch
+        [
+          #box(
+            width: 100%,
+            inset: 8pt,
+            stroke: 0.9pt + orange,
+            fill: rgb("#FFF4E3"),
+            radius: 6pt,
+          )[
+            #align(center)[
+              #text(weight: "bold", fill: orange)[8 HF conditioned outputs] \
+              #text(size: 8pt, fill: orange)[→ AD7606C-18 HF]
+            ]
+          ]
+        ],
+      )
+    ]
   ],
-  caption: [Acquisition structure of one zone.]
+  caption: [ADC allocation in one acquisition zone.]
 )
 
 For the complete 10-zone system:
