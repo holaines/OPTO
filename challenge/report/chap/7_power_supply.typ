@@ -294,12 +294,12 @@ The PCB layout must prevent digital switching currents from flowing through the 
 
 Key layout rules:
 
-* Place the LNA or buffer as close as possible to the MEMS output.
-* Place decoupling capacitors close to every supply pin.
-* Keep ADC reference routing short and shielded from digital lines.
-* Separate fast FPGA/ADC digital buses from MEMS and LNA inputs.
-* Route analog inputs symmetrically inside each zone.
-* Avoid sharing narrow return paths between FPGA currents and analog front-end currents.
+- Place the LNA or buffer as close as possible to the MEMS output.
+- Place decoupling capacitors close to every supply pin.
+- Keep ADC reference routing short and shielded from digital lines.
+- Separate fast FPGA/ADC digital buses from MEMS and LNA inputs.
+- Route analog inputs symmetrically inside each zone.
+- Avoid sharing narrow return paths between FPGA currents and analog front-end currents.
 
 == Power sequencing and monitoring
 
