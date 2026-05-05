@@ -1,3 +1,5 @@
+#import "@preview/acrostiche:0.7.0": *
+
 = Session 3
 #let img_path = "../img/session-3/"
 
@@ -188,7 +190,7 @@ We noticed that we could connect both circuits to the same computer and see the 
 
 In this figure, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the second microphone. This indicates that this microphone was positioned closer to the acoustic source. Also sound pressure level (SPL) decreases with distance due to propagation losses in air.
 
-The FFT spectrum shows a clear dominant peak around the excitation frequency (≈705 Hz), confirming correct detection of the injected tone. The higher spectral magnitude at this frequency also reflects the stronger received signal energy.
+The #acr("FFT") spectrum shows a clear dominant peak around the excitation frequency (≈705 Hz), confirming correct detection of the injected tone. The higher spectral magnitude at this frequency also reflects the stronger received signal energy.
 
 The SPL representation further supports this observation, showing larger pressure variations (higher dB-SPL values), which are consistent with a shorter distance between the microphone and the sound source.
 
@@ -213,6 +215,6 @@ This figure shows the simultaneous acquisition of the signals from both micropho
 
 In addition to the phase shift, a difference in signal amplitude can also be observed. The microphone located closer to the source presents a higher amplitude and higher SPL values, which is consistent with the expected attenuation of acoustic pressure with distance.
 
-The FFT representation confirms that both microphones detect the same dominant frequency component at approximately 705 Hz, proving that the difference between signals is due to spatial positioning, not to frequency variation.
+The #acr("FFT") representation confirms that both microphones detect the same dominant frequency component at approximately 705 Hz, proving that the difference between signals is due to spatial positioning, not to frequency variation.
 
 Therefore, the observed phase displacement and amplitude difference are consistent with the sound source being positioned closer to one microphone than the other.

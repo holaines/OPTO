@@ -1,3 +1,5 @@
+#import "@preview/acrostiche:0.7.0": *
+
 = Session 2
 #let img_path = "../img/session-2/"
 
@@ -42,7 +44,7 @@ To test the circuit, we generated acoustic tones with a smartphone application a
   caption: [Acoustic tone test with the analog MEMS microphone]
 )
 
-Some tones were tested, as shown in the following figures. For each case, we observed the signal in the time domain and also its FFT, where the main tone frequency can be identified more clearly.
+Some tones were tested, as shown in the following figures. For each case, we observed the signal in the time domain and also its #acr("FFT"), where the main tone frequency can be identified more clearly.
 
 #figure(
   grid(
@@ -51,7 +53,7 @@ Some tones were tested, as shown in the following figures. For each case, we obs
     image(img_path + "parte1foto1agusyjavi.jpeg", width: 80%),
     image(img_path + "parte1foto2agusyjavi.jpeg", width: 80%),
   ),
-  caption: [Time-domain signal and FFT for the first acoustic tone]
+  caption: [Time-domain signal and #acr("FFT") for the first acoustic tone]
 )
 
 #figure(
@@ -61,7 +63,7 @@ Some tones were tested, as shown in the following figures. For each case, we obs
     image(img_path + "parte2foto1agusyjavi.jpeg", width: 80%),
     image(img_path + "parte2foto2agusyjavi.jpeg", width: 80%),
   ),
-  caption: [Time-domain signal and FFT for the second acoustic tone]
+  caption: [Time-domain signal and #acr("FFT") for the second acoustic tone]
 )
 
 == Complete circuit test

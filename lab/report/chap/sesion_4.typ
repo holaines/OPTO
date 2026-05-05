@@ -1,3 +1,5 @@
+#import "@preview/acrostiche:0.7.0": *
+
 = Session 4
 #let img_path = "../img/session-4/"
 
@@ -23,11 +25,11 @@ We also checked the microphone board and its connections before acquiring the si
 
 == LabVIEW acquisition
 
-After connecting the complete system, we used LabVIEW to acquire the signals from the microphones. The program displayed the signal in the time domain and also the FFT, so the acoustic signal could be observed more clearly.
+After connecting the complete system, we used LabVIEW to acquire the signals from the microphones. The program displayed the signal in the time domain and also the #acr("FFT"), so the acoustic signal could be observed more clearly.
 
 #figure(
   image(img_path + "labview_acquisition_fft.jpeg", width: 100%),
-  caption: [LabVIEW acquisition with time-domain signal and FFT]
+  caption: [LabVIEW acquisition with time-domain signal and #acr("FFT")]
 )
 
 == Oscilloscope test

@@ -1,3 +1,5 @@
+#import "@preview/acrostiche:0.7.0": *
+
 = Session 1
 #let img_path = "../img/session-1/"
 
@@ -56,9 +58,9 @@ Finally, the acquired voltage signal was converted into acoustic pressure and so
   caption: [Signal represented in Pa and dB-SPL]
 )
 
-We also displayed the FFT to observe the main frequency component of the acquired signal.
+We also displayed the #acr("FFT") to observe the main frequency component of the acquired signal.
 
 #figure(
   image(img_path + "3Hz spl.png", width: 75%),
-  caption: [FFT representation of the acquired signal]
+  caption: [#acr("FFT") representation of the acquired signal]
 )
