@@ -3,9 +3,9 @@
 = At home
 == Introduction
 
-We noticed that the adquisition of these signals could be done with an #acr("MCU"). As we had a dual-core STM32H7 (Nucleo-H755ZI-Q board), with a powerful M7 core running up to 400MHz and three 16 bit #acr("ADC"), we thought it could be a good idea to try to develope the acquisition system with it.
+We noticed that the acquisition of these signals could be done with an #acr("MCU"). As we had a dual-core STM32H7 (Nucleo-H755ZI-Q board), with a powerful M7 core running up to 400MHz and three 16-bit #acr("ADC"), we thought it could be a good idea to try to develop the acquisition system with it.
 
-The architecture of the system consists of an STM32H7 connected to a PC through Ethernet, which represents the data on a python frontend. Setup of the protoboard with sensors and signal conditioners can be seen in @setup_ah, where we can distinguish blocks of alimentation, filtering, conditioning and adquisition. There are also 2 big capacitors connected between the 1.8V line and gnd to stabilize the voltage of the board.
+The architecture of the system consists of an STM32H7 connected to a PC through Ethernet, which represents the data on a python frontend. Setup of the protoboard with sensors and signal conditioners can be seen in @setup_ah, where we can distinguish blocks of alimentation, filtering, conditioning and acquisition. There are also 2 big capacitors connected between the 1.8V line and gnd to stabilize the voltage of the board.
 
 #figure(
   image("../img/at-home/setup.jpeg", width: 94%),
