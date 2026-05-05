@@ -1,5 +1,5 @@
 #let acronyms = ((
-  "MCU": ("Micro Controller Unit", "Micro Controller Units"),
+  "MCU": ("Microcontroller Unit", "Microcontroller Units"),
   "ADC": ("Analog to Digital Converter", "Analog to Digital Converters"),
   "FFT": ("Fast Fourier Transform", "Fast Fourier Transforms"),
   "RTIC": "Real-Time Interrupt-Driven Concurrency",
