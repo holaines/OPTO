@@ -3,11 +3,11 @@
 = Session 1
 #let img_path = "../img/session-1/"
 
-In this session, we used the NI-USB-6009 DAQ with MAX and LabVIEW. The main goal was to acquire and generate simple analog signals and check that the programs worked correctly.
+In this session, we used the NI-USB-6009 #acr("DAQ") with MAX and LabVIEW. The main goal was to acquire and generate simple analog signals and check that the programs worked correctly.
 
 == MAX tests
 
-First, we created tasks in MAX to test the DAQ. One task was used for analog input acquisition and another one for analog output generation. With these tests, we verified that the DAQ was working correctly.
+First, we created tasks in MAX to test the #acr("DAQ"). One task was used for analog input acquisition and another one for analog output generation. With these tests, we verified that the #acr("DAQ") was working correctly.
 
 #figure(
   image(img_path + "E0.png", width: 75%),
@@ -21,14 +21,14 @@ First, we created tasks in MAX to test the DAQ. One task was used for analog inp
 
 == LabVIEW acquisition
 
-Once the DAQ had been tested in MAX, we repeated the acquisition in LabVIEW. The first VI was used to read the analog input signal and display the waveform.
+Once the #acr("DAQ") had been tested in MAX, we repeated the acquisition in LabVIEW. The first #acr("VI") was used to read the analog input signal and display the waveform.
 
 #figure(
   image(img_path + "Ej6.png", width: 75%),
   caption: [LabVIEW VI for analog input acquisition]
 )
 
-We also used a continuous acquisition VI, where the waveform was refreshed while the program was running.
+We also used a continuous acquisition #acr("VI"), where the waveform was refreshed while the program was running.
 
 #figure(
   image(img_path + "E7.png", width: 75%),
@@ -37,7 +37,7 @@ We also used a continuous acquisition VI, where the waveform was refreshed while
 
 == Analog output generation
 
-We also tested the analog output of the DAQ using LabVIEW. A simple signal was generated and measured to check that the output was working correctly.
+We also tested the analog output of the #acr("DAQ") using LabVIEW. A simple signal was generated and measured to check that the output was working correctly.
 
 #figure(
   image(img_path + "E8.png", width: 75%),
@@ -62,5 +62,5 @@ We also displayed the #acr("FFT") to observe the main frequency component of the
 
 #figure(
   image(img_path + "3Hz spl.png", width: 75%),
-  caption: [#acr("FFT") representation of the acquired signal]
+  caption: [FFT representation of the acquired signal]
 )

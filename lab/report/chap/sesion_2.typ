@@ -3,13 +3,13 @@
 = Session 2
 #let img_path = "../img/session-2/"
 
-In this session, we built and tested the analog conditioning circuit for a MEMS microphone. The circuit was implemented with the INA131 instrumentation amplifier and checked using the oscilloscope.
+In this session, we built and tested the analog conditioning circuit for a #acr("MEMS") microphone. The circuit was implemented with the INA131 instrumentation amplifier and checked using the oscilloscope.
 
-The main goal was to verify that the microphone signal could be detected and amplified correctly before using it with the DAQ in the next session.
+The main goal was to verify that the microphone signal could be detected and amplified correctly before using it with the #acr("DAQ") in the next session.
 
 == Power supply check
 
-Before testing the circuit, we checked the supply voltages with a multimeter. The INA131 was supplied with approximately $+12$ V and $-12$ V. The MEMS microphone was supplied with approximately 2 V, which is the typical value indicated in its datasheet.
+Before testing the circuit, we checked the supply voltages with a multimeter. The INA131 was supplied with approximately $+12$ V and $-12$ V. The #acr("MEMS") microphone was supplied with approximately 2 V, which is the typical value indicated in its datasheet.
 
 #figure(
   grid(
@@ -53,7 +53,7 @@ Some tones were tested, as shown in the following figures. For each case, we obs
     image(img_path + "parte1foto1agusyjavi.jpeg", width: 80%),
     image(img_path + "parte1foto2agusyjavi.jpeg", width: 80%),
   ),
-  caption: [Time-domain signal and #acr("FFT") for the first acoustic tone]
+  caption: [Time-domain signal and FFT for the first acoustic tone]
 )
 
 #figure(
@@ -63,7 +63,7 @@ Some tones were tested, as shown in the following figures. For each case, we obs
     image(img_path + "parte2foto1agusyjavi.jpeg", width: 80%),
     image(img_path + "parte2foto2agusyjavi.jpeg", width: 80%),
   ),
-  caption: [Time-domain signal and #acr("FFT") for the second acoustic tone]
+  caption: [Time-domain signal and FFT for the second acoustic tone]
 )
 
 == Complete circuit test
@@ -75,4 +75,4 @@ Finally, we tested the complete circuit. The oscilloscope showed a clear signal,
   caption: [Output signal measured with the complete conditioning circuit]
 )
 
-In this session, we verified with the measurements shown in the oscilloscope that the MEMS microphone detected the sound and that the INA131 amplified the signal correctly.
+In this session, we verified with the measurements shown in the oscilloscope that the #acr("MEMS") microphone detected the sound and that the INA131 amplified the signal correctly.
