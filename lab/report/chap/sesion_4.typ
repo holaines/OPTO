@@ -1,13 +1,15 @@
+#import "@preview/acrostiche:0.7.0": *
+
 = Session 4
 #let img_path = "../img/session-4/"
 
-In this session, we integrated the different parts of the laboratory work into a complete instrumentation system. The conditioned microphones were connected to the NI-USB-6009 DAQ and the acquired signals were displayed in LabVIEW.
+In this session, we integrated the different parts of the laboratory work into a complete instrumentation system. The conditioned microphones were connected to the NI-USB-6009 #acr("DAQ") and the acquired signals were displayed in LabVIEW.
 
 The main goal was to check that the complete system worked correctly, from the microphone and conditioning circuit to the acquisition and visualization stage.
 
 == Complete system
 
-First, the different microphone conditioning circuits were connected together with the DAQ. The complete setup included the MEMS microphones, the INA131 amplification stages, the NI-USB-6009 module and the LabVIEW program.
+First, the different microphone conditioning circuits were connected together with the #acr("DAQ"). The complete setup included the #acr("MEMS") microphones, the INA131 amplification stages, the NI-USB-6009 module and the LabVIEW program.
 
 #figure(
   image(img_path + "complete_setup.jpeg", width: 70%),
@@ -23,7 +25,7 @@ We also checked the microphone board and its connections before acquiring the si
 
 == LabVIEW acquisition
 
-After connecting the complete system, we used LabVIEW to acquire the signals from the microphones. The program displayed the signal in the time domain and also the FFT, so the acoustic signal could be observed more clearly.
+After connecting the complete system, we used LabVIEW to acquire the signals from the microphones. The program displayed the signal in the time domain and also the #acr("FFT"), so the acoustic signal could be observed more clearly.
 
 #figure(
   image(img_path + "labview_acquisition_fft.jpeg", width: 100%),

@@ -9,5 +9,9 @@
   "SPI": "Serial Peripheral Interface",
   "PWM": "Pulse Width Modulation",
   "PDM": "Pulse Density Modulation",
-  "FIR": "Finite Impulse Response"
+  "FIR": "Finite Impulse Response",
+  "DAQ": "Data Acquisition",
+  "MEMS": ("Micro-Electro-Mechanical System", "Micro-Electro-Mechanical Systems"),
+  "VI": "Virtual Instrument",
+  "SPL": "Sound Pressure Level"
 ))
