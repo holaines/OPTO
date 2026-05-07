@@ -38,8 +38,8 @@ We also checked the microphone board and its connections before acquiring the si
 After connecting the complete system, we used LabVIEW to acquire the signals from the microphones. The program displayed the signal in the time domain and also the #acr("FFT"), so the acoustic signal could be observed more clearly.
 
 #figure(
-  image(img_path + "labview_acquisition_fft.jpeg", width: 100%),
-  caption: [LabVIEW acquisition with time-domain signal and FFT]
+  image(img_path + "tono digital 1khz.png", width: 100%),
+  caption: [Acquisition of a 1 kHz digital tone in LabVIEW]
 )
 
 == Oscilloscope test
