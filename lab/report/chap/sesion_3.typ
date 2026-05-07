@@ -3,7 +3,6 @@
 = Session 3
 #let img_path = "../img/session-3/"
 
-
 In the previous sessions, basic acquisition programs were developed in LabVIEW for the NI-USB6009 #acr("DAQ"), enabling signal recording at typical audio sampling frequencies (e.g., 14 kSps). Additionally, different #acr("MEMS") microphones were tested, their specifications analyzed, and the required signal conditioning circuits were designed for proper connection to the #acr("DAQ") (see Appendix).
 
 The objective of this session is to acquire signals from one or more conditioned sensors, process the obtained data, and present the results in a useful format. 
@@ -36,6 +35,32 @@ In this session we will be using two different analog #acr("MEMS") microphones:
 
 We make sure both circuits are properly connected before doing any Measurements, and then we proceed to acquire signals from both microphones while producing noise and while not producing noise.
 
+== Acquisition strategy by sensor
+
+Before starting the measurements, we defined the acquisition strategy for each microphone. Both sensors were analog #acr("MEMS") microphones connected to their conditioning circuits and acquired with the NI-USB-6009 #acr("DAQ") in LabVIEW.
+
+#table(
+  columns: (1.5fr, 1.8fr, 1.8fr, 2.4fr),
+  inset: 6pt,
+  align: left,
+  [*Sensor*], [*Acquisition input*], [*Test performed*], [*Result*],
+
+  [First analog #acr("MEMS") microphone],
+  [Analog input of the NI-USB-6009 #acr("DAQ")],
+  [Acquisition with and without acoustic excitation],
+  [The signal increased when sound was generated close to the microphone.],
+
+  [Second analog #acr("MEMS") microphone],
+  [Analog input of the NI-USB-6009 #acr("DAQ")],
+  [Acquisition with and without acoustic excitation],
+  [The signal also increased with sound, allowing comparison with the first microphone.],
+
+  [Both microphones together],
+  [Two analog inputs of the NI-USB-6009 #acr("DAQ")],
+  [Simultaneous acquisition in LabVIEW],
+  [Amplitude and delay differences were observed depending on the position of the sound source.],
+)
+
 == Acquisition with and without noise
 
 #figure(
@@ -43,9 +68,7 @@ We make sure both circuits are properly connected before doing any Measurements,
   caption: [Both circuits properly connected]
 )
 
-
 For the first microphone, and while producing noise, we obtained the following signal in the right, and while not producing noise, we obtained the one on the left :
-
 
 #grid(
   columns: (1fr, 1fr),
@@ -181,7 +204,6 @@ When introducing a pure tone of 705 Hz, a clear spectral peak appears around thi
 == Simultaneous acquisition of both microphones
 
 We noticed that we could connect both circuits to the same computer and see the acquired signals from both microphones simultaneously in LabVIEW, which is a very useful feature for comparing the performance of different sensors under the same conditions, or even by aproaching the emited frequency to one micorphone or to another to see the different delays.
-
 
 #figure(
   image(img_path + "comparacion masfuerte ines.png", width: 100%),
