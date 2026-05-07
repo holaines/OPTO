@@ -43,6 +43,7 @@ Before starting the measurements, we defined the acquisition strategy for each m
   columns: (1.5fr, 1.8fr, 1.8fr, 2.4fr),
   inset: 6pt,
   align: left,
+  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
   [*Sensor*], [*Acquisition input*], [*Test performed*], [*Result*],
 
   [First analog #acr("MEMS") microphone],

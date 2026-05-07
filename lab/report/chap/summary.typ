@@ -7,6 +7,7 @@ The following table summarizes the main laboratory objectives and the degree of 
   columns: (2.3fr, 1.2fr, 3.5fr),
   inset: 6pt,
   align: left,
+  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
   [*Objective*], [*Status*], [*Comment*],
 
   [LabVIEW programs and DAQ tests],

@@ -41,6 +41,7 @@ The INA131 has a fixed gain of 100 V/V, so the expected output after amplificati
   columns: (2.5fr, 2fr),
   inset: 6pt,
   align: left,
+  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
   [*Parameter*], [*Value*],
 
   [Microphone sensitivity],
