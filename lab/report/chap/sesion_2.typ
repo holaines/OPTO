@@ -37,36 +37,39 @@ $ V_m = 12.6 "mV/Pa" dot 0.2 "Pa" approx 2.5 "mV" $
 
 The INA131 has a fixed gain of 100 V/V, so the expected output after amplification is in the order of hundreds of millivolts. This makes the signal easier to observe with the oscilloscope and suitable for later acquisition with the DAQ.
 
-#table(
-  columns: (2.5fr, 2fr),
-  inset: 6pt,
-  align: left,
-  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
-  [*Parameter*], [*Value*],
+#figure(
+  table(
+    columns: (2.5fr, 2fr),
+    inset: 6pt,
+    align: left,
+    fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
+    [*Parameter*], [*Value*],
 
-  [Microphone sensitivity],
-  [$-38$ dB re 1 V/Pa $approx 12.6$ mV/Pa],
+    [Microphone sensitivity],
+    [$-38$ dB re 1 V/Pa $approx 12.6$ mV/Pa],
 
-  [Expected output at 80 dB SPL],
-  [$approx 2.5$ mV],
+    [Expected output at 80 dB SPL],
+    [$approx 2.5$ mV],
 
-  [Amplifier],
-  [INA131],
+    [Amplifier],
+    [INA131],
 
-  [Amplifier gain],
-  [100 V/V],
+    [Amplifier gain],
+    [100 V/V],
 
-  [Expected amplified output at 80 dB SPL],
-  [$approx 250$ mV],
+    [Expected amplified output at 80 dB SPL],
+    [$approx 250$ mV],
 
-  [AC coupling],
-  [$f_c approx 40$ Hz],
+    [AC coupling],
+    [$f_c approx 40$ Hz],
 
-  [Anti-aliasing filter],
-  [$f_c approx 7$ kHz],
+    [Anti-aliasing filter],
+    [$f_c approx 7$ kHz],
 
-  [DAQ input],
-  [NI-USB-6009 analog input],
+    [DAQ input],
+    [NI-USB-6009 analog input],
+  ),
+  caption: [Functional design parameters],
 )
 
 == Circuit implementation

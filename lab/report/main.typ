@@ -26,12 +26,14 @@
 )
 
 #outline()
+#pagebreak()
 #outline(title: "Table of Figures", target: figure.where(kind: image))
 #pagebreak()
+#outline(title: "Table of Tables", target: figure.where(kind: table))
 
 #init-acronyms(acronyms)
 
-#print-index(sorted: "up", title: "Acronyms Table")
+#print-index(sorted: "up", title: "Table of Acronyms")
 #pagebreak()
 
 #include "chap/sesion_1.typ"

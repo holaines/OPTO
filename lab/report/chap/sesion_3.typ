@@ -39,27 +39,30 @@ We make sure both circuits are properly connected before doing any Measurements,
 
 Before starting the measurements, we defined the acquisition strategy for each microphone. Both sensors were analog #acr("MEMS") microphones connected to their conditioning circuits and acquired with the NI-USB-6009 #acr("DAQ") in LabVIEW.
 
-#table(
-  columns: (1.5fr, 1.8fr, 1.8fr, 2.4fr),
-  inset: 6pt,
-  align: left,
-  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
-  [*Sensor*], [*Acquisition input*], [*Test performed*], [*Result*],
+#figure(
+  table(
+    columns: (1.8fr, 1.8fr, 1.8fr, 2.4fr),
+    inset: 6pt,
+    align: left,
+    fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
+    [*Sensor*], [*Acquisition input*], [*Test performed*], [*Result*],
 
-  [First analog #acr("MEMS") microphone],
-  [Analog input of the NI-USB-6009 #acr("DAQ")],
-  [Acquisition with and without acoustic excitation],
-  [The signal increased when sound was generated close to the microphone.],
+    [First analog #acr("MEMS") microphone],
+    [Analog input of the NI-USB-6009 #acr("DAQ")],
+    [Acquisition with and without acoustic excitation],
+    [The signal increased when sound was generated close to the microphone.],
 
-  [Second analog #acr("MEMS") microphone],
-  [Analog input of the NI-USB-6009 #acr("DAQ")],
-  [Acquisition with and without acoustic excitation],
-  [The signal also increased with sound, allowing comparison with the first microphone.],
+    [Second analog #acr("MEMS") microphone],
+    [Analog input of the NI-USB-6009 #acr("DAQ")],
+    [Acquisition with and without acoustic excitation],
+    [The signal also increased with sound, allowing comparison with the first microphone.],
 
-  [Both microphones together],
-  [Two analog inputs of the NI-USB-6009 #acr("DAQ")],
-  [Simultaneous acquisition in LabVIEW],
-  [Amplitude and delay differences were observed depending on the position of the sound source.],
+    [Both microphones together],
+    [Two analog inputs of the NI-USB-6009 #acr("DAQ")],
+    [Simultaneous acquisition in LabVIEW],
+    [Amplitude and delay differences were observed depending on the position of the sound source.],
+  ),
+  caption: [Acquisition table per sensor]
 )
 
 == Acquisition with and without noise
