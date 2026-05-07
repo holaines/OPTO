@@ -33,12 +33,12 @@
 #pagebreak()
 #outline(title: "Table of Tables", target: figure.where(kind: table))
 #init-acronyms(acronyms)
+#print-index(sorted: "up", title: "Table of Acronyms")
+#pagebreak()
 
 #set page(numbering: "1")
 #counter(page).update(1)
 
-#print-index(sorted: "up", title: "Table of Acronyms")
-#pagebreak()
 
 #include "chap/sesion_1.typ"
 #include "chap/sesion_2.typ"
