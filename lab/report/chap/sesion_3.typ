@@ -33,7 +33,7 @@ In this session we will be using two different analog #acr("MEMS") microphones:
   ]
 )
 
-We make sure both circuits are properly connected before doing any Measurements, and then we proceed to acquire signals from both microphones while producing noise and while not producing noise.
+We make sure both circuits are properly connected before doing any measurements, and then we proceed to acquire signals from both microphones while producing noise and while not producing noise.
 
 == Acquisition strategy by sensor
 
@@ -207,11 +207,11 @@ When introducing a pure tone of 705 Hz, a clear spectral peak appears around thi
 
 == Simultaneous acquisition of both microphones
 
-We noticed that we could connect both circuits to the same computer and see the acquired signals from both microphones simultaneously in LabVIEW, which is a very useful feature for comparing the performance of different sensors under the same conditions, or even by aproaching the emited frequency to one micorphone or to another to see the different delays.
+We noticed that we could connect both circuits to the same computer and see the acquired signals from both microphones simultaneously in LabVIEW, which is a very useful feature for comparing the performance of different sensors under the same conditions, or even by approaching the emitted frequency to one microphone or to another to see the different delays.
 
 #figure(
   image(img_path + "comparacion masfuerte ines.png", width: 100%),
-  caption: [Signal acquired while aproaching the emitted frequency to the first microphone]
+  caption: [Signal acquired while approaching the emitted frequency to the first microphone]
 )
 
 In this figure, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the second microphone. This indicates that this microphone was positioned closer to the acoustic source. Also #acr("SPL") decreases with distance due to propagation losses in air.
@@ -224,7 +224,7 @@ Compared with the second microphone, a slight phase advance can also be observed
 
 #figure(
   image(img_path + "comparacion masfuerte agus.png", width: 100%),
-  caption: [Signal acquired while aproaching the emitted frequency to the second microphone]
+  caption: [Signal acquired while approaching the emitted frequency to the second microphone]
 )
 
 In this figure we can see the same results, the acquired signal presents a noticeably higher amplitude in the time-domain waveform compared to the first microphone. This indicates that this microphone was positioned closer to  the acoustic source. 

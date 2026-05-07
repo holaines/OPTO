@@ -33,7 +33,7 @@ The following table summarizes the main laboratory objectives and the degree of 
 
     [Signal processing and measurement analysis],
     [Partially completed],
-    [The system displayed the time-domain signal, FFT and SPL values. Calibration and data storage were not fully developed and are proposed as future improvements.],
+    [The system displayed the time-domain signal, FFT and SPL values. The acquired samples were saved in a binary file, while full acoustic calibration remains as a future improvement.],
 
     [Complete system integration],
     [Completed],
