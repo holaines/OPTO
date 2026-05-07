@@ -7,6 +7,16 @@ In this session, we integrated the different parts of the laboratory work into a
 
 The main goal was to check that the complete system worked correctly, from the microphone and conditioning circuit to the acquisition and visualization stage.
 
+== Block diagram
+
+The complete system can be divided into the following blocks: the acoustic signal is detected by the MEMS microphones, the signal is amplified by the INA131 conditioning circuit, the NI-USB-6009 DAQ acquires the conditioned signal and LabVIEW displays the waveform and the FFT.
+
+#figure(
+  image(img_path + "block_diagram.png", width: 100%),
+  caption: [Block diagram of the complete instrumentation system]
+)
+The interface between the microphone and the conditioning circuit is an analog voltage. The interface between the conditioning circuit and the DAQ is also an analog voltage, connected to the analog input of the NI-USB-6009. Finally, the DAQ sends the acquired data to LabVIEW, where the signal is represented in the time and frequency domains.
+
 == Complete system
 
 First, the different microphone conditioning circuits were connected together with the #acr("DAQ"). The complete setup included the #acr("MEMS") microphones, the INA131 amplification stages, the NI-USB-6009 module and the LabVIEW program.
