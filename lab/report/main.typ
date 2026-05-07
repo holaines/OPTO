@@ -39,4 +39,6 @@
 #include "chap/sesion_3.typ"
 #include "chap/sesion_4.typ"
 #include "chap/at_home.typ"
+#include "chap/summary.typ"
 #include "chap/self_evaluation.typ"
+
