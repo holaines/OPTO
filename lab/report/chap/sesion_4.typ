@@ -73,32 +73,35 @@ The signals changed depending on the acoustic excitation and on the position of 
 
 The complete system was tested with acoustic tones and with the two conditioned microphone signals connected to the DAQ. The main results are summarized in the following table.
 
-#table(
-  columns: (2.2fr, 2.2fr, 3fr),
-  inset: 6pt,
-  align: left,
-  fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
-  [*Test*], [*Observed result*], [*Conclusion*],
+#figure(
+  table(
+    columns: (2.2fr, 2.2fr, 3fr),
+    inset: 6pt,
+    align: left,
+    fill: (col, row) => {if row == 0 {gray.lighten(50%)}},
+    [*Test*], [*Observed result*], [*Conclusion*],
 
-  [Single microphone acquisition],
-  [The signal was displayed in LabVIEW in the time domain and in the FFT.],
-  [The complete acquisition chain worked correctly for one conditioned microphone.],
+    [Single microphone acquisition],
+    [The signal was displayed in LabVIEW in the time domain and in the FFT.],
+    [The complete acquisition chain worked correctly for one conditioned microphone.],
 
-  [1 kHz tone test],
-  [The tone was visible in the acquired signal and in the frequency-domain representation.],
-  [The system was able to detect the main frequency component of the acoustic signal.],
+    [1 kHz tone test],
+    [The tone was visible in the acquired signal and in the frequency-domain representation.],
+    [The system was able to detect the main frequency component of the acoustic signal.],
 
-  [Two-channel oscilloscope test],
-  [Two signals were observed at the same time using the oscilloscope.],
-  [The outputs of the conditioning circuits could be compared simultaneously.],
+    [Two-channel oscilloscope test],
+    [Two signals were observed at the same time using the oscilloscope.],
+    [The outputs of the conditioning circuits could be compared simultaneously.],
 
-  [Change in sound-source position],
-  [The signal amplitude changed when the acoustic source was moved.],
-  [The microphones responded differently depending on their distance from the source.],
+    [Change in sound-source position],
+    [The signal amplitude changed when the acoustic source was moved.],
+    [The microphones responded differently depending on their distance from the source.],
 
-  [Data storage],
-  [The acquired samples were saved in a binary file.],
-  [The measurement could be stored for later analysis.],
+    [Data storage],
+    [The acquired samples were saved in a binary file.],
+    [The measurement could be stored for later analysis.],
+  ),
+  caption: [Characterization results]  
 )
 
 Overall, the final characterization confirmed that the integrated system was able to detect acoustic signals, condition them, acquire them with the NI-USB-6009 DAQ and display the results in LabVIEW.

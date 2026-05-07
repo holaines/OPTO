@@ -25,13 +25,17 @@
   doc_title,
 )
 
+#set page(numbering: "I")
+
 #outline()
 #pagebreak()
 #outline(title: "Table of Figures", target: figure.where(kind: image))
 #pagebreak()
 #outline(title: "Table of Tables", target: figure.where(kind: table))
-
 #init-acronyms(acronyms)
+
+#set page(numbering: "1")
+#counter(page).update(1)
 
 #print-index(sorted: "up", title: "Table of Acronyms")
 #pagebreak()
