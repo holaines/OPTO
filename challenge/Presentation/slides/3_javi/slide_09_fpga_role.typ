@@ -14,13 +14,13 @@
       inset: 0.22cm,
     )[
       #text(size: 16pt, weight: "bold", fill: theme_blue)[Role of the FPGA]
-      #v(0.12cm)
+      #v(0.0cm)
       - #text(size: 15pt)[The chain is #strong[80 MEMS -> 160 outputs -> 20 ADCs -> 1 FPGA].]
       - #text(size: 15pt)[The FPGA guarantees #strong[synchronized acquisition] for the whole array.]
       - #text(size: 15pt)[It generates the common timing and reads all ADCs in #strong[parallel].]
       - #text(size: 15pt)[It concentrates the data into one ordered stream for the PC.]
 
-      #v(0.16cm)
+      #v(0.00cm)
       #rect(
         width: 100%,
         radius: 6pt,
