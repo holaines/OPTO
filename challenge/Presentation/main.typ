@@ -9,7 +9,6 @@
 #include "slides/1_mer/slide_02_requirements.typ"
 #include "slides/1_mer/slide_03_mems_concept.typ"
 #include "slides/1_mer/slide_04_global_architecture.typ"
-#include "slides/1_mer/slide_05_architecture_summary.typ"
 
 #include "slides/2_ines/slide_06_one_zone.typ"
 #include "slides/2_ines/slide_07_ad7606c18.typ"
