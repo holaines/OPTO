@@ -116,12 +116,12 @@ If only one DOUT line is used, the 144 bits must be shifted sequentially through
     [2],
     [$20 dot 2 = 40$],
     [$72$],
-    [Good compromise between FPGA pin count and readout time. Recommended baseline option.],
+    [Lower pin count, but lower timing margin.],
 
     [4],
     [$20 dot 4 = 80$],
     [$36$],
-    [Higher pin count, but much larger timing margin. Recommended if the package has enough I/O.],
+    [Selected configuration. It provides larger timing margin while keeping the I/O count acceptable.],
 
     [8],
     [$20 dot 8 = 160$],
@@ -137,7 +137,7 @@ The selected configuration is #strong[4 DOUT lines per ADC]. This matches the da
 
 The I/O budget depends mainly on the number of DOUT lines selected per ADC and on the host communication interface. The following calculation assumes a shared sampling and clocking structure:
 
-- One common CONVST signal distributed to all ADCs.
+- Separate CONVST signals for the LF and HF ADC groups.
 - One common RESET signal.
 - One common SCLK signal.
 - One common SDI/MOSI configuration line.
@@ -153,9 +153,9 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
     align: left,
     table.header([Signal group], [Pins], [Purpose]),
 
-    [CONVST],
-    [1],
-    [Common conversion start. Defines the sampling instant for the complete array.],
+    [CONVST_LF / CONVST_HF],
+    [2],
+    [Synchronized conversion-start signals for the LF and HF ADC groups.],
 
     [RESET],
     [1],
@@ -196,25 +196,21 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
   caption: [Estimated FPGA I/O budget for the 4-DOUT-per-ADC and 2.5G Ethernet implementation.]
 )<table:io-budget>
 
-The ADC-side I/O count for the baseline case is approximately:
+The ADC-side I/O count for the selected case is approximately:
 
-$ N_"ADC I/O" = 1 + 1 + 1 + 1 + 20 + 20 + 40 + 8 = 92 " pins" $
+$ N_"ADC I/O" = 2 + 1 + 1 + 1 + 20 + 20 + 80 + 8 = 133 " pins" $
 
-Adding the PC interface and debug margin:
+Adding the 2.5G Ethernet PHY interface and debug margin:
 
-$ N_"total I/O" approx 92 + (20 " to " 40) + (10 " to " 15) = 122 " to " 147 " pins" $
+$ N_"total I/O" approx 133 + (15 " to " 25) + (10 " to " 15) = 158 " to " 173 " pins" $
 
-If 4 DOUT lines per ADC are used, the DOUT contribution increases from 40 pins to 80 pins:
-
-$ N_"total I/O, 4-DOUT" approx 162 " to " 187 " pins" $
-
-Therefore, the 2-DOUT option is the safest baseline for the selected Artix-7 package. The 4-DOUT option is technically better in timing, but it must only be used if the final package exposes enough user I/O after assigning power, configuration, clock and communication pins.
+Therefore, the selected FPGA package must be checked against the final I/O budget after assigning power, configuration, clock and communication pins.
 
 == Synchronization strategy
 
 The most important digital requirement is synchronization. In an acoustic array, the relative delay between channels affects phase measurements and therefore affects beamforming, delay estimation and spatial reconstruction. The system must not only digitize the 160 channels; it must digitize them with a common time reference.
 
-The synchronization is achieved by distributing a common CONVST signal from the FPGA to all 20 AD7606C-18 devices. The rising edge of CONVST defines the sampling instant. Since each AD7606C-18 performs simultaneous sampling on its 8 channels, and all ADCs receive the same CONVST edge, the full 160-channel frame is associated with one global sampling instant.
+The synchronization is achieved by generating CONVST_HF and CONVST_LF from the same FPGA timebase. The rising edge of each CONVST signal defines the sampling instant for its corresponding ADC group.
 
 #figure(
   align(center)[
@@ -261,7 +257,7 @@ The FPGA implements one common ADC acquisition controller and 20 parallel serial
     [Wait until the next sampling tick generated from the FPGA sampling timer.],
 
     [START_CONVERSION],
-    [Generate a common CONVST pulse for all ADCs and capture the timestamp counter.],
+    [Generate CONVST_HF or CONVST_LF and capture the timestamp counter.],
 
     [WAIT_BUSY],
     [Wait until all BUSY signals return to low. If a timeout occurs, set an ADC error flag.],
@@ -445,32 +441,28 @@ The FIFO must report at least three status conditions: almost full, full and ove
 
 The output data rate is determined by the number of channels, the number of bits used to store each sample and the sampling frequency.
 
-Although the ADC resolution is 18 bits, the FPGA should not pack the samples as a continuous 18-bit bitstream. It is more practical to align each sample to 24 bits or 32 bits. The 24-bit option is selected as a compromise between efficient bandwidth and simple byte alignment.
+For the 18-bit AD7606C-18 samples, the general expression is:
 
-The general expression is:
+$ R = N_"channels" dot 18 " bits/sample" dot f_s $
 
-$ R = N_"channels" dot N_"bits/sample" dot f_s $
+The selected sampling strategy uses different sampling frequencies for the two branches:
 
-If all 160 channels were sampled at 250 kS/s and stored as 24-bit words:
-
-$ R = 160 dot 24 dot 250 " kS/s" = 960 " Mbit/s" $
-
-This value does not include frame headers, status fields or protocol overhead. Therefore, streaming all channels at 250 kS/s is close to the practical limit of Gigabit Ethernet.
-
-A more efficient strategy is to use different sampling frequencies for the two branches:
-
-- HF branch: 80 channels at 250 kS/s.
-- LF branch: 80 channels at 50 kS/s.
+- HF branch: 80 channels at 256 kS/s.
+- LF branch: 80 channels at 51.2 kS/s.
 
 The payload throughput is then:
 
-$ R_"HF" = 80 dot 24 dot 250 " kS/s" = 480 " Mbit/s" $
+$ R_"HF" = 80 dot 18 dot 256 " kS/s" = 368.6 " Mbit/s" $
 
-$ R_"LF" = 80 dot 24 dot 50 " kS/s" = 96 " Mbit/s" $
+$ R_"LF" = 80 dot 18 dot 51.2 " kS/s" = 73.7 " Mbit/s" $
 
-$ R_"total" = 480 " Mbit/s" + 96 " Mbit/s" = 576 " Mbit/s" $
+$ R_"total" = 368.6 " Mbit/s" + 73.7 " Mbit/s" = 442.3 " Mbit/s" $
 
-After headers, timestamps, CRC and communication overhead, the expected sustained rate is approximately 650 Mbit/s to 750 Mbit/s. This is compatible with a carefully implemented Gigabit Ethernet link, but it leaves limited margin. USB 3.0 FIFO provides more margin and is therefore selected as the preferred interface to the PC.
+After headers, timestamps, CRC and communication overhead, a 25 % margin gives:
+
+$ R_"design" approx 1.25 dot 442.3 " Mbit/s" approx 553 " Mbit/s" $
+
+This is below the nominal bandwidth of Gigabit Ethernet, but 2.5G Ethernet is selected to provide additional implementation margin, support robust industrial cabling and leave room for metadata, control traffic and future extensions.
 
 #figure(
   table(
@@ -479,22 +471,22 @@ After headers, timestamps, CRC and communication overhead, the expected sustaine
     align: left,
     table.header([Acquisition mode], [Payload rate], [Interface margin], [Comment]),
 
-    [HF 256 kS/s + LF 51.2 kS/s, 32-bit packed],
-    [786.5 Mbit/s],
-    [Good with 2.5G Ethernet],
+    [HF 256 kS/s + LF 51.2 kS/s, 18-bit samples],
+    [442.3 Mbit/s],
+    [High with 2.5G Ethernet],
     [Selected operating mode.],
 
     [Same mode with 25 % overhead margin],
-    [≈983 Mbit/s],
-    [Too close for 1G Ethernet],
-    [Justifies the 2.5G Ethernet link.],
+    [≈553 Mbit/s],
+    [Comfortable with 2.5G Ethernet],
+    [Leaves margin for framing, status and control traffic.],
 
     [HF/LF with decimation in FPGA],
     [Lower],
     [High],
     [Useful if real-time spectral features are extracted before transmission.],
   ),
-  caption: [Estimated payload data rates for 24-bit-aligned samples.]
+  caption: [Estimated payload data rates for 18-bit samples.]
 )<table:data-rates>
 
 == Output interface to PC or DAQ
@@ -512,7 +504,7 @@ The role of the Ethernet block is not to define the measurement timing. Timing i
 
     [1G Ethernet],
     [Long cable length, standard networking and robust connector options.],
-    [Too little margin for the selected packed data rate and protocol overhead.],
+    [Lower implementation margin for continuous acquisition and future extensions.],
 
     [2.5G Ethernet],
     [Selected option. Provides sufficient bandwidth margin while keeping FPGA and PHY complexity moderate.],
@@ -603,4 +595,4 @@ The complete FPGA subsystem is summarized in @fig:fpga-complete.
 
 The selected architecture satisfies the digital requirements of the project. It provides synchronized LF and HF sampling through FPGA-generated CONVST signals, parallel 4-DOUT readout of the 20 ADCs, deterministic timestamping, ordered frame construction and buffered high-throughput transmission to the host computer through 2.5G Ethernet.
 
-The main pending implementation check is the final package-level I/O validation. The selected 4-DOUT-per-ADC architecture requires approximately 157 to 177 FPGA I/O pins including the Ethernet PHY interface and debug margin. If the selected XC7A35T-1FTG256I package does not expose enough usable pins after power, configuration and clock pins are reserved, the design must reduce non-essential pins or move to a larger Artix-7 package.
+The main pending implementation check is the final package-level I/O validation. The selected 4-DOUT-per-ADC architecture requires approximately 158 to 173 FPGA I/O pins including the Ethernet PHY interface and debug margin. If the selected XC7A35T-1FTG256I package does not expose enough usable pins after power, configuration and clock pins are reserved, the design must reduce non-essential pins or move to a larger Artix-7 package.
