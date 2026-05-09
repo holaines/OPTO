@@ -1,17 +1,10 @@
-#set page(
-  paper: "presentation-16-9",
-  margin: 1.1cm,
-)
-
-#set text(
-  font: "New Computer Modern",
-  size: 22pt,
-)
-
-#set par(justify: false)
+#import "style.typ": custom-theme
 
 #include "slides/0_cover/slide_00.typ"
 
+#show: custom-theme
+
+= Title
 #include "slides/1_mer/slide_01_context.typ"
 #include "slides/1_mer/slide_02_requirements.typ"
 #include "slides/1_mer/slide_03_mems_concept.typ"
