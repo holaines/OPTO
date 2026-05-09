@@ -17,8 +17,8 @@
   top + left,
   dx: 1.05cm,
   dy: 0.65cm,
-  text(size: 28pt, weight: "bold", fill: black)[Título de la diapositiva],
-)// Título de la diapositiva
+  text(size: 28pt, weight: "bold", fill: black)[Main system requirements],
+)
 
 #place(
   left + bottom,
@@ -35,19 +35,71 @@
 )
 
 // Contenido de la diapositiva
-#table(
-  columns: (1fr, 1.4fr),
-  inset: 7pt,
-  align: (left, left),
-  [*Requirement*], [*Target*],
-  [MEMS microphones], [80],
-  [Outputs per MEMS], [LF + HF],
-  [Total analog signals], [160],
-  [Frequency range], [100 Hz – 100 kHz],
-  [Dynamic range], [30 dB SPL – 170 dB SPL],
-  [Target SNR], [90 dB WTT / 70 dB FT],
-  [Power supply], [28 V aircraft bus / 24 V battery],
-)
+#block(
+  width: 100%,
+  inset: (top: 2.3cm, left: 1.05cm, right: 1.05cm, bottom: 1.2cm),
+)[
+  #table(
+    columns: (1fr, 1fr),
+    inset: 8pt,
+    stroke: 0.6pt + theme_blue,
+    align: (left, left),
+    table.header(
+      table.cell(fill: theme_blue.transparentize(88%))[#text(size: 15pt, weight: "bold", fill: theme_blue)[Requirement]],
+      table.cell(fill: theme_blue.transparentize(88%))[#text(size: 15pt, weight: "bold", fill: theme_blue)[Target]],
+    ),
+    [#text(size: 17pt)[MEMS microphones]], [#text(size: 17pt)[80]],
+    [#text(size: 17pt)[Outputs per MEMS]], [#text(size: 17pt)[LF + HF]],
+    [#text(size: 17pt)[Total analog signals]], [#text(size: 17pt)[160]],
+    [#text(size: 17pt)[Frequency range]], [#text(size: 17pt)[100 Hz – 100 kHz]],
+    [#text(size: 17pt)[Dynamic range]], [#text(size: 17pt)[30 dB SPL – 170 dB SPL]],
+    [#text(size: 17pt)[Target SNR]], [#text(size: 17pt)[90 dB WTT / 70 dB FT]],
+    [#text(size: 14pt)[Power supply]], [#text(size: 14pt)[28 V aircraft bus / 24 V battery]],
+  )
+
+  #v(0.1cm)
+
+  #align(center)[
+    #block(width: 82%)[
+      #grid(
+        columns: (1fr, 1fr),
+        gutter: 0.6cm,
+        [
+          #rect(
+          width: 100%,
+          height: 2.3cm,
+          radius: 6pt,
+          stroke: theme_blue + 1pt,
+          fill: theme_blue.transparentize(88%),
+          inset: 0.25cm,
+        )[
+          #align(center + horizon)[
+            #text(size: 15pt, weight: "bold", fill: theme_blue)[80 MEMS × 2 outputs]
+            #v(0.06cm)
+            #text(size: 15pt, weight: "bold")[160 signals]
+          ]
+        ]
+      ],
+      [
+        #rect(
+          width: 100%,
+          height: 2.3cm,
+          radius: 6pt,
+          stroke: theme_blue + 1pt,
+          fill: none,
+          inset: 0.25cm,
+        )[
+          #align(center + horizon)[
+            #text(size: 15pt, weight: "bold", fill: theme_blue)[Most demanding case]
+            #v(0.06cm)
+            #text(size: 15pt)[WTT closed section · 100 Hz – 100 kHz]
+          ]
+        ]
+        ],
+      )
+    ]
+  ]
+]
 
 // Salto de página
 #pagebreak()
