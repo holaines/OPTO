@@ -1,5 +1,8 @@
+#import "@preview/acrostiche:0.7.0": *
+
 #import "lib/style.typ": setup
 #import "cover.typ": cover
+#import "acronym.typ": acronyms
 
 #let doc_title = "LabVIEW"
 #let authors_portrait = ("Inés Menchero", "Javier del Río", "Mercedes Ramos", "Rubén Agustín")
@@ -22,11 +25,26 @@
   doc_title,
 )
 
+#set page(numbering: "I")
+
 #outline()
+#pagebreak()
 #outline(title: "Table of Figures", target: figure.where(kind: image))
 #pagebreak()
+#outline(title: "Table of Tables", target: figure.where(kind: table))
+#init-acronyms(acronyms)
+#print-index(sorted: "up", title: "Table of Acronyms")
+#pagebreak()
+
+#set page(numbering: "1")
+#counter(page).update(1)
+
 
 #include "chap/sesion_1.typ"
 #include "chap/sesion_2.typ"
 #include "chap/sesion_3.typ"
 #include "chap/sesion_4.typ"
+#include "chap/at_home.typ"
+#include "chap/summary.typ"
+#include "chap/self_evaluation.typ"
+
