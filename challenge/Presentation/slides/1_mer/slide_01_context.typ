@@ -38,15 +38,15 @@
 // Contenido de la diapositiva
 #block(
   width: 100%,
-  inset: (top: 1.75cm, left: 1.05cm, right: 1.05cm, bottom: 1.2cm),
+  inset: (top: 2.4cm, left: 1.05cm, right: 1.05cm, bottom: 1.2cm),
 )[
   #grid(
     columns: (1fr, 1fr),
-    gutter: 0.75cm,
+    gutter: 0.85cm,
     [
       #rect(
         width: 100%,
-        height: 2.15cm,
+        height: 4cm,
         radius: 6pt,
         stroke: theme_blue + 1pt,
         fill: theme_blue.transparentize(90%),
@@ -65,7 +65,7 @@
 
       #rect(
         width: 100%,
-        height: 2.15cm,
+        height: 4cm,
         radius: 6pt,
         stroke: theme_blue + 1pt,
         fill: theme_blue.transparentize(90%),
@@ -83,7 +83,7 @@
     [
       #rect(
         width: 100%,
-        height: 2.15cm,
+        height: 4cm,
         radius: 6pt,
         stroke: theme_blue + 1pt,
         fill: theme_blue.transparentize(90%),
@@ -102,7 +102,7 @@
 
       #rect(
         width: 100%,
-        height: 2.15cm,
+        height: 4cm,
         radius: 6pt,
         stroke: theme_blue + 1pt,
         fill: theme_blue.transparentize(90%),
