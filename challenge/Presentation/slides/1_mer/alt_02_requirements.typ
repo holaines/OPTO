@@ -1,5 +1,7 @@
 #let theme_blue = rgb("#1f4f6b")
 
+== Main system requirements
+
 #table(
   columns: (1fr, 1fr),
   inset: 8pt,
