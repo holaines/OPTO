@@ -51,7 +51,7 @@ The FPGA must perform the following tasks:
 - Reorder the samples by zone, frequency branch and channel number.
 - Build data frames with header, payload and status information.
 - Store the frames in a FIFO to avoid data loss during communication stalls.
-- Stream the data to the PC or remote DAQ interface.
+- Stream the data to the acquisition PC through the 2.5G Ethernet interface.
 
 == Justification of the Artix-7 FPGA
 
@@ -131,7 +131,7 @@ If only one DOUT line is used, the 144 bits must be shifted sequentially through
   caption: [Comparison of possible AD7606C-18 serial readout widths.]
 )<table:dout-options>
 
-The proposed baseline is #strong[2 DOUT lines per ADC]. This option keeps the ADC interface at a reasonable I/O count while allowing the required high-frequency sampling rate. If the final package pinout has enough available I/O, a #strong[4 DOUT configuration] can be selected to increase timing margin.
+The selected configuration is #strong[4 DOUT lines per ADC]. This matches the data-handling architecture and provides enough timing margin for the 256 kS/s HF branch while avoiding the excessive pin usage of the 8-DOUT option.
 
 == FPGA I/O budget <sec:fpga-io-budget>
 
@@ -143,7 +143,8 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
 - One common SDI/MOSI configuration line.
 - Individual CS signals, one for each ADC.
 - Individual BUSY signals, one for each ADC, to detect desynchronization or ADC faults.
-- Two DOUT lines per ADC as the baseline option.
+- Four DOUT lines per ADC as the selected option.
+- Additional FPGA pins for the 2.5G Ethernet PHY, external trigger, clocks and debug.
 
 #figure(
   table(
@@ -177,22 +178,22 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
     [Individual conversion-busy signals. They allow the FPGA to verify that every ADC completed the conversion.],
 
     [DOUT],
-    [$20 dot 2 = 40$],
-    [Two serial data outputs per ADC, read in parallel by the FPGA.],
+    [$20 dot 4 = 80$],
+    [Four serial data outputs per ADC, read in parallel by the FPGA.],
 
     [Static or semi-static configuration pins],
     [5--8],
     [PAR/SER, oversampling pins, range-related pins and mode pins. Some can be fixed by hardware.],
 
-    [Host interface],
-    [20--40],
-    [USB 3.0 FIFO, Ethernet interface or equivalent output interface.],
+    [2.5G Ethernet PHY interface],
+    [15--25],
+    [RGMII/SGMII-related signals, MDIO/MDC, reset, interrupts and clocking, depending on the selected PHY.],
 
     [Clocks, debug and spare pins],
     [10--15],
     [External oscillator, status LEDs, test points, trigger input/output and design margin.],
   ),
-  caption: [Estimated FPGA I/O budget for the 2-DOUT-per-ADC baseline implementation.]
+  caption: [Estimated FPGA I/O budget for the 4-DOUT-per-ADC and 2.5G Ethernet implementation.]
 )<table:io-budget>
 
 The ADC-side I/O count for the baseline case is approximately:
@@ -224,15 +225,15 @@ The synchronization is achieved by distributing a common CONVST signal from the 
         align: center,
         [#strong[FPGA timing generator]],
         [$arrow.b$],
-        [Common CONVST edge],
+        [CONVST_HF at 256 kS/s and CONVST_LF at 51.2 kS/s],
         [$arrow.b$],
-        [20 AD7606C-18 sample simultaneously],
+        [10 HF ADCs and 10 LF ADCs sample synchronously within each branch],
         [$arrow.b$],
         [BUSY high during conversion],
         [$arrow.b$],
         [BUSY low: conversion completed],
         [$arrow.b$],
-        [Parallel serial readout of the 20 ADCs],
+        [Parallel 4-DOUT serial readout of the ADCs],
         [$arrow.b$],
         [Timestamp + frame building + FIFO],
       )
@@ -241,7 +242,7 @@ The synchronization is achieved by distributing a common CONVST signal from the 
   caption: [Timing sequence controlled by the FPGA.]
 )<fig:fpga-timing-sequence>
 
-The following point is essential: the physical sampling time is determined by the CONVST edge, not by the later digital readout order. The ADC data can be read a few microseconds after conversion without creating inter-channel sampling delay, as long as all devices sampled from the same CONVST event and the frame builder keeps the samples grouped under the same timestamp.
+The physical sampling time is determined by the CONVST edge, not by the later digital readout order. The ADC data can be read after conversion without creating inter-channel sampling delay, as long as all devices in the same branch sampled from the same CONVST event and the frame builder keeps the samples grouped under the same timestamp or sample counter.
 
 To improve robustness, the FPGA monitors the BUSY signals. If one ADC does not release BUSY within the expected time window, the frame is marked with an error flag. This avoids silently accepting corrupted or incomplete data.
 
@@ -287,57 +288,53 @@ The individual serial receivers work in parallel. Each receiver captures the DOU
 
 == Readout timing calculation
 
-The readout time must be shorter than the sampling period. For one AD7606C-18, the number of bits per frame is 144 bits. With 2 DOUT lines, the number of SCLK cycles is:
-
-$ N_"cycles, 2-DOUT" = 144 / 2 = 72 " cycles" $
-
-With 4 DOUT lines:
+The readout time must be shorter than the sampling period. For one AD7606C-18, the number of bits per frame is 144 bits. With 4 DOUT lines, the number of SCLK cycles is:
 
 $ N_"cycles, 4-DOUT" = 144 / 4 = 36 " cycles" $
 
 Assuming a conservative serial clock of 60 MHz, the readout time is:
 
-$ t_"read, 2-DOUT" = 72 / (60 " MHz") = 1.2 mu s $
-
 $ t_"read, 4-DOUT" = 36 / (60 " MHz") = 0.6 mu s $
 
-The high-frequency branch must cover signals up to 100 kHz. A sampling frequency of 250 kS/s is selected for the HF branch because it is above the Nyquist minimum and leaves margin for anti-aliasing and spectral analysis:
+The high-frequency branch must cover signals up to 100 kHz. A sampling frequency of 256 kS/s is selected for the HF branch because it is above the Nyquist minimum and is an integer multiple of the LF sampling rate:
 
-$ f_"s,HF" = 250 " kS/s" quad => quad T_"s,HF" = 4 mu s $
+$ f_"s,HF" = 256 " kS/s" quad => quad T_"s,HF" = 3.906 mu s $
 
-Therefore, with 2 DOUT lines per ADC:
+Therefore:
 
-$ t_"read, 2-DOUT" = 1.2 mu s < T_"s,HF" = 4 mu s $
+$ t_"read, 4-DOUT" = 0.6 mu s < T_"s,HF" = 3.906 mu s $
 
-The low-frequency branch only needs to cover up to approximately 10 kHz. A sampling frequency of 50 kS/s is sufficient:
+The low-frequency branch only needs to cover up to approximately 10 kHz. A sampling frequency of 51.2 kS/s is selected:
 
-$ f_"s,LF" = 50 " kS/s" quad => quad T_"s,LF" = 20 mu s $
+$ f_"s,LF" = 51.2 " kS/s" quad => quad T_"s,LF" = 19.531 mu s $
 
-This gives even more timing margin.
+This gives even more timing margin. The selected rates satisfy:
+
+$ f_"s,HF" = 5 dot f_"s,LF" $
 
 #figure(
   table(
     columns: (1.4fr, 1.2fr, 1.4fr, 1.5fr, 1.5fr),
     inset: 6pt,
     align: left,
-    table.header([Branch], [Selected $f_s$], [Sampling period], [2-DOUT readout], [Timing margin]),
+    table.header([Branch], [Selected $f_s$], [Sampling period], [4-DOUT readout], [Timing margin]),
 
     [HF],
-    [250 kS/s],
-    [4 µs],
-    [1.2 µs],
+    [256 kS/s],
+    [3.906 µs],
+    [0.6 µs],
     [Valid],
 
     [LF],
-    [50 kS/s],
-    [20 µs],
-    [1.2 µs],
+    [51.2 kS/s],
+    [19.531 µs],
+    [0.6 µs],
     [Large margin],
   ),
-  caption: [Readout timing verification for the proposed 2-DOUT configuration.]
+  caption: [Readout timing verification for the selected 4-DOUT configuration.]
 )<table:readout-timing>
 
-This timing calculation justifies the 2-DOUT baseline. A 4-DOUT configuration can be kept as an upgrade path if a higher sampling frequency or extra timing margin is required.
+This timing calculation justifies the 4-DOUT configuration selected in the data-handling architecture.
 
 == Timestamp and frame format
 
@@ -413,7 +410,7 @@ where $"zone" = 0 ... 9$ and $"local_channel" = 0 ... 7$. The frequency branch i
 
 == FIFO buffering and clock domains
 
-The FPGA must separate the deterministic acquisition domain from the host communication domain. The ADCs are sampled periodically, but the PC interface can pause temporarily because of USB packets, Ethernet arbitration, operating-system latency or driver behavior. If these pauses are not absorbed, samples can be lost.
+The FPGA must separate the deterministic acquisition domain from the host communication domain. The ADCs are sampled periodically, but Ethernet transmission can pause temporarily because of packet scheduling, arbitration, MAC buffering, operating-system latency or driver behavior. If these pauses are not absorbed, samples can be lost.
 
 For this reason, the data path includes a FIFO:
 
@@ -430,7 +427,7 @@ For this reason, the data path includes a FIFO:
         [$arrow.r$],
         [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[Asynchronous FIFO]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[USB/Ethernet interface]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[2.5G Ethernet packetizer]],
       )
     ]
   ],
@@ -482,15 +479,15 @@ After headers, timestamps, CRC and communication overhead, the expected sustaine
     align: left,
     table.header([Acquisition mode], [Payload rate], [Interface margin], [Comment]),
 
-    [160 channels at 250 kS/s],
-    [960 Mbit/s],
-    [Low for Gigabit Ethernet],
-    [Possible only with a faster interface or reduced overhead.],
+    [HF 256 kS/s + LF 51.2 kS/s, 32-bit packed],
+    [786.5 Mbit/s],
+    [Good with 2.5G Ethernet],
+    [Selected operating mode.],
 
-    [HF 250 kS/s + LF 50 kS/s],
-    [576 Mbit/s],
-    [Moderate],
-    [Recommended operating mode.],
+    [Same mode with 25 % overhead margin],
+    [≈983 Mbit/s],
+    [Too close for 1G Ethernet],
+    [Justifies the 2.5G Ethernet link.],
 
     [HF/LF with decimation in FPGA],
     [Lower],
@@ -502,9 +499,9 @@ After headers, timestamps, CRC and communication overhead, the expected sustaine
 
 == Output interface to PC or DAQ
 
-The selected primary output interface is USB 3.0 FIFO. This type of interface is convenient because it exposes a parallel FIFO-like bus to the FPGA and provides more bandwidth margin than Gigabit Ethernet for continuous streaming.
+The selected primary output interface is #strong[2.5G Ethernet]. It provides more bandwidth margin than standard Gigabit Ethernet and is more suitable than USB for a distributed wind-tunnel or flight-test instrumentation system because it supports longer cables, standard networking hardware and robust industrial connectors.
 
-The role of the USB/Ethernet block is not to define the measurement timing. Timing is defined internally by the FPGA and CONVST. The communication interface only transports completed frames from the FIFO to the PC.
+The role of the Ethernet block is not to define the measurement timing. Timing is defined internally by the FPGA and the CONVST signals. The communication interface only transports completed frames from the FIFO to the acquisition PC.
 
 #figure(
   table(
@@ -513,21 +510,28 @@ The role of the USB/Ethernet block is not to define the measurement timing. Timi
     align: left,
     table.header([Interface], [Advantages], [Limitations]),
 
-    [USB 3.0 FIFO],
-    [High practical throughput; simple FIFO-style connection to FPGA; good for laboratory acquisition.],
-    [Shorter cable distance; requires PC-side driver and acquisition software.],
+    [1G Ethernet],
+    [Long cable length, standard networking and robust connector options.],
+    [Too little margin for the selected packed data rate and protocol overhead.],
 
-    [Gigabit Ethernet],
-    [Longer cables; robust connector; easier remote acquisition over standard networks.],
-    [Limited margin if all channels are streamed at high sampling rate; requires MAC/UDP logic or an external controller.],
+    [2.5G Ethernet],
+    [Selected option. Provides sufficient bandwidth margin while keeping FPGA and PHY complexity moderate.],
+    [Requires a 2.5G-capable PHY, PCB routing discipline and compatible PC/network interface.],
+
+    [USB 3.0 FIFO],
+    [High practical throughput and simple laboratory connection.],
+    [Less suitable for remote acquisition and less mechanically robust for the target environment.],
   ),
   caption: [Comparison of candidate output interfaces.]
 )<table:output-interface>
 
-The recommended final choice is:
+The selected physical interface is:
 
-- #strong[USB 3.0 FIFO] as the primary interface for full-rate acquisition.
-- #strong[Gigabit Ethernet] as an alternative if LF and HF data rates are reduced or if the FPGA performs decimation before transmission.
+```text
+FPGA Ethernet MAC → 2.5G Ethernet PHY → shielded M12 X-coded connector → acquisition PC
+```
+
+Raw acquisition data are streamed using UDP packets. Configuration and status commands can use TCP or a lightweight UDP control channel.
 
 == Error detection and diagnostic flags
 
@@ -576,17 +580,17 @@ The complete FPGA subsystem is summarized in @fig:fpga-complete.
         row-gutter: 8pt,
         align: center,
 
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[20 AD7606C-18 \ 2 DOUT/ADC]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[20 AD7606C-18 \ 4 DOUT/ADC]],
         [$arrow.r$],
         [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[Artix-7 FPGA \ timing + capture + frame builder]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[USB 3.0 FIFO \ or Ethernet]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[2.5G Ethernet PHY \ M12 X-coded connector]],
 
         [],
         [],
         [
           #box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[
-            CONVST generator \ ADC controller \ timestamp counter \ serial receivers \ FIFO \ diagnostics
+            CONVST_LF/HF generator \ ADC controller \ timestamp counter \ 4-DOUT serial receivers \ FIFO \ UDP packetizer \ diagnostics
           ]
         ],
         [],
@@ -597,6 +601,6 @@ The complete FPGA subsystem is summarized in @fig:fpga-complete.
   caption: [Final FPGA-based digital acquisition architecture.]
 )<fig:fpga-complete>
 
-The selected architecture satisfies the digital requirements of the project. It provides simultaneous sampling through a common CONVST signal, parallel readout of the 20 ADCs, deterministic timestamping, ordered frame construction and buffered high-throughput transmission to the host computer.
+The selected architecture satisfies the digital requirements of the project. It provides synchronized LF and HF sampling through FPGA-generated CONVST signals, parallel 4-DOUT readout of the 20 ADCs, deterministic timestamping, ordered frame construction and buffered high-throughput transmission to the host computer through 2.5G Ethernet.
 
-The main pending implementation check is the final package-level I/O validation. The 2-DOUT-per-ADC baseline requires approximately 122 to 147 FPGA I/O pins including host interface and debug margin. If the selected XC7A35T-1FTG256I package exposes enough user pins after power, configuration and clock pins are reserved, it is a valid choice. Otherwise, the design must either reduce debug/host-interface pins, group some BUSY/CS signals externally, or move to a larger Artix-7 package.
+The main pending implementation check is the final package-level I/O validation. The selected 4-DOUT-per-ADC architecture requires approximately 157 to 177 FPGA I/O pins including the Ethernet PHY interface and debug margin. If the selected XC7A35T-1FTG256I package does not expose enough usable pins after power, configuration and clock pins are reserved, the design must reduce non-essential pins or move to a larger Artix-7 package.
