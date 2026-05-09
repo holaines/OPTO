@@ -40,7 +40,7 @@
   left + bottom,
   dx: 1.25cm,
   dy: -1.85cm,
-  image("../../figures/Fondo de “Logo_UC3M” eliminado.png", width: 5.0cm),
+  image("../../figures/Logo_UC3M.png", width: 5.0cm),
 )
 
 #place(
