@@ -122,10 +122,10 @@
   radius: 7pt,
   stroke: green + 1pt,
   fill: soft_green,
-  inset: 0.3cm,      // Aumentamos un poco el margen interno para que respire
+  inset: 0.3cm,      
 )[
   #stack(
-    spacing: 0.15cm, // Controla exactamente el espacio entre el título y las líneas
+    spacing: 0.15cm, 
     text(size: 17pt, weight: "bold", fill: green)[Sampling compatibility],
     
     text(size: 12pt)[LF: 50–100 kS/s for signals up to 10 kHz.],
