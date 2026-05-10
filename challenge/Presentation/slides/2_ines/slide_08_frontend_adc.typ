@@ -63,7 +63,6 @@
       ]
     ]
   ],
-
   [
     #rect(
       width: 100%,
@@ -98,7 +97,6 @@
       #v(0cm)
     ]
     #v(0cm)
-
     #rect(
   width: 100%,
  height: 2.25cm,  
