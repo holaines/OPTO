@@ -177,7 +177,7 @@
   ],
 )
 
-#v(0.15cm)
+#v(0.30cm)
 
 #align(center)[
   #text(size: 13.5pt)[The AD7606C-18 simplifies acquisition while preserving channel-to-channel timing.]
