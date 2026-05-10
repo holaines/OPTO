@@ -1,5 +1,5 @@
 #let theme_blue = rgb("#1f4f6b")
-#let light_blue = theme_blue.transparentize(90%)
+#let light_blue = theme_blue.transparentize(91%)
 #let soft_blue = theme_blue.transparentize(86%)
 #let green = rgb("#3A7D44")
 #let soft_green = green.transparentize(88%)
@@ -10,169 +10,167 @@
 
 #grid(
   columns: (1fr, 1fr),
-  gutter: 0.65cm,
+  gutter: 0.55cm,
+
   [
     #rect(
       width: 100%,
-      height: 7.6cm,
-      radius: 8pt,
+      height: 7.25cm,
+      radius: 7pt,
       stroke: theme_blue + 1pt,
       fill: light_blue,
-      inset: 0.35cm,
+      inset: 0.28cm,
     )[
-      #text(size: 20pt, weight: "bold", fill: theme_blue)[Why this ADC?]
+      #text(size: 18pt, weight: "bold", fill: theme_blue)[Why this ADC?]
 
-      #v(0.25cm)
+      #v(0.18cm)
 
-      #text(size: 15pt)[The AD7606C-18 is used as an integrated acquisition block because it includes:]
+      #text(size: 13.7pt)[
+        The AD7606C-18 is used as an integrated acquisition block for each LF or HF group of one zone.
+      ]
 
-      #v(0.25cm)
+      #v(0.24cm)
 
       #grid(
         columns: (1fr, 1fr),
-        gutter: 0.25cm,
+        gutter: 0.22cm,
+
         [
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: theme_blue + 0.8pt,
             fill: white,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold")[8 input channels]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold")[8 analog inputs]]]
 
-          #v(0.18cm)
+          #v(0.16cm)
 
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: theme_blue + 0.8pt,
             fill: white,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold")[18-bit SAR ADC]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold")[18-bit SAR ADC]]]
 
-          #v(0.18cm)
+          #v(0.16cm)
 
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: theme_blue + 0.8pt,
             fill: white,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold")[Programmable ranges]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold")[Programmable ranges]]]
         ],
+
         [
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: green + 0.8pt,
             fill: soft_green,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold", fill: green)[Simultaneous sampling]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold", fill: green)[Simultaneous sampling]]]
 
-          #v(0.18cm)
+          #v(0.16cm)
 
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: green + 0.8pt,
             fill: soft_green,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold", fill: green)[Internal PGA + LPF]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold", fill: green)[PGA + low-pass filter]]]
 
-          #v(0.18cm)
+          #v(0.16cm)
 
           #rect(
             width: 100%,
-            height: 1.25cm,
-            radius: 6pt,
+            height: 1.05cm,
+            radius: 5pt,
             stroke: green + 0.8pt,
             fill: soft_green,
-            inset: 0.12cm,
-          )[
-            #align(center + horizon)[#text(size: 14pt, weight: "bold", fill: green)[Digital interface]]
-          ]
+            inset: 0.1cm,
+          )[#align(center + horizon)[#text(size: 13.2pt, weight: "bold", fill: green)[Digital interface]]]
         ],
       )
 
-      #v(0.28cm)
+      #v(0.25cm)
 
       #rect(
         width: 100%,
-        radius: 6pt,
+        height: 0.95cm,
+        radius: 5pt,
         stroke: theme_blue + 0.8pt,
         fill: white,
-        inset: 0.18cm,
+        inset: 0.12cm,
       )[
-        #text(size: 14.5pt)[
-          One device can acquire the 8 LF or 8 HF outputs of one zone.
+        #align(center + horizon)[
+          #text(size: 13pt)[One device acquires all 8 LF or all 8 HF outputs of one zone.]
         ]
       ]
     ]
   ],
+
   [
     #rect(
       width: 100%,
-      height: 3.1cm,
-      radius: 8pt,
+      height: 2.35cm,
+      radius: 7pt,
       stroke: orange + 1pt,
       fill: soft_orange,
-      inset: 0.3cm,
+      inset: 0.25cm,
     )[
-      #text(size: 19pt, weight: "bold", fill: orange)[MUX removal]
+      #text(size: 18pt, weight: "bold", fill: orange)[MUX removal]
 
-      #v(0.15cm)
+      #v(0.13cm)
 
-      #text(size: 15pt)[The external 8:1 analog multiplexer is not needed, because each AD7606C-18 already has 8 simultaneous ADC channels.]
+      #text(size: 13.6pt)[
+        The external 8:1 analog multiplexer is removed because each ADC already samples 8 channels simultaneously.
+      ]
     ]
 
     #v(0.35cm)
 
     #rect(
       width: 100%,
-      height: 4.15cm,
-      radius: 8pt,
+      height: 4.55cm,
+      radius: 7pt,
       stroke: theme_blue + 1pt,
       fill: white,
-      inset: 0.3cm,
+      inset: 0.28cm,
     )[
-      #text(size: 19pt, weight: "bold", fill: theme_blue)[Channel count]
+      #text(size: 18pt, weight: "bold", fill: theme_blue)[Channel count]
 
-      #v(0.25cm)
+      #v(0.35cm)
 
       #align(center)[
-        #text(size: 17pt)[$10 " zones" dot 2 " ADCs/zone" = 20 " ADCs"$]
+        #text(size: 16pt)[$10 " zones" dot 2 " ADCs/zone" = 20 " ADCs"$]
 
-        #v(0.28cm)
+        #v(0.3cm)
 
-        #text(size: 17pt)[$20 " ADCs" dot 8 " channels" = 160 " channels"$]
+        #text(size: 16pt)[$20 " ADCs" dot 8 " channels" = 160 " channels"$]
       ]
 
-      #v(0.25cm)
+      #v(0.4cm)
 
       #rect(
         width: 100%,
-        radius: 6pt,
+        height: 0.95cm,
+        radius: 5pt,
         stroke: theme_blue + 0.8pt,
         fill: light_blue,
-        inset: 0.16cm,
+        inset: 0.12cm,
       )[
-        #align(center)[
-          #text(size: 14.5pt, weight: "bold", fill: theme_blue)[The ADC count exactly matches the 160 analog MEMS outputs.]
+        #align(center + horizon)[
+          #text(size: 13.2pt, weight: "bold", fill: theme_blue)[The ADC count exactly matches the 160 MEMS analog outputs.]
         ]
       ]
     ]
@@ -182,5 +180,5 @@
 #v(0.15cm)
 
 #align(center)[
-  #text(size: 14.5pt)[The selected ADC simplifies the acquisition stage while preserving channel-to-channel timing.]
+  #text(size: 13.5pt)[The AD7606C-18 simplifies acquisition while preserving channel-to-channel timing.]
 ]
