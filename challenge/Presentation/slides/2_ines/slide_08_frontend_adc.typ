@@ -29,33 +29,33 @@
 #align(center)[
   #stack(
     dir: ttb,
-    spacing: 0.1cm, // <--- Controla el espacio total entre bloques y flechas
+    spacing: 0.1cm, 
     
-    // Bloque 1
+    
     rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold")[MEMS LF/HF output]),
     
     text(size: 12pt, fill: theme_blue)[↓],
     
-    // Bloque 2
+    
     rect(width: 82%, radius: 5pt, stroke: green + 0.8pt, fill: soft_green, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: green)[High-impedance buffer / LNA]),
     
     text(size: 12pt, fill: theme_blue)[↓],
     
-    // Bloque 3
+    
     rect(width: 82%, radius: 5pt, stroke: orange + 0.8pt, fill: soft_orange, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: orange)[Gain or attenuation]),
     
     text(size: 12pt, fill: theme_blue)[↓],
     
-    // Bloque 4
+    
     rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold")[Protection + RC filter]),
     
     text(size: 12pt, fill: theme_blue)[↓],
     
-    // Bloque 5
+    
     rect(width: 82%, radius: 5pt, stroke: red + 0.8pt, fill: soft_red, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: red)[AD7606C-18 input])
   )
