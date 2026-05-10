@@ -8,7 +8,6 @@
 #let soft_red = red.transparentize(88%)
 
 == Front-end and ADC compatibility
-
 #grid(
   columns: (0.95fr, 1.05fr),
   gutter: 0.55cm,
@@ -36,31 +35,25 @@
       text(size: 12.5pt, weight: "bold")[MEMS LF/HF output]),
     
     text(size: 12pt, fill: theme_blue)[↓],
-    
-    
+
     rect(width: 82%, radius: 5pt, stroke: green + 0.8pt, fill: soft_green, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: green)[High-impedance buffer / LNA]),
     
     text(size: 12pt, fill: theme_blue)[↓],
-    
-    
+
     rect(width: 82%, radius: 5pt, stroke: orange + 0.8pt, fill: soft_orange, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: orange)[Gain or attenuation]),
     
     text(size: 12pt, fill: theme_blue)[↓],
-    
-    
+
     rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold")[Protection + RC filter]),
     
     text(size: 12pt, fill: theme_blue)[↓],
-    
-    
     rect(width: 82%, radius: 5pt, stroke: red + 0.8pt, fill: soft_red, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: red)[AD7606C-18 input])
   )
 ]
-
       #v(0.18cm)
 
       #rect(
