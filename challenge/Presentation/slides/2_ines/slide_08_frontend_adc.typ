@@ -33,13 +33,15 @@
     text(size: 12pt, fill: theme_blue)[↓],
 
     rect(width: 82%, radius: 5pt, stroke: green + 0.8pt, fill: soft_green, inset: 0.2cm,
+      
       text(size: 12.5pt, weight: "bold", fill: green)[High-impedance buffer / LNA]),
     
+    
     text(size: 12pt, fill: theme_blue)[↓],
-
+    
     rect(width: 82%, radius: 5pt, stroke: orange + 0.8pt, fill: soft_orange, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold", fill: orange)[Gain or attenuation]),
-    
+  
     text(size: 12pt, fill: theme_blue)[↓],
 
     rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
