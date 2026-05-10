@@ -95,9 +95,7 @@
       #align(center)[
         #text(size: 16pt)[$abs(V_"ADC,in") <= V_"ADC,FS"$]
       ]
-
       #v(0cm)
-
     ]
     #v(0cm)
 
