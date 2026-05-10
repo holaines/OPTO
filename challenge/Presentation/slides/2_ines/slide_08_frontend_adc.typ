@@ -11,7 +11,6 @@
 #grid(
   columns: (0.95fr, 1.05fr),
   gutter: 0.55cm,
-
   [
     #rect(
       width: 100%,
@@ -22,14 +21,11 @@
       inset: 0.25cm,
     )[
       #text(size: 18pt, weight: "bold", fill: theme_blue)[Analog front-end]
-
 #v(0.2cm)
-
 #align(center)[
   #stack(
     dir: ttb,
     spacing: 0.1cm, 
-    
     
     rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
       text(size: 12.5pt, weight: "bold")[MEMS LF/HF output]),
