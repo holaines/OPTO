@@ -44,20 +44,24 @@
         )
       ]
     ]
-  ]
+  ],
 )
 
 == Software
 
 // ── colour palette ──
 #let fpga-fill = rgb("#d6e8f0")
-#let pc-fill   = blue.lighten(78%)
-#let out-fill  = rgb("#e3f0d8")
+#let pc-fill = blue.lighten(78%)
+#let out-fill = rgb("#e3f0d8")
 #let ctrl-fill = rgb("#fff4d6")
 
 // ── compact block helpers ──
 #let bk(title, body, fill: pc-fill, w: 2.7cm) = box(
-  width: w, inset: 5pt, stroke: 0.55pt, radius: 3pt, fill: fill,
+  width: w,
+  inset: 5pt,
+  stroke: 0.55pt,
+  radius: 3pt,
+  fill: fill,
 )[
   #align(center + horizon)[
     #text(size: 8pt, weight: "bold")[#title] \
@@ -69,10 +73,7 @@
 #let harr(label: none) = box(width: 0.85cm, height: 0.6cm)[
   #align(center + horizon)[
     #if label != none [
-      #stack(dir: ttb, spacing: 0pt,
-        text(size: 5.5pt)[#label],
-        text(size: 11pt)[→],
-      )
+      #stack(dir: ttb, spacing: 0pt, text(size: 5.5pt)[#label], text(size: 11pt)[→])
     ] else [
       #text(size: 11pt)[→]
     ]
@@ -94,19 +95,18 @@
         align: center + horizon,
 
         // ── Row 1: reception pipeline ──
-        bk([FPGA stream], [160 ch × 18 bit\ framed data], fill: fpga-fill),
+        bk([FPGA stream], [\ 160 ch × 18 bit\ framed data], fill: fpga-fill),
         harr(label: [2.5G ETH]),
-        bk([Packet receiver], [UDP socket\ packet buffering]),
+        bk([Packet receiver], [ \ UDP socket\ packet buffering]),
         harr(),
         bk([Frame parser], [sync word\ header decoding\ payload extract.]),
         harr(),
         bk([Integrity check], [CRC-32\ frame counter\ status flags]),
         harr(),
-        bk([Channel mapper], [LF / HF branch\ zone · sensor idx]),
+        bk([Channel mapper], [\ LF / HF branch\ zone · sensor idx]),
 
         // ── Row 2: arrows down ──
-        [], [], [], [], [], [], [], [],
-        varr,
+        [], [], [], [], [], [], [], [], varr,
 
         // ── Row 3: outputs ──
         bk([Configuration], [start / stop\ sampling rates\ metadata], fill: ctrl-fill),
@@ -121,7 +121,7 @@
         box(width: 0.85cm, height: 0.6cm)[
           #align(center + horizon)[#text(size: 11pt)[←]]
         ],
-        bk([Acquisition buf.], [time-aligned ring\ LF + HF samples]),
+        bk([Acquisition buf.], [\ time-aligned ring\ LF + HF samples]),
       )
     ]
   ],
