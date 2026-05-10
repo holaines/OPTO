@@ -16,7 +16,7 @@
   [
     #rect(
       width: 100%,
-      height: 12cm,
+      height: 9cm,
       radius: 7pt,
       stroke: theme_blue + 1pt,
       fill: light_blue,
