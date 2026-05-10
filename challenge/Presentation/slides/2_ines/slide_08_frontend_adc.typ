@@ -91,11 +91,11 @@
       #text(size: 13pt)[Low SPL signals are very small, while high SPL signals can exceed the ADC range.]
     ]
 
-    #v(0.25cm)
+    #v(0cm)
 
     #rect(
       width: 100%,
-      height: 2.5cm,
+      height: 3cm,
       radius: 7pt,
       stroke: orange + 1pt,
       fill: soft_orange,
@@ -109,12 +109,12 @@
         #text(size: 16pt)[$abs(V_"ADC,in") <= V_"ADC,FS"$]
       ]
 
-      #v(0.08cm)
+      #v(0cm)
 
       
     ]
 
-    #v(0.2cm)
+    #v(0cm)
 
     #rect(
   width: 100%,
