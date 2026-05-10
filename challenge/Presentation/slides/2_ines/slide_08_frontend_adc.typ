@@ -82,7 +82,7 @@
     #v(0cm)
     #rect(
       width: 100%,
-      height: 3cm,
+      height: 2.55cm,
       radius: 7pt,
       stroke: orange + 1pt,
       fill: soft_orange,
