@@ -16,7 +16,7 @@
   [
     #rect(
       width: 100%,
-      height: 7.45cm,
+      height: 12cm,
       radius: 7pt,
       stroke: theme_blue + 1pt,
       fill: light_blue,
@@ -24,72 +24,42 @@
     )[
       #text(size: 18pt, weight: "bold", fill: theme_blue)[Analog front-end]
 
-      #v(0.2cm)
+#v(0.2cm)
 
-      #align(center)[
-        #rect(
-          width: 82%,
-          height: 0.75cm,
-          radius: 5pt,
-          stroke: theme_blue + 0.8pt,
-          fill: white,
-          inset: 0.08cm,
-        )[
-          #align(center + horizon)[#text(size: 12.5pt, weight: "bold")[MEMS LF/HF output]]
-        ]
-
-        #text(size: 12pt, fill: theme_blue)[↓]
-
-        #rect(
-          width: 82%,
-          height: 0.75cm,
-          radius: 5pt,
-          stroke: green + 0.8pt,
-          fill: soft_green,
-          inset: 0.08cm,
-        )[
-          #align(center + horizon)[#text(size: 12.5pt, weight: "bold", fill: green)[High-impedance buffer / LNA]]
-        ]
-
-        #text(size: 12pt, fill: theme_blue)[↓]
-
-        #rect(
-          width: 82%,
-          height: 0.75cm,
-          radius: 5pt,
-          stroke: orange + 0.8pt,
-          fill: soft_orange,
-          inset: 0.08cm,
-        )[
-          #align(center + horizon)[#text(size: 12.5pt, weight: "bold", fill: orange)[Gain or attenuation]]
-        ]
-
-        #text(size: 12pt, fill: theme_blue)[↓]
-
-        #rect(
-          width: 82%,
-          height: 0.75cm,
-          radius: 5pt,
-          stroke: theme_blue + 0.8pt,
-          fill: white,
-          inset: 0.08cm,
-        )[
-          #align(center + horizon)[#text(size: 12.5pt, weight: "bold")[Protection + RC filter]]
-        ]
-
-        #text(size: 12pt, fill: theme_blue)[↓]
-
-        #rect(
-          width: 82%,
-          height: 0.75cm,
-          radius: 5pt,
-          stroke: red + 0.8pt,
-          fill: soft_red,
-          inset: 0.08cm,
-        )[
-          #align(center + horizon)[#text(size: 12.5pt, weight: "bold", fill: red)[AD7606C-18 input]]
-        ]
-      ]
+#align(center)[
+  #stack(
+    dir: ttb,
+    spacing: 0.1cm, // <--- Controla el espacio total entre bloques y flechas
+    
+    // Bloque 1
+    rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
+      text(size: 12.5pt, weight: "bold")[MEMS LF/HF output]),
+    
+    text(size: 12pt, fill: theme_blue)[↓],
+    
+    // Bloque 2
+    rect(width: 82%, radius: 5pt, stroke: green + 0.8pt, fill: soft_green, inset: 0.2cm,
+      text(size: 12.5pt, weight: "bold", fill: green)[High-impedance buffer / LNA]),
+    
+    text(size: 12pt, fill: theme_blue)[↓],
+    
+    // Bloque 3
+    rect(width: 82%, radius: 5pt, stroke: orange + 0.8pt, fill: soft_orange, inset: 0.2cm,
+      text(size: 12.5pt, weight: "bold", fill: orange)[Gain or attenuation]),
+    
+    text(size: 12pt, fill: theme_blue)[↓],
+    
+    // Bloque 4
+    rect(width: 82%, radius: 5pt, stroke: theme_blue + 0.8pt, fill: white, inset: 0.2cm,
+      text(size: 12.5pt, weight: "bold")[Protection + RC filter]),
+    
+    text(size: 12pt, fill: theme_blue)[↓],
+    
+    // Bloque 5
+    rect(width: 82%, radius: 5pt, stroke: red + 0.8pt, fill: soft_red, inset: 0.2cm,
+      text(size: 12.5pt, weight: "bold", fill: red)[AD7606C-18 input])
+  )
+]
 
       #v(0.18cm)
 
@@ -116,7 +86,7 @@
     )[
       #text(size: 17pt, weight: "bold", fill: theme_blue)[Why gain/attenuation?]
 
-      #v(0.08cm)
+      #v(-0.5cm)
 
       #text(size: 13pt)[Low SPL signals are very small, while high SPL signals can exceed the ADC range.]
     ]
@@ -125,7 +95,7 @@
 
     #rect(
       width: 100%,
-      height: 2.25cm,
+      height: 2.5cm,
       radius: 7pt,
       stroke: orange + 1pt,
       fill: soft_orange,
@@ -144,7 +114,7 @@
       #text(size: 12.7pt)[For a ±10 V range, the ADC input must remain between −10 V and +10 V.]
     ]
 
-    #v(0.25cm)
+    #v(0.2cm)
 
     #rect(
       width: 100%,
@@ -156,11 +126,11 @@
     )[
       #text(size: 17pt, weight: "bold", fill: green)[Sampling compatibility]
 
-      #v(0.1cm)
+      #v(0cm)
 
-      #text(size: 13pt)[LF: 50–100 kS/s for signals up to 10 kHz.]
+      #text(size: 12pt)[LF: 50–100 kS/s for signals up to 10 kHz.]
 
-      #v(0.05cm)
+      #v(0cm)
 
       #text(size: 13pt)[HF: 500 kS/s–1 MS/s for signals up to 100 kHz.]
     ]
@@ -176,7 +146,7 @@
       inset: 0.14cm,
     )[
       #align(center + horizon)[
-        #text(size: 12.8pt, weight: "bold", fill: theme_blue)[Final message:]
+        #text(size: 12pt, weight: "bold", fill: theme_blue)[]
         #text(size: 12.8pt)[ ADC channel count is solved, but analog conditioning is still required.]
       ]
     ]
