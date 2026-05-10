@@ -90,9 +90,7 @@
       inset: 0.22cm,
     )[
       #text(size: 17pt, weight: "bold", fill: orange)[Input range rule]
-
       #v(0.12cm)
-
       #align(center)[
         #text(size: 16pt)[$abs(V_"ADC,in") <= V_"ADC,FS"$]
       ]
