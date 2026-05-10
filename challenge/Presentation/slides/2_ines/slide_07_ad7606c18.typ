@@ -113,7 +113,7 @@
         inset: 0.12cm,
       )[
         #align(center + horizon)[
-          #text(size: 13pt)[One device acquires all 8 LF or all 8 HF outputs of one zone.]
+          #text(size: 12pt)[One device acquires all 8 LF or all 8 HF outputs of one zone.]
         ]
       ]
     ]
@@ -130,9 +130,9 @@
     )[
       #text(size: 18pt, weight: "bold", fill: orange)[MUX removal]
 
-      #v(0.13cm)
+      #v(-0.5cm)
 
-      #text(size: 13.6pt)[
+      #text(size: 13pt)[
         The external 8:1 analog multiplexer is removed because each ADC already samples 8 channels simultaneously.
       ]
     ]
@@ -170,14 +170,14 @@
         inset: 0.12cm,
       )[
         #align(center + horizon)[
-          #text(size: 13.2pt, weight: "bold", fill: theme_blue)[The ADC count exactly matches the 160 MEMS analog outputs.]
+          #text(size: 10pt, weight: "bold", fill: theme_blue)[The ADC count exactly matches the 160 MEMS analog outputs.]
         ]
       ]
     ]
   ],
 )
 
-#v(0.30cm)
+#v(0.80cm)
 
 #align(center)[
   #text(size: 13.5pt)[The AD7606C-18 simplifies acquisition while preserving channel-to-channel timing.]
