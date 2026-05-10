@@ -57,7 +57,7 @@
         fill: theme_blue.transparentize(94%),
         inset: 0.14cm,
       )[
-        #text(size: 12pt)[Throughput: `HF 480 Mbit/s + LF 96 Mbit/s = 576 Mbit/s`. `USB 3.0 FIFO` provides enough margin.]
+        #text(size: 12pt)[Throughput: `HF 480 Mbit/s + LF 96 Mbit/s = 576 Mbit/s`.]
       ]
     ]
   ],
