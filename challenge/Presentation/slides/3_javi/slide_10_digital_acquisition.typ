@@ -57,7 +57,7 @@
         fill: theme_blue.transparentize(94%),
         inset: 0.14cm,
       )[
-        #text(size: 12pt)[Throughput: `HF 480 Mbit/s + LF 96 Mbit/s = 576 Mbit/s`.]
+        #text(size: 12pt)[Throughput: `HF 480 Mbit/s + LF 96 Mbit/s = 576 Mbit/s`. Output through #strong[Ethernet].]
       ]
     ]
   ],
