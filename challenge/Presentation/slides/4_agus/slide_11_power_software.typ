@@ -1,4 +1,4 @@
-== Power
+== Power supply
 
 #figure(
   align(center)[
