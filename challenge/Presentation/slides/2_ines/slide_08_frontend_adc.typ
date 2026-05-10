@@ -111,29 +111,28 @@
 
       #v(0.08cm)
 
-      #text(size: 12.7pt)[For a ±10 V range, the ADC input must remain between −10 V and +10 V.]
+      
     ]
 
     #v(0.2cm)
 
     #rect(
-      width: 100%,
-      height: 2.25cm,
-      radius: 7pt,
-      stroke: green + 1pt,
-      fill: soft_green,
-      inset: 0.22cm,
-    )[
-      #text(size: 17pt, weight: "bold", fill: green)[Sampling compatibility]
-
-      #v(0cm)
-
-      #text(size: 12pt)[LF: 50–100 kS/s for signals up to 10 kHz.]
-
-      #v(0cm)
-
-      #text(size: 13pt)[HF: 500 kS/s–1 MS/s for signals up to 100 kHz.]
-    ]
+  width: 100%,
+ height: 2.25cm,  
+  radius: 7pt,
+  stroke: green + 1pt,
+  fill: soft_green,
+  inset: 0.3cm,      // Aumentamos un poco el margen interno para que respire
+)[
+  #stack(
+    spacing: 0.15cm, // Controla exactamente el espacio entre el título y las líneas
+    text(size: 17pt, weight: "bold", fill: green)[Sampling compatibility],
+    
+    text(size: 12pt)[LF: 50–100 kS/s for signals up to 10 kHz.],
+    
+    text(size: 12pt)[HF: 500 kS/s–1 MS/s for signals up to 100 kHz.]
+  )
+]
 
     #v(0.25cm)
 
