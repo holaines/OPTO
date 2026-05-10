@@ -90,9 +90,7 @@
 
       #text(size: 13pt)[Low SPL signals are very small, while high SPL signals can exceed the ADC range.]
     ]
-
     #v(0cm)
-
     #rect(
       width: 100%,
       height: 3cm,
@@ -111,9 +109,7 @@
 
       #v(0cm)
 
-      
     ]
-
     #v(0cm)
 
     #rect(
@@ -133,9 +129,7 @@
     text(size: 12pt)[HF: 500 kS/s–1 MS/s for signals up to 100 kHz.]
   )
 ]
-
     #v(0.25cm)
-
     #rect(
       width: 100%,
       height: 1.1cm,
