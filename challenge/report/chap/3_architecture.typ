@@ -2,7 +2,7 @@
 
 The proposed system is divided into 10 equal zones. Each zone contains 8 MEMS microphones. Since each microphone has two outputs, one for the LF band and one for the HF band, each zone has 16 analog signals.
 
-The two frequency bands are acquired separately. The HF outputs of the 8 microphones are connected to one AD7606C-18, and the LF outputs are connected to another AD7606C-18. In this way, each zone uses two ADCs: one for the 8 HF channels and one for the 8 LF channels.
+The two frequency bands are acquired separately. The HF outputs of the 8 microphones are connected to one AD7606C-18, and the LF outputs are connected to another AD7606C-18. In this way, each zone uses two integrated circuits: one for the 8 HF channels and one for the 8 LF channels.
 
 Before entering the AD7606C-18, the microphone outputs pass through a low-noise amplifier (LNA). After this stage, each AD7606C-18 performs the conversion of the 8 channels of one frequency band.
 
