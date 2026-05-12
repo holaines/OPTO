@@ -544,9 +544,12 @@ A preliminary implementation is:
 #figure(
   diagram-box[
     Analog front-end output \
-    → small series resistor \
-    → optional RC low-pass filter \
-    → AD7606C-18 analog input
+    $arrow.b$ \ 
+    small series resistor \
+    $arrow.b$ \ 
+    optional RC low-pass filter \
+    $arrow.b$ \ 
+    AD7606C-18 analog input
   ],
   caption: [Preliminary protection and input filtering network.]
 )
@@ -571,7 +574,7 @@ The analog component count follows directly from the 10-zone architecture. Each 
     radius: 5pt,
   )[
     #table(
-      columns: (1.3fr, 1fr, 1.3fr, 1.5fr, 1.2fr),
+      columns: (1.1fr, 0.8fr, 1.5fr, 2.1fr, 1.2fr),
       inset: 7pt,
       align: center,
 
