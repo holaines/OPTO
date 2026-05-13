@@ -568,8 +568,6 @@ The cutoff frequency must be chosen above the useful signal bandwidth:
 - LF path: cutoff above 10 kHz.
 - HF path: cutoff above 100 kHz.
 
-The AD7606C-18 already includes an internal analog low-pass filter, so this external RC network is not intended to define the main measurement bandwidth. It is mainly used as protection and high-frequency interference reduction.
-
 This external RC network is not intended to define the measurement bandwidth. Its cutoff frequency must be placed above the useful acoustic band and its main role is to reduce RF interference, limit input current during overload and improve robustness. The main bandwidth limitation is defined by the MEMS response, the analog front-end and the AD7606C-18 internal filter mode.
 
 == Component count
