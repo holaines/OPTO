@@ -1,7 +1,8 @@
 = FPGA and digital acquisition
+
 == Purpose of the digital acquisition stage
 
-The FPGA is the central digital element of the proposed acquisition system. Its function is not only to receive digital data from the ADCs, but to guarantee that the complete 160-channel microphone array is acquired with a common timing reference and that the data are delivered to the host computer in an ordered and lossless way.
+The FPGA is the central digital element of the proposed acquisition system. Its function is not only to receive digital data from the ADCs, but to guarantee that all 160 microphone channels are acquired with a common timing reference and that the data are delivered to the host computer in an ordered and lossless way.
 
 The complete system contains 80 dual-frequency MEMS microphones. Each MEMS provides two analog outputs, one for the low-frequency branch and one for the high-frequency branch. Therefore, the digital acquisition system must handle:
 
@@ -39,7 +40,7 @@ The adopted distribution is the same as in the global architecture:
     ]
   ],
   caption: [Digital acquisition distribution for the 80 dual-frequency MEMS microphones.]
-)<fig:fpga-distribution>
+) <fig:fpga-distribution>
 
 The FPGA must perform the following tasks:
 
@@ -55,6 +56,12 @@ The FPGA must perform the following tasks:
 == Justification of the Artix-7 FPGA
 
 An FPGA is preferred over a microcontroller because this acquisition problem is strongly parallel and timing-critical. A microcontroller would normally control the ADCs sequentially through software instructions, interrupts or DMA transactions. This can introduce variable latency and makes the synchronization of 20 converters more difficult. In contrast, an FPGA implements the control logic as hardware. Therefore, it can generate deterministic timing signals and read several digital interfaces at the same time.
+
+The choice of an FPGA is also directly linked to the functional requirements of this project. The digital subsystem is not required to perform only one task, such as reading ADC samples. It must simultaneously generate branch-specific sampling signals, receive 160 channels from 20 ADCs, verify conversion completion, reconstruct the sample ordering, attach timestamps, buffer the data stream and forward the frames to the communication interface. These operations must remain consistent over long acquisitions and must not depend on software execution order. An FPGA is well suited to this kind of pipeline because each function can be implemented as a dedicated hardware block operating concurrently with the others.
+
+This hardware concurrency is especially useful in the present architecture. The LF and HF branches operate at different sampling rates, but both must remain internally synchronized and traceable to the same FPGA timebase. At the same time, the output interface must transmit a continuous stream of framed data without disturbing the acquisition schedule. The FPGA can separate these functions into timing generation, ADC readout, FIFO buffering and Ethernet packetization blocks. This modular structure makes it easier to guarantee that communication delays or packet scheduling do not affect the actual sampling instants.
+
+Another practical reason for selecting an FPGA is that the design benefits from a large amount of configurable digital I/O placed close to the acquisition logic. The 20 AD7606C-18 devices require many control, status and data signals, and those signals must be handled with predictable timing. A processor-based solution would either require extensive external glue logic or would sacrifice determinism when the interface count becomes too large. The FPGA instead acts as a digital backplane: it concentrates the distributed ADC interfaces into one deterministic, timestamped and communication-ready data stream for the acquisition PC.
 
 The selected FPGA family is Artix-7. It is appropriate for this system for four main reasons.
 
@@ -82,11 +89,11 @@ The selected FPGA family is Artix-7. It is appropriate for this system for four 
     [The FPGA is compatible with the wind-tunnel temperature range provided that the PCB thermal design keeps the junction temperature within limits.],
   ),
   caption: [Reasons for using an Artix-7 FPGA as the digital acquisition core.]
-)<table:artix-justification>
+) <table:artix-justification>
 
 The Artix-7 is therefore selected as the digital timing and concentration device. The exact package must expose enough user I/O pins for the selected ADC interface and for the PC communication interface. For this reason, the final PCB implementation must verify the user I/O count in the Xilinx package and pinout documentation for the selected part, for example XC7A35T-1FTG256I.
 
-This distinction is important: the Artix-7 family is electrically and functionally suitable, but the final package must still be checked against the I/O budget calculated in the FPGA I/O budget section.
+This distinction is important: the Artix-7 family is electrically and functionally suitable, but the final package must still be checked against the I/O budget calculated in @sec:fpga-io-budget.
 
 == ADC digital interface strategy
 
@@ -128,11 +135,12 @@ If only one DOUT line is used, the 144 bits must be shifted sequentially through
     [Fastest readout, but excessive I/O usage for this design. Not selected.],
   ),
   caption: [Comparison of possible AD7606C-18 serial readout widths.]
-)<table:dout-options>
+) <table:dout-options>
 
 The selected configuration is #strong[4 DOUT lines per ADC]. This matches the data-handling architecture and provides enough timing margin for the 256 kS/s HF branch while avoiding the excessive pin usage of the 8-DOUT option.
 
-== FPGA I/O budget 
+== FPGA I/O budget
+<sec:fpga-io-budget>
 
 The I/O budget depends mainly on the number of DOUT lines selected per ADC and on the host communication interface. The following calculation assumes a shared sampling and clocking structure:
 
@@ -193,7 +201,7 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
     [External oscillator, status LEDs, test points, trigger input/output and design margin.],
   ),
   caption: [Estimated FPGA I/O budget for the 4-DOUT-per-ADC and 2.5G Ethernet implementation.]
-)<table:io-budget>
+) <table:io-budget>
 
 The ADC-side I/O count for the selected case is approximately:
 
@@ -235,7 +243,7 @@ The synchronization is achieved by generating CONVST_HF and CONVST_LF from the s
     ]
   ],
   caption: [Timing sequence controlled by the FPGA.]
-)<fig:fpga-timing-sequence>
+) <fig:fpga-timing-sequence>
 
 The physical sampling time is determined by the CONVST edge, not by the later digital readout order. The ADC data can be read after conversion without creating inter-channel sampling delay, as long as all devices in the same branch sampled from the same CONVST event and the frame builder keeps the samples grouped under the same timestamp or sample counter.
 
@@ -277,7 +285,7 @@ The FPGA implements one common ADC acquisition controller and 20 parallel serial
     [Report timeout, FIFO overflow, CRC mismatch or synchronization loss.],
   ),
   caption: [FPGA acquisition controller state machine.]
-)<table:adc-state-machine>
+) <table:adc-state-machine>
 
 The individual serial receivers work in parallel. Each receiver captures the DOUT lines of one ADC and reconstructs the eight 18-bit samples. All receivers are triggered by the same global READ_ADC state, so the 20 ADCs are read in the same readout window.
 
@@ -327,7 +335,7 @@ $ f_"s,HF" = 5 dot f_"s,LF" $
     [Large margin],
   ),
   caption: [Readout timing verification for the selected 4-DOUT configuration.]
-)<table:readout-timing>
+) <table:readout-timing>
 
 This timing calculation justifies the 4-DOUT configuration selected in the data-handling architecture.
 
@@ -335,11 +343,13 @@ This timing calculation justifies the 4-DOUT configuration selected in the data-
 
 The FPGA includes a free-running timestamp counter. A 64-bit counter is proposed because it provides a very long time range even with a high-frequency FPGA system clock.
 
-At every CONVST event, the current counter value is latched and stored as the timestamp of the complete 160-channel frame:
+At every CONVST event, the current counter value is latched and stored as the timestamp of the corresponding acquisition frame:
 
 $ "timestamp"[k] = "counter value at CONVST edge"[k] $
 
 This is preferable to timestamping the data at the end of the readout, because the relevant physical time is the instant at which the analog inputs were sampled.
+
+Because the HF and LF branches operate at different sampling rates, the frame timestamp must identify one acquisition event of one branch. In other words, the FPGA should not label every packet as if it contained one simultaneous 160-channel sample. A practical implementation is to generate branch-tagged frames: HF frames at 256 kS/s and LF frames at 51.2 kS/s, both referenced to the same FPGA counter. If a higher-level superframe is desired, it can be reconstructed later by grouping five consecutive HF frames with one LF frame.
 
 The proposed frame structure is:
 
@@ -360,7 +370,7 @@ The proposed frame structure is:
     [64-bit value captured at the CONVST edge.],
 
     [Mode field],
-    [Sampling mode, LF/HF rate configuration, DOUT mode and ADC configuration version.],
+    [Sampling mode, LF/HF rate configuration, branch identifier, DOUT mode and ADC configuration version.],
 
     [Status flags],
     [BUSY timeout, FIFO overflow, ADC CRC error, synchronization error, reset event.],
@@ -369,13 +379,13 @@ The proposed frame structure is:
     [Number of payload bytes.],
 
     [Payload],
-    [Samples ordered by zone, branch and channel.],
+    [Samples ordered by zone and channel for the branch identified in the header.],
 
     [CRC / checksum],
     [Optional integrity check for the complete frame.],
   ),
   caption: [Proposed digital frame format.]
-)<table:frame-format>
+) <table:frame-format>
 
 The payload is ordered in a deterministic way:
 
@@ -386,22 +396,22 @@ The payload is ordered in a deterministic way:
         columns: (1fr,),
         row-gutter: 4pt,
         align: left,
-        [Zone 0: LF ch0...ch7, HF ch0...ch7],
-        [Zone 1: LF ch0...ch7, HF ch0...ch7],
-        [Zone 2: LF ch0...ch7, HF ch0...ch7],
+        [Zone 0: ch0...ch7],
+        [Zone 1: ch0...ch7],
+        [Zone 2: ch0...ch7],
         [...],
-        [Zone 9: LF ch0...ch7, HF ch0...ch7],
+        [Zone 9: ch0...ch7],
       )
     ]
   ],
-  caption: [Payload organization inside one acquisition frame.]
-)<fig:payload-organization>
+  caption: [Payload organization inside one branch-tagged acquisition frame.]
+) <fig:payload-organization>
 
 The global sensor index can be reconstructed as:
 
 $ "sensor_id" = 8 dot "zone" + "local_channel" $
 
-where $"zone" = 0 ... 9$ and $"local_channel" = 0 ... 7$. The frequency branch is stored separately as LF or HF.
+where $"zone" = 0 ... 9$ and $"local_channel" = 0 ... 7$. The frequency branch is stored separately in the frame header as LF or HF.
 
 == FIFO buffering and clock domains
 
@@ -427,7 +437,7 @@ For this reason, the data path includes a FIFO:
     ]
   ],
   caption: [Internal FPGA data path from ADC readout to the host interface.]
-)<fig:fpga-data-path>
+) <fig:fpga-data-path>
 
 The FIFO has two roles:
 
@@ -486,7 +496,7 @@ This is below the nominal bandwidth of Gigabit Ethernet, but 2.5G Ethernet is se
     [Useful if real-time spectral features are extracted before transmission.],
   ),
   caption: [Estimated payload data rates for 18-bit samples.]
-)<table:data-rates>
+) <table:data-rates>
 
 == Output interface to PC or DAQ
 
@@ -514,7 +524,7 @@ The role of the Ethernet block is not to define the measurement timing. Timing i
     [Less suitable for remote acquisition and less mechanically robust for the target environment.],
   ),
   caption: [Comparison of candidate output interfaces.]
-)<table:output-interface>
+) <table:output-interface>
 
 The selected physical interface is:
 
@@ -554,7 +564,7 @@ The FPGA must include diagnostic logic because this is a large distributed acqui
     [Data integrity check failed, either in ADC communication or in the output stream.],
   ),
   caption: [Diagnostic flags generated by the FPGA acquisition subsystem.]
-)<table:diagnostic-flags>
+) <table:diagnostic-flags>
 
 These flags support system verification and simplify debugging during laboratory tests.
 
@@ -590,7 +600,7 @@ The complete FPGA subsystem is summarized in @fig:fpga-complete.
     ]
   ],
   caption: [Final FPGA-based digital acquisition architecture.]
-)<fig:fpga-complete>
+) <fig:fpga-complete>
 
 The selected architecture satisfies the digital requirements of the project. It provides synchronized LF and HF sampling through FPGA-generated CONVST signals, parallel 4-DOUT readout of the 20 ADCs, deterministic timestamping, ordered frame construction and buffered high-throughput transmission to the host computer through 2.5G Ethernet.
 
