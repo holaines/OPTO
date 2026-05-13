@@ -313,12 +313,12 @@ The LF and HF bands have different bandwidth requirements. Therefore, the two AD
       [LF],
       [Up to 10 kHz],
       [Low-bandwidth mode, 25 kHz],
-      [50 kS/s to 100 kS/s per channel],
+      [51.2 kS/s per channel],
 
       [HF],
       [Up to 100 kHz],
-      [High-bandwidth mode, 220 kHz],
-      [500 kS/s to 1 MS/s per channel],
+      [High-bandwidth mode, −3 dB BW ≈ 220 kHz],
+      [512 kS/s per channel],
     )
   ],
   caption: [Proposed AD7606C-18 configuration for LF and HF acquisition.]
@@ -349,6 +349,7 @@ At 1 MS/s, the number of samples per period at 100 kHz is:
   N = f_s / f_"max" = 1 " MHz" / 100 " kHz" = 10 " samples/period"
   $
 ]
+The high-bandwidth mode of the AD7606C-18 is suitable for acquiring the HF band up to 100 kHz from a Nyquist point of view. However, the 220 kHz value corresponds to the approximate −3 dB bandwidth, not to a perfectly flat passband. Therefore, accurate amplitude and phase measurements near 100 kHz require calibration of the ADC/filter frequency response.
 
 Therefore, the AD7606C-18 is compatible with the HF bandwidth if a maximum of 10 samples per period at 100 kHz is accepted. If the design requirement were 20 samples per period at 100 kHz, the required sampling frequency would be:
 
