@@ -1,3 +1,52 @@
+#let navy = rgb("#17324D")
+#let blue = rgb("#2F6F9F")
+#let light-blue = rgb("#EAF3F8")
+#let pale-blue = rgb("#F6FAFD")
+#let green = rgb("#3A7D44")
+#let light-green = rgb("#ECF7EF")
+#let orange = rgb("#B86B00")
+#let light-orange = rgb("#FFF4E3")
+#let red = rgb("#9B2C2C")
+#let light-red = rgb("#FDECEC")
+#let grey = rgb("#5A5A5A")
+#let light-grey = rgb("#F4F6F8")
+
+#let diagram-box(body) = align(center)[
+  #box(
+    width: 92%,
+    inset: 10pt,
+    stroke: 0.8pt + blue,
+    fill: pale-blue,
+    radius: 6pt,
+  )[
+    #text(font: "Courier", size: 8pt, fill: navy)[#body]
+  ]
+]
+
+#let equation-box(body, color: blue, fill-color: light-blue) = align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + color,
+    fill: fill-color,
+    radius: 5pt,
+  )[
+    #body
+  ]
+]
+
+#let note-box(title, body, color: blue, fill-color: light-blue) = box(
+  width: 100%,
+  inset: 9pt,
+  stroke: 0.7pt + color,
+  fill: fill-color,
+  radius: 5pt,
+)[
+  #text(fill: color, weight: "bold")[#title] \
+  #body
+]
+
+#set heading(numbering: "1.1")
+
 #let pblock(title, body, color: none) = box(
   width: 100%,
   inset: 6pt,
@@ -112,34 +161,44 @@ The input stage adapts the 24 V auxiliary battery or the nominal 28 V aircraft D
 Using the components listed in @table:component_list, the input stage provides robust protection against common electrical faults and transients while generating a protected 7 V intermediate rail for the downstream analog and digital regulators.
 
 #figure(
-  table(
-    columns: (1.4fr, 2.3fr, 2.5fr),
-    fill: (col, row) => { if row == 0 { gray.lighten(50%) } else { if col == 0 { gray.lighten(80%) } } },
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([*Block*], [*Selected components*], [*Function*]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.4fr, 2.3fr, 2.5fr),
+      inset: 7pt,
+      align: left,
 
-    [Primary protection],
-    [F1: Littelfuse 0451010.MRL \
-    D1: Littelfuse SMCJ33A],
-    [Disconnects the board under hard faults and clamps positive input transients before they reach the active protection stage.],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Block]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Selected components]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Function]],
 
-    [Electronic protection],
-    [U1: LTC4368-2 \
-    Q1-Q2: BSC026N08NS5 \
-    Rsense: WSL2512R0100FEA],
-    [Provides reverse-polarity blocking, undervoltage/overvoltage lockout and active overcurrent protection.],
+      [Primary protection],
+      [F1: Littelfuse 0451010.MRL \
+      D1: Littelfuse SMCJ33A],
+      [Disconnects the board under hard faults and clamps positive input transients before they reach the active protection stage.],
 
-    [Input filtering],
-    [L1: TDK ACM7060-301-2PL-TL01 \
-    Cbulk + Cmid + Chf],
-    [Attenuates conducted EMI and provides local input energy storage for the switching regulator.],
+      [Electronic protection],
+      [U1: LTC4368-2 \
+      Q1-Q2: BSC026N08NS5 \
+      Rsense: WSL2512R0100FEA],
+      [Provides reverse-polarity blocking, undervoltage/overvoltage lockout and active overcurrent protection.],
 
-    [Pre-regulation],
-    [U2: LT8645S \
-    L2: Coilcraft XAL7070-472MEC],
-    [Generates the 7 V intermediate rail with high efficiency and enough margin for the downstream 5 V regulators.],
-  ),
+      [Input filtering],
+      [L1: TDK ACM7060-301-2PL-TL01 \
+      Cbulk + Cmid + Chf],
+      [Attenuates conducted EMI and provides local input energy storage for the switching regulator.],
+
+      [Pre-regulation],
+      [U2: LT8645S \
+      L2: Coilcraft XAL7070-472MEC],
+      [Generates the 7 V intermediate rail with high efficiency and enough margin for the downstream 5 V regulators.],
+    )
+  ],
   caption: [Selected components for the input stage blocks.],
 )<table:component_list>
 
@@ -164,25 +223,35 @@ After the protection stage, a conducted EMI filter is placed before the switchin
 The input capacitors provide local energy storage and differential-mode noise reduction. A practical implementation is:
 
 #figure(
-  table(
-    columns: (1.1fr, 2.1fr, 3fr),
-    fill: (col, row) => { if row == 0 { gray.lighten(50%) } else { if col == 0 { gray.lighten(80%) } } },
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([*Component*], [*Proposed value / part*], [*Function*]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.1fr, 2.1fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    [$C_"bulk"$],
-    [Panasonic EEH-ZS1J101P, 100 µF, 63 V],
-    [Low-ESR bulk reservoir. It supports input current transients and reduces low-frequency ripple at the buck input.],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Component]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Proposed value / part]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Function]],
 
-    [$C_"mid"$],
-    [TDK C3216X7R2A105K160AE, 1 µF, 100 V, X7R],
-    [Medium-frequency decoupling close to the buck input and EMI filter output.],
+      [$C_"bulk"$],
+      [Panasonic EEH-ZS1J101P, 100 µF, 63 V],
+      [Low-ESR bulk reservoir. It supports input current transients and reduces low-frequency ripple at the buck input.],
 
-    [$C_"hf"$],
-    [100 nF, 100 V, X7R],
-    [High-frequency bypass placed physically close to the buck converter input pins.],
-  ),
+      [$C_"mid"$],
+      [TDK C3216X7R2A105K160AE, 1 µF, 100 V, X7R],
+      [Medium-frequency decoupling close to the buck input and EMI filter output.],
+
+      [$C_"hf"$],
+      [100 nF, 100 V, X7R],
+      [High-frequency bypass placed physically close to the buck converter input pins.],
+    )
+  ],
   caption: [Input capacitor configuration.],
 )
 
@@ -255,40 +324,53 @@ The FPGA core rails should not be generated using linear regulators from 7 V or 
 
 == Rail summary
 
-#table(
-  columns: (1.2fr, 2.2fr, 2.5fr),
-  fill: (col, row) => { if row == 0 { gray.lighten(50%) } else { if col == 0 { gray.lighten(80%) } } },
-  inset: 6pt,
-  align: left,
-  table.header([*Rail*], [*Main loads*], [*Design notes*]),
+#figure(
+  box(
+    width: 100%,
+    inset: 6pt,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.2fr, 2.2fr, 2.5fr),
+      inset: 7pt,
+      align: left,
 
-  [7 V],
-  [Intermediate bus],
-  [Generated by the main buck converter from 24/28 V. Not used directly for sensitive circuitry.],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Rail]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Main loads]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Design notes]],
 
-  [$+5 V_A$],
-  [AD7606C-18 AVCC, AD8429 positive supply, analog bias],
-  [Low-noise LDO from 7 V. Local filtering per zone. Separated from digital return currents.],
+      [7 V],
+      [Intermediate bus],
+      [Generated by the main buck converter from 24/28 V. Not used directly for sensitive circuitry.],
 
-  [$-5 V_A$],
-  [AD8429 negative supply],
-  [Inverting DC-DC from 7 V. Required only by the bipolar LNA stage. Not connected to the AD7606C-18.],
+      [$+5 V_A$],
+      [AD7606C-18 AVCC, AD8429 positive supply, analog bias],
+      [Low-noise LDO from 7 V. Local filtering per zone. Separated from digital return currents.],
 
-  [$5 V_D$],
-  [Digital pre-regulation rail],
-  [Feeds $3.3 V_D$ and FPGA regulators. Can be generated with a switching regulator.],
+      [$-5 V_A$],
+      [AD8429 negative supply],
+      [Inverting DC-DC from 7 V. Required only by the bipolar LNA stage. Not connected to the AD7606C-18.],
 
-  [$3.3 V_D$],
-  [AD7606C-18 VDRIVE, FPGA I/O],
-  [Must match the selected FPGA I/O voltage.],
+      [$5 V_D$],
+      [Digital pre-regulation rail],
+      [Feeds $3.3 V_D$ and FPGA regulators. Can be generated with a switching regulator.],
 
-  [1.8 V],
-  [FPGA auxiliary supply, optional logic],
-  [Generated according to FPGA requirements.],
+      [$3.3 V_D$],
+      [AD7606C-18 VDRIVE, FPGA I/O],
+      [Must match the selected FPGA I/O voltage.],
 
-  [1.0 V],
-  [FPGA core],
-  [Dedicated high-efficiency buck regulator.],
+      [1.8 V],
+      [FPGA auxiliary supply, optional logic],
+      [Generated according to FPGA requirements.],
+
+      [1.0 V],
+      [FPGA core],
+      [Dedicated high-efficiency buck regulator.],
+    )
+  ],
+  caption: [Summary of the proposed supply rails.],
 )
 
 == Distribution to the acquisition zones
