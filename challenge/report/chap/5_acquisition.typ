@@ -406,6 +406,7 @@ For example, with the ±10 V range, the ADC input must remain inside:
 ]
 
 Therefore, high-SPL signals require analog attenuation before the ADC input.
+The selected ADC input range must be stored as acquisition metadata together with the analog gain or attenuation state, because both values are required to reconstruct the original acoustic pressure from the ADC code.
 
 == Resolution and LSB size
 
@@ -487,6 +488,7 @@ The device also includes per-channel calibration features:
   color: green,
   fill-color: light-green,
 )
+The phase calibration feature is especially important for microphone-array measurements, because relative phase errors between channels directly affect delay estimation, beamforming and spatial reconstruction.
 
 These functions are useful because the complete system contains 160 analog channels, and small mismatches between channels are expected. During calibration, known acoustic or electrical test signals can be applied, and the correction coefficients can be stored in the acquisition software.
 
