@@ -618,7 +618,7 @@ The AD7606C-18 is specified for operation from -40 °C to +125 °C. This is comp
 #note-box(
   [Temperature limitation],
   [
-    However, the flight test requirement includes temperatures down to -65 °C. Therefore, the selected AD7606C-18 does not fully cover the lowest flight-test temperature requirement. This must be stated as a limitation of the preliminary design.
+    However, the flight test requirement includes temperatures down to -65 °C. Therefore, the selected AD7606C-18 does not fully cover the lowest flight-test temperature requirement. This limitation is addressed by adding a heating layer on the PCB design.
 
     The same limitation applies to the proposed AD8429 low-noise amplifier candidate, which is also specified from -40 °C to +125 °C.
   ],
