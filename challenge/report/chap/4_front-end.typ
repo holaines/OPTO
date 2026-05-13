@@ -494,7 +494,11 @@ For this preliminary design, the AD8429 is used as a representative low-noise am
 
 The AD7606C-18 supports several input ranges, including bipolar single-ended ranges of ±12.5 V, ±10 V, ±6.25 V, ±5 V and ±2.5 V, and differential bipolar ranges up to ±20 V.
 
-Because the raw MEMS voltage can reach tens of volts at the maximum SPL, direct connection to the ADC is not acceptable for the full dynamic range. Therefore, the analog front-end must guarantee:
+Because the raw MEMS voltage can reach tens of volts at the maximum SPL, direct connection to the ADC is not acceptable for the full dynamic range.
+
+Although the AD7606C-18 includes analog input clamp protection, this protection must be treated as an overload or transient protection feature, not as a normal operating condition. The analog front-end must ensure that the steady-state ADC input voltage remains inside the selected full-scale input range.
+
+ Therefore, the analog front-end must guarantee:
 
 #align(center)[
   #box(
@@ -510,6 +514,7 @@ Because the raw MEMS voltage can reach tens of volts at the maximum SPL, direct 
 ]
 
 where $V_"ADC,FS"$ is the selected full-scale input range of the AD7606C-18.
+
 
 For example, if the ±10 V single-ended range is selected, the maximum allowed ADC input magnitude is 10 V. The required attenuation at 170 dB SPL is then:
 
@@ -564,6 +569,8 @@ The cutoff frequency must be chosen above the useful signal bandwidth:
 - HF path: cutoff above 100 kHz.
 
 The AD7606C-18 already includes an internal analog low-pass filter, so this external RC network is not intended to define the main measurement bandwidth. It is mainly used as protection and high-frequency interference reduction.
+
+This external RC network is not intended to define the measurement bandwidth. Its cutoff frequency must be placed above the useful acoustic band and its main role is to reduce RF interference, limit input current during overload and improve robustness. The main bandwidth limitation is defined by the MEMS response, the analog front-end and the AD7606C-18 internal filter mode.
 
 == Component count
 
