@@ -342,16 +342,17 @@ However, using a higher sampling frequency improves waveform representation and 
   $
 ]
 
-At 1 MS/s, the number of samples per period at 100 kHz is:
+At the selected HF sampling rate of 512 kS/s, the number of samples per period at 100 kHz is:
 
 #equation-box[
   $
-  N = f_s / f_"max" = 1 " MHz" / 100 " kHz" = 10 " samples/period"
+  N = f_s / f_"max" = 512 " kHz" / 100 " kHz" = 5.12 " samples/period"
   $
 ]
+
 The high-bandwidth mode of the AD7606C-18 is suitable for acquiring the HF band up to 100 kHz from a Nyquist point of view. However, the 220 kHz value corresponds to the approximate −3 dB bandwidth, not to a perfectly flat passband. Therefore, accurate amplitude and phase measurements near 100 kHz require calibration of the ADC/filter frequency response.
 
-Therefore, the AD7606C-18 is compatible with the HF bandwidth if a maximum of 10 samples per period at 100 kHz is accepted. If the design requirement were 20 samples per period at 100 kHz, the required sampling frequency would be:
+Therefore, the selected 512 kS/s sampling rate is compatible with Nyquist-compliant acquisition of the HF band and provides 5.12 samples per period at 100 kHz. If more accurate waveform reconstruction is required, the HF ADCs can be operated closer to the 1 MS/s maximum rate, which would provide 10 samples per period at 100 kHz.
 
 #equation-box[
   $
@@ -659,7 +660,7 @@ The AD7606C-18 is a strong candidate for this project because it integrates 8 si
 
     The use of the AD7606C-18 removes the need for external analog multiplexers because each ADC provides 8 simultaneous sampling channels. This improves timing alignment between microphones and avoids the sampling delay introduced by multiplexed acquisition.
 
-    The LF ADCs can operate at lower sample rates, typically 50 kS/s to 100 kS/s per channel, while the HF ADCs can operate at 500 kS/s to 1 MS/s per channel. At 1 MS/s, the system obtains 10 samples per period at 100 kHz, which is acceptable for Nyquist-compliant acquisition but below a strict 20-samples-per-period criterion.
+   The selected preliminary sampling rates are 51.2 kS/s per channel for the LF ADCs and 512 kS/s per channel for the HF ADCs. The LF rate gives 5.12 samples per period at 10 kHz, while the HF rate gives 5.12 samples per period at 100 kHz. These rates are above the Nyquist limit and keep the data rate manageable. If higher time-domain waveform fidelity is required, the HF ADCs can be operated closer to the 1 MS/s maximum rate of the AD7606C-18, which would provide 10 samples per period at 100 kHz.
 
     The main unresolved issue is not the number of channels but the analog dynamic range. The MEMS outputs can be extremely small at low SPL and too large at high SPL. Therefore, the AD7606C-18 must be used together with a calibrated analog front-end providing low-noise amplification, attenuation, protection and filtering.
   ],
