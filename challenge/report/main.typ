@@ -24,7 +24,10 @@
 )
 
 #outline()
+#pagebreak()
 #outline(title: "Table of Figures", target: figure.where(kind: image))
+#pagebreak()
+#outline(title: "Table of Tables", target: figure.where(kind: table))
 #pagebreak()
 
 #include "chap/1_introduction.typ"
