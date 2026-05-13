@@ -748,21 +748,6 @@ Only lightweight visualization should be performed in real time, such as a small
 
 The proposed storage format is HDF5. It is suitable for long acquisitions because it supports large multidimensional arrays, compression, metadata and hierarchical organization.
 
-A possible file structure is:
-
-```text
-/acquisition/raw/LF
-/acquisition/raw/HF
-/acquisition/time/HF_counter
-/acquisition/time/LF_counter
-/metadata/channel_map
-/metadata/sensor_positions
-/metadata/sampling_rates
-/metadata/adc_configuration
-/metadata/calibration
-/metadata/status_log
-```
-
 === Metadata and calibration data
 
 The metadata must be stored with the raw samples. At minimum, the file should contain the channel map, zone map, LF/HF branch assignment, sampling rates, ADC configuration, gain/range configuration, timestamp origin and calibration constants.
