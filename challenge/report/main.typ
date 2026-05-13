@@ -1,7 +1,7 @@
 #import "lib/style.typ": setup
 #import "cover.typ": cover
 
-#let doc_title = "INSTRUMENTATION WITH MEMS MICROPHONE ARRAYS FOR AERONAUTICAL TESTING"
+#let doc_title = "MEMS microphones arrays for aeronautical testing"
 #let authors_portrait = ("Inés Menchero", "Javier del Río", "Mercedes Ramos", "Rubén Agustín")
 #let authors_header = "Inés Menchero, Javier del Río, Mercedes Ramos, Rubén Agustín"
 #let course = "Electronic instrumentation and optoelectronics"
