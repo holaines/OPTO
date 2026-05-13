@@ -608,6 +608,3 @@ The analog component count follows directly from the 10-zone architecture. Each 
   ],
   caption: [Analog front-end and ADC count per zone and for the full 80-MEMS system.]
 ) <table:component_count_frontend>
-
-
-)
