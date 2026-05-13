@@ -40,3 +40,46 @@
 #include "chap/8_data_handling.typ"
 #include "chap/9_verification.typ"
 #include "chap/10_evaluation.typ"
+
+// ── Annexes: Data-Sheets ──────────────────────────────────────────
+#pagebreak()
+#counter(heading).update(0)
+#set heading(numbering: "A.", supplement: [Annex])
+
+#let embed-datasheet(path, n-pages) = {
+  for i in range(1, n-pages + 1) {
+    image(path, width: 100%, page: i)
+    if i < n-pages { pagebreak() }
+  }
+}
+
+= MEMS Microphone Data-Sheet
+#embed-datasheet("../Data-Sheets/MEMS.pdf", 6)
+
+#pagebreak()
+= LNA Data-Sheet
+#embed-datasheet("../Data-Sheets/LNA.pdf", 20)
+
+#pagebreak()
+= AD7606C-18 ADC Data-Sheet
+#embed-datasheet("../Data-Sheets/ad7606c-18.pdf", 79)
+
+#pagebreak()
+= FPGA Data-Sheet
+#embed-datasheet("../Data-Sheets/FPGA.pdf", 63)
+
+#pagebreak()
+= Input protection
+#embed-datasheet("../Data-Sheets/LTC4368.PDF", 22)
+
+#pagebreak()
+= Buck DC/DC
+#embed-datasheet("../Data-Sheets/LT8645S.PDF", 30)
+
+#pagebreak()
+= Inverting DC/DC
+#embed-datasheet("../Data-Sheets/TPS63710.PDF", 36)
+
+#pagebreak()
+= Alternate inverting DC/DC
+#embed-datasheet("../Data-Sheets/LT3462.PDF", 8)
