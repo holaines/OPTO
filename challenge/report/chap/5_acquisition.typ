@@ -652,20 +652,4 @@ The AD7606C-18 is a strong candidate for this project because it integrates 8 si
   ],
   caption: [Main limitations of the AD7606C-18 acquisition solution.]
 ) <table:adc_limitations>
-
-== Acquisition-stage conclusion
-
-#note-box(
-  [Conclusion],
-  [
-    The proposed acquisition architecture uses two AD7606C-18 devices per zone: one for the 8 LF outputs and one for the 8 HF outputs. Across 10 zones, the full system uses 20 AD7606C-18 devices and acquires 160 analog channels.
-
-    The use of the AD7606C-18 removes the need for external analog multiplexers because each ADC provides 8 simultaneous sampling channels. This improves timing alignment between microphones and avoids the sampling delay introduced by multiplexed acquisition.
-
-   The selected preliminary sampling rates are 51.2 kS/s per channel for the LF ADCs and 512 kS/s per channel for the HF ADCs. The LF rate gives 5.12 samples per period at 10 kHz, while the HF rate gives 5.12 samples per period at 100 kHz. These rates are above the Nyquist limit and keep the data rate manageable. If higher time-domain waveform fidelity is required, the HF ADCs can be operated closer to the 1 MS/s maximum rate of the AD7606C-18, which would provide 10 samples per period at 100 kHz.
-
-    The main unresolved issue is not the number of channels but the analog dynamic range. The MEMS outputs can be extremely small at low SPL and too large at high SPL. Therefore, the AD7606C-18 must be used together with a calibrated analog front-end providing low-noise amplification, attenuation, protection and filtering.
-  ],
-  color: navy,
-  fill-color: light-grey,
 )
