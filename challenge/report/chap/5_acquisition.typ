@@ -663,4 +663,3 @@ The AD7606C-18 is a strong candidate for this project because it integrates 8 si
   ],
   caption: [Main limitations of the AD7606C-18 acquisition solution.]
 ) <table:adc_limitations>
-)
