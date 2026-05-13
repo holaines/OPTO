@@ -606,6 +606,10 @@ The AD7606C-18 is supplied in a 64-lead LQFP package. According to the package o
 
 The AD7606C-18 package is compatible with the 2 mm thickness target of the flexible PCB integration. Since the maximum package height is below 2 mm, the selected ADC does not violate the thickness constraint from the package point of view. However, the final compliance with the 2 mm mechanical requirement must be verified at PCB level, including PCB thickness, solder joint height, decoupling capacitors, reference capacitors, protection components and any connectors placed in the acquisition zone.
 
+#figure(
+  image("../img/layoutimg.png", width: 70%),
+  caption: [AD7606C-18 64-lead LQFP package outline used for preliminary PCB layout considerations.]
+)
 
 == Thermal and operating-temperature compatibility
 
