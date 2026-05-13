@@ -618,7 +618,7 @@ The analog component count follows directly from the 10-zone architecture. Each 
   [
     The proposed analog front-end keeps the LF and HF outputs separated, preserving the dual-frequency behavior of the MEMS microphones. Each zone contains 16 analog paths: 8 LF paths and 8 HF paths. The external analog multiplexer is not used in the final architecture because each AD7606C-18 already acquires 8 channels simultaneously.
 
-    However, the external analog interface is still necessary. The MEMS output spans from microvolts at low SPL to tens of volts at high SPL. Therefore, each channel requires a low-noise buffer/LNA, selectable gain or attenuation, protection and local filtering before the AD7606C-18 input.
+    However, the external analog interface is still necessary. Using a linear extrapolation from the nominal MEMS sensitivity, the MEMS output can range from microvolts at low SPL to tens of volts at high SPL. This does not mean that the sensor is guaranteed to remain linear up to these voltages, but it justifies the need for gain control, attenuation and protection.. Therefore, each channel requires a low-noise buffer/LNA, selectable gain or attenuation, protection and local filtering before the AD7606C-18 input.
 
     The main design limitation is the very wide acoustic dynamic range. The front-end must be calibrated and the selected gain state must be stored with the acquired data so that the acoustic pressure can be reconstructed accurately during post-processing.
   ],
