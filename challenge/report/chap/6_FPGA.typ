@@ -396,15 +396,15 @@ The payload is ordered in a deterministic way:
         columns: (1fr,),
         row-gutter: 4pt,
         align: left,
-        [Zone 0: ch0...ch7],
-        [Zone 1: ch0...ch7],
-        [Zone 2: ch0...ch7],
+        [Zone 0: LF ch0...ch7, HF ch0...ch7],
+        [Zone 1: LF ch0...ch7, HF ch0...ch7],
+        [Zone 2: LF ch0...ch7, HF ch0...ch7],
         [...],
-        [Zone 9: ch0...ch7],
+        [Zone 9: LF ch0...ch7, HF ch0...ch7],
       )
     ]
   ],
-  caption: [Payload organization inside one branch-tagged acquisition frame.]
+  caption: [Payload organization inside one acquisition frame.]
 ) <fig:payload-organization>
 
 The global sensor index can be reconstructed as:
