@@ -39,3 +39,4 @@
 #include "chap/7_power_supply.typ"
 #include "chap/8_data_handling.typ"
 #include "chap/9_verification.typ"
+#include "chap/10_evaluation.typ"
