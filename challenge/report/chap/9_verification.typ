@@ -1,85 +1,18 @@
-#let navy = rgb("#17324D")
-#let blue = rgb("#2F6F9F")
-#let light-blue = rgb("#EAF3F8")
-#let pale-blue = rgb("#F6FAFD")
-#let green = rgb("#3A7D44")
-#let light-green = rgb("#ECF7EF")
-#let orange = rgb("#B86B00")
-#let light-orange = rgb("#FFF4E3")
-#let red = rgb("#9B2C2C")
-#let light-red = rgb("#FDECEC")
-#let grey = rgb("#5A5A5A")
-#let light-grey = rgb("#F4F6F8")
+= Requirement verification and final conclusions
+== Verification of requirements
 
-#let diagram-box(body) = align(center)[
-  #box(
-    width: 92%,
-    inset: 10pt,
-    stroke: 0.8pt + blue,
-    fill: pale-blue,
-    radius: 6pt,
-  )[
-    #text(font: "Courier", size: 8pt, fill: navy)[#body]
-  ]
-]
+The proposed system theoretically satisfies the main requirements of the project. The complete array uses 80 dual-frequency MEMS microphones, so the system must acquire 160 analog signals. This is achieved by dividing the array into 10 equal zones, with 8 MEMS microphones per zone.
 
-#let equation-box(body, color: blue, fill-color: light-blue) = align(center)[
-  #box(
-    inset: 8pt,
-    stroke: 0.7pt + color,
-    fill: fill-color,
-    radius: 5pt,
-  )[
-    #body
-  ]
-]
+Each zone uses two AD7606C-18 integrated circuits: one for the 8 LF outputs and one for the 8 HF outputs. As a result, the complete system uses 20 AD7606C-18 devices. Since each device has 8 simultaneous sampling channels, the 160 outputs can be acquired without external analog multiplexers. The LF and HF branches are kept separated, and the proposed sampling rates are compatible with the required frequency bands.
 
-#let note-box(title, body, color: blue, fill-color: light-blue) = box(
-  width: 100%,
-  inset: 9pt,
-  stroke: 0.7pt + color,
-  fill: fill-color,
-  radius: 5pt,
-)[
-  #text(fill: color, weight: "bold")[#title] \
-  #body
-]
+The power requirement is also considered, because the system can be supplied from a 28 V aircraft bus or from a 24 V battery. The proposed power architecture separates the analog and digital supplies, which is important to reduce noise in the MEMS front-end and ADC stage.
 
-#set heading(numbering: "1.1")
-= Verification of requirements
+The most critical requirement is the wide acoustic dynamic range. For this reason, the AD7606C-18 must be used together with a calibrated analog front-end, including low-noise amplification, gain or attenuation selection, protection and filtering.
 
-== Acquisition-stage conclusion
+== Final conclusions
 
-#note-box(
-  [Conclusion],
-  [
-    The proposed acquisition architecture uses two AD7606C-18 devices per zone: one for the 8 LF outputs and one for the 8 HF outputs. Across 10 zones, the full system uses 20 AD7606C-18 devices and acquires 160 analog channels.
+The AD7606C-18 is one of the key parts of the design. It is not only an ADC, but a complete acquisition block with 8 simultaneous 18-bit channels, programmable input ranges, PGA, filtering and digital interface. This makes the zone-based architecture simpler and avoids the use of external multiplexers.
 
-    The use of the AD7606C-18 removes the need for external analog multiplexers because each ADC provides 8 simultaneous sampling channels. This improves timing alignment between microphones and avoids the sampling delay introduced by multiplexed acquisition.
+The main limitation of the system is the FPGA. It has to control the 20 ADCs, synchronize the acquisition, read the digital data, add timestamps, buffer the stream and send it to the PC. For this reason, the FPGA I/O count, readout timing and output data rate are the main bottlenecks of the design.
 
-    The selected preliminary sampling rates are 51.2 kS/s per channel for the LF ADCs and 512 kS/s per channel for the HF ADCs. The LF rate gives 5.12 samples per period at 10 kHz, while the HF rate gives 5.12 samples per period at 100 kHz. These rates are above the Nyquist limit and keep the data rate manageable. If higher time-domain waveform fidelity is required, the HF ADCs can be operated closer to the 1 MS/s maximum rate of the AD7606C-18, which would provide 10 samples per period at 100 kHz.
-
-    The main unresolved issue is not the number of channels but the analog dynamic range. The MEMS outputs can be extremely small at low SPL and too large at high SPL. Therefore, the AD7606C-18 must be used together with a calibrated analog front-end providing low-noise amplification, attenuation, protection and filtering.
-  ],
-  color: navy,
-  fill-color: light-grey,
-)
-
-== Analog front-end conclusion
-
-#note-box(
-  [Conclusion],
-  [
-    The proposed analog front-end keeps the LF and HF outputs separated, preserving the dual-frequency behavior of the MEMS microphones. Each zone contains 16 analog paths: 8 LF paths and 8 HF paths. The external analog multiplexer is not used in the final architecture because each AD7606C-18 already acquires 8 channels simultaneously.
-
-    However, the external analog interface is still necessary. Using a linear extrapolation from the nominal MEMS sensitivity, the MEMS output can range from microvolts at low SPL to tens of volts at high SPL. This does not mean that the sensor is guaranteed to remain linear up to these voltages, but it justifies the need for gain control, attenuation and protection. Therefore, each channel requires a low-noise buffer/LNA, selectable gain or attenuation, protection and local filtering before the AD7606C-18 input.
-
-    The main design limitation is the very wide acoustic dynamic range. The front-end must be calibrated and the selected gain state must be stored with the acquired data so that the acoustic pressure can be reconstructed accurately during post-processing.
-  ],
-  color: navy,
-  fill-color: light-grey,
-
-  
-)
-
-At system level, the use of 20 AD7606C-18 devices means that the physical layout is not only an electrical problem but also an integration constraint. The final PCB must allocate space for the ADCs, the analog front-end, local filtering, decoupling, connectors and routing between the 10 acquisition zones and the FPGA.dd
+In summary, the proposed architecture is coherent with the project requirements. The design provides a modular solution for acquiring the 160 MEMS outputs using 10 acquisition zones, simultaneous ADC sampling and centralized FPGA control. However, since this is a preliminary design, the final performance should be verified experimentally, especially the analog dynamic range, the FPGA pin and data-rate margin, and the physical integration of the 20 AD7606C-18 devices on the PCB.
