@@ -1,3 +1,16 @@
+#let navy = rgb("#17324D")
+#let blue = rgb("#2F6F9F")
+#let light-blue = rgb("#EAF3F8")
+#let pale-blue = rgb("#F6FAFD")
+#let green = rgb("#3A7D44")
+#let light-green = rgb("#ECF7EF")
+#let orange = rgb("#B86B00")
+#let light-orange = rgb("#FFF4E3")
+#let red = rgb("#9B2C2C")
+#let light-red = rgb("#FDECEC")
+#let grey = rgb("#5A5A5A")
+#let light-grey = rgb("#F4F6F8")
+
 = FPGA and digital acquisition
 
 == Purpose of the digital acquisition stage
@@ -16,7 +29,7 @@ The adopted distribution is the same as in the global architecture:
 
 #figure(
   align(center)[
-    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt)[
+    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(90%))[
       #grid(
         columns: (1fr,),
         row-gutter: 7pt,
@@ -30,8 +43,8 @@ The adopted distribution is the same as in the global architecture:
             columns: (1fr, 1fr),
             column-gutter: 20pt,
             align: center,
-            [#box(inset: 6pt, stroke: 0.7pt, radius: 4pt)[8 LF outputs \ $arrow.r$ \ 1 AD7606C-18]],
-            [#box(inset: 6pt, stroke: 0.7pt, radius: 4pt)[8 HF outputs \ $arrow.r$ \ 1 AD7606C-18]],
+            [#box(inset: 6pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[8 LF outputs \ $arrow.b$ \ 1 AD7606C-18]],
+            [#box(inset: 6pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[8 HF outputs \ $arrow.b$ \ 1 AD7606C-18]],
           )
         ],
         [$arrow.b$],
@@ -66,28 +79,39 @@ Another practical reason for selecting an FPGA is that the design benefits from 
 The selected FPGA family is Artix-7. It is appropriate for this system for four main reasons.
 
 #figure(
-  table(
-    columns: (1.4fr, 2.3fr, 3.2fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Criterion], [Relevant Artix-7 characteristic], [Impact on this project]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (2fr, 3fr, 3.2fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { navy } },
+      align: left,
+      table.header(
+        text(fill: white)[*Criterion*],
+        text(fill: white)[*Relevant Artix-7 characteristic*], 
+        text(fill: white)[*Impact on this project*]),
 
-    [Deterministic timing],
-    [Hardware logic, clocked counters, state machines and parallel I/O.],
-    [The sampling pulse, ADC readout sequence and timestamp generation are not affected by software latency.],
+      [Deterministic timing],
+      [Hardware logic, clocked counters, state machines and parallel I/O.],
+      [The sampling pulse, ADC readout sequence and timestamp generation are not affected by software latency.],
 
-    [Parallel acquisition],
-    [Many user I/O pins and configurable SelectIO banks.],
-    [The FPGA can read the digital outputs of the 20 ADCs in parallel instead of polling them one by one.],
+      [Parallel acquisition],
+      [Many user I/O pins and configurable SelectIO banks.],
+      [The FPGA can read the digital outputs of the 20 ADCs in parallel instead of polling them one by one.],
 
-    [Electrical compatibility],
-    [HR I/O banks can operate with several VCCO levels, including common 1.8 V, 2.5 V and 3.3 V logic families.],
-    [The AD7606C-18 VDRIVE supply can be matched to the FPGA I/O bank voltage, avoiding level translators.],
+      [Electrical compatibility],
+      [HR I/O banks can operate with several VCCO levels, including common 1.8 V, 2.5 V and 3.3 V logic families.],
+      [The AD7606C-18 VDRIVE supply can be matched to the FPGA I/O bank voltage, avoiding level translators.],
 
-    [Environmental margin],
-    [Industrial versions support junction temperatures down to -40 °C and up to 100 °C; other grades extend this range.],
-    [The FPGA is compatible with the wind-tunnel temperature range provided that the PCB thermal design keeps the junction temperature within limits.],
-  ),
+      [Environmental margin],
+      [Industrial versions support junction temperatures down to -40 °C and up to 100 °C; other grades extend this range.],
+      [The FPGA is compatible with the wind-tunnel temperature range provided that the PCB thermal design keeps the junction temperature within limits.],
+  )],
   caption: [Reasons for using an Artix-7 FPGA as the digital acquisition core.]
 ) <table:artix-justification>
 
@@ -108,32 +132,44 @@ $ 8 " channels" dot 18 " bits/channel" = 144 " bits" $
 If only one DOUT line is used, the 144 bits must be shifted sequentially through that single line. If two DOUT lines are used, the data are divided between two outputs. If four DOUT lines are used, the transfer is divided between four outputs. Therefore, using more DOUT lines reduces the readout time but increases the number of FPGA pins.
 
 #figure(
-  table(
-    columns: (1.1fr, 1.2fr, 1.4fr, 2.8fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([DOUT per ADC], [ADC DOUT pins for 20 ADCs], [SCLK cycles per ADC frame], [Comment]),
+    stroke: 0.7pt + green,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (0.8fr, 1.5fr, 1.5fr, 2.8fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { green }},
+      align: left,
+      table.header(
+        text(fill: white)[*DOUT per ADC*],
+        text(fill: white)[*ADC DOUT pins for 20 ADCs*],
+        text(fill: white)[*SCLK cycles per ADC frame*],
+        text(fill: white)[*Comment*]),
 
-    [1],
-    [$20 dot 1 = 20$],
-    [$144$],
-    [Minimum number of pins, but longest readout time. Useful only if the sampling frequency is relaxed.],
+      [1],
+      [$20 dot 1 = 20$],
+      [$144$],
+      [Minimum number of pins, but longest readout time. Useful only if the sampling frequency is relaxed.],
 
-    [2],
-    [$20 dot 2 = 40$],
-    [$72$],
-    [Lower pin count, but lower timing margin.],
+      [2],
+      [$20 dot 2 = 40$],
+      [$72$],
+      [Lower pin count, but lower timing margin.],
 
-    [4],
-    [$20 dot 4 = 80$],
-    [$36$],
-    [Selected configuration. It provides larger timing margin while keeping the I/O count acceptable.],
+      [4],
+      [$20 dot 4 = 80$],
+      [$36$],
+      [Selected configuration. It provides larger timing margin while keeping the I/O count acceptable.],
 
-    [8],
-    [$20 dot 8 = 160$],
-    [$18$],
-    [Fastest readout, but excessive I/O usage for this design. Not selected.],
-  ),
+      [8],
+      [$20 dot 8 = 160$],
+      [$18$],
+      [Fastest readout, but excessive I/O usage for this design. Not selected.],
+  )],
   caption: [Comparison of possible AD7606C-18 serial readout widths.]
 ) <table:dout-options>
 
@@ -154,52 +190,63 @@ The I/O budget depends mainly on the number of DOUT lines selected per ADC and o
 - Additional FPGA pins for the 2.5G Ethernet PHY, external trigger, clocks and debug.
 
 #figure(
-  table(
-    columns: (1.8fr, 1.1fr, 3.6fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Signal group], [Pins], [Purpose]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.8fr, 1.1fr, 3.6fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { navy }},
+      align: left,
+      table.header(
+        text(fill: white)[*Signal group*],
+        text(fill: white)[*Pins*],
+        text(fill: white)[*Purpose*]),
 
-    [CONVST_LF / CONVST_HF],
-    [2],
-    [Synchronized conversion-start signals for the LF and HF ADC groups.],
+      [CONVST_LF \ CONVST_HF],
+      [2],
+      [Synchronized conversion-start signals for the LF and HF ADC groups.],
 
-    [RESET],
-    [1],
-    [Global reset for the 20 ADCs.],
+      [RESET],
+      [1],
+      [Global reset for the 20 ADCs.],
 
-    [SCLK],
-    [1],
-    [Common serial readout clock.],
+      [SCLK],
+      [1],
+      [Common serial readout clock.],
 
-    [SDI / MOSI],
-    [1],
-    [Configuration data from FPGA to selected ADC.],
+      [SDI / MOSI],
+      [1],
+      [Configuration data from FPGA to selected ADC.],
 
-    [CS],
-    [20],
-    [Individual chip-select signals. They allow independent configuration and diagnosis.],
+      [CS],
+      [20],
+      [Individual chip-select signals. They allow independent configuration and diagnosis.],
 
-    [BUSY],
-    [20],
-    [Individual conversion-busy signals. They allow the FPGA to verify that every ADC completed the conversion.],
+      [BUSY],
+      [20],
+      [Individual conversion-busy signals. They allow the FPGA to verify that every ADC completed the conversion.],
 
-    [DOUT],
-    [$20 dot 4 = 80$],
-    [Four serial data outputs per ADC, read in parallel by the FPGA.],
+      [DOUT],
+      [$20 dot 4 = 80$],
+      [Four serial data outputs per ADC, read in parallel by the FPGA.],
 
-    [Static or semi-static configuration pins],
-    [5--8],
-    [PAR/SER, oversampling pins, range-related pins and mode pins. Some can be fixed by hardware.],
+      [Static or semi-static configuration pins],
+      [5--8],
+      [PAR/SER, oversampling pins, range-related pins and mode pins. Some can be fixed by hardware.],
 
-    [2.5G Ethernet PHY interface],
-    [15--25],
-    [RGMII/SGMII-related signals, MDIO/MDC, reset, interrupts and clocking, depending on the selected PHY.],
+      [2.5G Ethernet PHY interface],
+      [15--25],
+      [RGMII/SGMII-related signals, MDIO/MDC, reset, interrupts and clocking, depending on the selected PHY.],
 
-    [Clocks, debug and spare pins],
-    [10--15],
-    [External oscillator, status LEDs, test points, trigger input/output and design margin.],
-  ),
+      [Clocks, debug and spare pins],
+      [10--15],
+      [External oscillator, status LEDs, test points, trigger input/output and design margin.],
+    )],
   caption: [Estimated FPGA I/O budget for the 4-DOUT-per-ADC and 2.5G Ethernet implementation.]
 ) <table:io-budget>
 
@@ -221,7 +268,7 @@ The synchronization is achieved by generating CONVST_HF and CONVST_LF from the s
 
 #figure(
   align(center)[
-    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt)[
+    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(90%))[
       #grid(
         columns: (1fr,),
         row-gutter: 6pt,
@@ -254,36 +301,46 @@ To improve robustness, the FPGA monitors the BUSY signals. If one ADC does not r
 The FPGA implements one common ADC acquisition controller and 20 parallel serial receivers. The high-level state machine is:
 
 #figure(
-  table(
-    columns: (1.2fr, 4.5fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([State], [Function]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.5fr, 4.5fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { navy } },
+      align: left,
+      table.header(
+        text(fill: white)[*State*],
+        text(fill: white)[*Function*]),
 
-    [IDLE],
-    [Wait until the next sampling tick generated from the FPGA sampling timer.],
+      [IDLE],
+      [Wait until the next sampling tick generated from the FPGA sampling timer.],
 
-    [START_CONVERSION],
-    [Generate CONVST_HF or CONVST_LF and capture the timestamp counter.],
+      [START_CONVERSION],
+      [Generate CONVST_HF or CONVST_LF and capture the timestamp counter.],
 
-    [WAIT_BUSY],
-    [Wait until all BUSY signals return to low. If a timeout occurs, set an ADC error flag.],
+      [WAIT_BUSY],
+      [Wait until all BUSY signals return to low. If a timeout occurs, set an ADC error flag.],
 
-    [READ_ADC],
-    [Generate SCLK and capture the DOUT streams from the 20 ADCs in parallel.],
+      [READ_ADC],
+      [Generate SCLK and capture the DOUT streams from the 20 ADCs in parallel.],
 
-    [ALIGN_SAMPLES],
-    [Reconstruct 18-bit samples and assign them to zone, branch and channel indices.],
+      [ALIGN_SAMPLES],
+      [Reconstruct 18-bit samples and assign them to zone, branch and channel indices.],
 
-    [BUILD_FRAME],
-    [Add header, frame counter, timestamp, status flags and payload length.],
+      [BUILD_FRAME],
+      [Add header, frame counter, timestamp, status flags and payload length.],
 
-    [WRITE_FIFO],
-    [Write the complete frame into the asynchronous FIFO when there is enough space.],
+      [WRITE_FIFO],
+      [Write the complete frame into the asynchronous FIFO when there is enough space.],
 
-    [ERROR],
-    [Report timeout, FIFO overflow, CRC mismatch or synchronization loss.],
-  ),
+      [ERROR],
+      [Report timeout, FIFO overflow, CRC mismatch or synchronization loss.],
+    )],
   caption: [FPGA acquisition controller state machine.]
 ) <table:adc-state-machine>
 
@@ -316,11 +373,24 @@ This gives even more timing margin. The selected rates satisfy:
 $ f_"s,HF" = 5 dot f_"s,LF" $
 
 #figure(
-  table(
+  box(
+    width: 100%,
+    inset: 6pt,
+    stroke: 0.7pt + green,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    #table(
     columns: (1.4fr, 1.2fr, 1.4fr, 1.5fr, 1.5fr),
     inset: 6pt,
+    fill: (col, row) => { if row == 0 { green }},
     align: left,
-    table.header([Branch], [Selected $f_s$], [Sampling period], [4-DOUT readout], [Timing margin]),
+    table.header(
+      text(fill: white)[*Branch*],
+      text(fill: white)[*Selected $f_s$*],
+      text(fill: white)[*Sampling period*],
+      text(fill: white)[*4-DOUT readout*],
+      text(fill: white)[*Timing margin*]),
 
     [HF],
     [256 kS/s],
@@ -333,7 +403,7 @@ $ f_"s,HF" = 5 dot f_"s,LF" $
     [19.531 µs],
     [0.6 µs],
     [Large margin],
-  ),
+  )],
   caption: [Readout timing verification for the selected 4-DOUT configuration.]
 ) <table:readout-timing>
 
@@ -354,36 +424,46 @@ Because the HF and LF branches operate at different sampling rates, the frame ti
 The proposed frame structure is:
 
 #figure(
-  table(
-    columns: (1.4fr, 4.2fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Field], [Content]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.4fr, 4.2fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { navy } },
+      align: left,
+      table.header(
+        text(fill: white)[*Field*],
+        text(fill: white)[*Content*]),
 
-    [Sync word],
-    [Fixed pattern used by the PC software to find the beginning of each frame.],
+      [Sync word],
+      [Fixed pattern used by the PC software to find the beginning of each frame.],
 
-    [Frame counter],
-    [Incremented at every acquisition. It allows detection of lost frames.],
+      [Frame counter],
+      [Incremented at every acquisition. It allows detection of lost frames.],
 
-    [Timestamp],
-    [64-bit value captured at the CONVST edge.],
+      [Timestamp],
+      [64-bit value captured at the CONVST edge.],
 
-    [Mode field],
-    [Sampling mode, LF/HF rate configuration, branch identifier, DOUT mode and ADC configuration version.],
+      [Mode field],
+      [Sampling mode, LF/HF rate configuration, branch identifier, DOUT mode and ADC configuration version.],
 
-    [Status flags],
-    [BUSY timeout, FIFO overflow, ADC CRC error, synchronization error, reset event.],
+      [Status flags],
+      [BUSY timeout, FIFO overflow, ADC CRC error, synchronization error, reset event.],
 
-    [Payload length],
-    [Number of payload bytes.],
+      [Payload length],
+      [Number of payload bytes.],
 
-    [Payload],
-    [Samples ordered by zone and channel for the branch identified in the header.],
+      [Payload],
+      [Samples ordered by zone and channel for the branch identified in the header.],
 
-    [CRC / checksum],
-    [Optional integrity check for the complete frame.],
-  ),
+      [CRC / checksum],
+      [Optional integrity check for the complete frame.],
+  )],
   caption: [Proposed digital frame format.]
 ) <table:frame-format>
 
@@ -421,18 +501,18 @@ For this reason, the data path includes a FIFO:
 
 #figure(
   align(center)[
-    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt)[
+    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(90%))[
       #grid(
         columns: (1.2fr, 0.25fr, 1.2fr, 0.25fr, 1.2fr, 0.25fr, 1.2fr),
         column-gutter: 4pt,
         align: horizon,
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[ADC receivers]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[ADC receivers]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[Frame builder]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[Frame builder]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[Asynchronous FIFO]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[Asynchronous FIFO]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[2.5G Ethernet packetizer]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[2.5G Ethernet packetizer]],
       )
     ]
   ],
@@ -474,27 +554,39 @@ $ R_"design" approx 1.25 dot 442.3 " Mbit/s" approx 553 " Mbit/s" $
 This is below the nominal bandwidth of Gigabit Ethernet, but 2.5G Ethernet is selected to provide additional implementation margin, support robust industrial cabling and leave room for metadata, control traffic and future extensions.
 
 #figure(
-  table(
-    columns: (1.7fr, 1.7fr, 1.7fr, 2.7fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Acquisition mode], [Payload rate], [Interface margin], [Comment]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.7fr, 1.7fr, 1.7fr, 2.7fr),
+      fill: (col, row) => { if row == 0 { navy }},
+      inset: 6pt,
+      align: left,
+      table.header(
+        text(fill: white)[*Acquisition mode*],
+        text(fill: white)[*Payload rate*],
+        text(fill: white)[*Interface margin*],
+        text(fill: white)[*Comment*]),
 
-    [HF 256 kS/s + LF 51.2 kS/s, 18-bit samples],
-    [442.3 Mbit/s],
-    [High with 2.5G Ethernet],
-    [Selected operating mode.],
+      [HF 256 kS/s + LF 51.2 kS/s, 18-bit samples],
+      [442.3 Mbit/s],
+      [High with 2.5G Ethernet],
+      [Selected operating mode.],
 
-    [Same mode with 25 % overhead margin],
-    [≈553 Mbit/s],
-    [Comfortable with 2.5G Ethernet],
-    [Leaves margin for framing, status and control traffic.],
+      [Same mode with 25 % overhead margin],
+      [≈553 Mbit/s],
+      [Comfortable with 2.5G Ethernet],
+      [Leaves margin for framing, status and control traffic.],
 
-    [HF/LF with decimation in FPGA],
-    [Lower],
-    [High],
-    [Useful if real-time spectral features are extracted before transmission.],
-  ),
+      [HF/LF with decimation in FPGA],
+      [Lower],
+      [High],
+      [Useful if real-time spectral features are extracted before transmission.],
+  )],
   caption: [Estimated payload data rates for 18-bit samples.]
 ) <table:data-rates>
 
@@ -505,24 +597,35 @@ The selected primary output interface is #strong[2.5G Ethernet]. It provides mor
 The role of the Ethernet block is not to define the measurement timing. Timing is defined internally by the FPGA and the CONVST signals. The communication interface only transports completed frames from the FIFO to the acquisition PC.
 
 #figure(
-  table(
-    columns: (1.2fr, 2.4fr, 2.4fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Interface], [Advantages], [Limitations]),
+    stroke: 0.7pt + navy,
+    fill: light-green,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.2fr, 2.4fr, 2.4fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { green }},
+      align: left,
+      table.header(
+        text(fill: white)[*Interface*],
+        text(fill: white)[*Advantages*],
+        text(fill: white)[*Limitations*]),
 
-    [1G Ethernet],
-    [Long cable length, standard networking and robust connector options.],
-    [Lower implementation margin for continuous acquisition and future extensions.],
+      [1G Ethernet],
+      [Long cable length, standard networking and robust connector options.],
+      [Lower implementation margin for continuous acquisition and future extensions.],
 
-    [2.5G Ethernet],
-    [Selected option. Provides sufficient bandwidth margin while keeping FPGA and PHY complexity moderate.],
-    [Requires a 2.5G-capable PHY, PCB routing discipline and compatible PC/network interface.],
+      [2.5G Ethernet],
+      [Selected option. Provides sufficient bandwidth margin while keeping FPGA and PHY complexity moderate.],
+      [Requires a 2.5G-capable PHY, PCB routing discipline and compatible PC/network interface.],
 
-    [USB 3.0 FIFO],
-    [High practical throughput and simple laboratory connection.],
-    [Less suitable for remote acquisition and less mechanically robust for the target environment.],
-  ),
+      [USB 3.0 FIFO],
+      [High practical throughput and simple laboratory connection.],
+      [Less suitable for remote acquisition and less mechanically robust for the target environment.],
+  )],
   caption: [Comparison of candidate output interfaces.]
 ) <table:output-interface>
 
@@ -539,30 +642,40 @@ Raw acquisition data are streamed using UDP packets. Configuration and status co
 The FPGA must include diagnostic logic because this is a large distributed acquisition system. With 20 ADCs, a single failing link should not invalidate the complete design silently. The following diagnostic flags are included in the frame header:
 
 #figure(
-  table(
-    columns: (1.7fr, 3.7fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    table.header([Flag], [Meaning]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.7fr, 3.7fr),
+      inset: 6pt,
+      fill: (col, row) => { if row == 0 { navy } },
+      align: left,
+      table.header(
+        text(fill: white)[*Flag*],
+        text(fill: white)[*Meaning*]),
 
-    [ADC_BUSY_TIMEOUT],
-    [At least one ADC did not finish conversion in the expected time.],
+      [ADC_BUSY_TIMEOUT],
+      [At least one ADC did not finish conversion in the expected time.],
 
-    [ADC_SYNC_ERROR],
-    [BUSY or frame timing differs from the expected synchronized sequence.],
+      [ADC_SYNC_ERROR],
+      [BUSY or frame timing differs from the expected synchronized sequence.],
 
-    [FIFO_ALMOST_FULL],
-    [The communication interface is not emptying the FIFO fast enough.],
+      [FIFO_ALMOST_FULL],
+      [The communication interface is not emptying the FIFO fast enough.],
 
-    [FIFO_OVERFLOW],
-    [At least one frame was lost because the FIFO was full.],
+      [FIFO_OVERFLOW],
+      [At least one frame was lost because the FIFO was full.],
 
-    [FRAME_COUNTER_GAP],
-    [Detected by the PC when frame counters are not consecutive.],
+      [FRAME_COUNTER_GAP],
+      [Detected by the PC when frame counters are not consecutive.],
 
-    [CRC_ERROR],
-    [Data integrity check failed, either in ADC communication or in the output stream.],
-  ),
+      [CRC_ERROR],
+      [Data integrity check failed, either in ADC communication or in the output stream.],
+  )],
   caption: [Diagnostic flags generated by the FPGA acquisition subsystem.]
 ) <table:diagnostic-flags>
 
@@ -574,23 +687,23 @@ The complete FPGA subsystem is summarized in @fig:fpga-complete.
 
 #figure(
   align(center)[
-    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt)[
+    #box(inset: 8pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(90%))[
       #grid(
         columns: (1fr, 0.2fr, 1.2fr, 0.2fr, 1fr),
         column-gutter: 5pt,
         row-gutter: 8pt,
         align: center,
 
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[20 AD7606C-18 \ 4 DOUT/ADC]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[20 AD7606C-18 \ 4 DOUT/ADC]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[Artix-7 FPGA \ timing + capture + frame builder]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[Artix-7 FPGA \ timing + capture + frame builder]],
         [$arrow.r$],
-        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[2.5G Ethernet PHY \ M12 X-coded connector]],
+        [#box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[2.5G Ethernet PHY \ M12 X-coded connector]],
 
         [],
         [],
         [
-          #box(inset: 5pt, stroke: 0.7pt, radius: 4pt)[
+          #box(inset: 5pt, stroke: 0.7pt, radius: 4pt, fill: blue.lighten(75%))[
             CONVST_LF/HF generator \ ADC controller \ timestamp counter \ 4-DOUT serial receivers \ FIFO \ UDP packetizer \ diagnostics
           ]
         ],
