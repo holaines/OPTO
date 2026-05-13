@@ -6,4 +6,4 @@ The complete array has 80 MEMS microphones. Each microphone has two outputs: one
 
 To make the design easier, the array is divided into 10 zones. Each zone with 8 MEMS microphones and the electronics needed to acquire both frequency bands.
 
-The main parts of the system are the analog front-end, the AD7606C-18 ADCs, the Artix-7 FPGA, the power supply stage and the software used to store and visualize the data.
+The main parts of the system are the analog front-end, the AD7606C-18 integrated circuit, the Artix-7 FPGA, the power supply stage and the software used to store and visualize the data.
