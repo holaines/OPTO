@@ -637,8 +637,8 @@ The AD7606C-18 is a strong candidate for this project because it integrates 8 si
       table.cell(fill: red)[#text(fill: white, weight: "bold")[Limitation]],
       table.cell(fill: red)[#text(fill: white, weight: "bold")[Impact on the design]],
 
-      [1 MS/s maximum per channel],
-      [Valid for 100 kHz acquisition with 10 samples per period, but not enough for a strict 20 samples per period at 100 kHz.],
+      [Sampling-rate margin],
+      [The selected 512 kS/s HF rate gives 5.12 samples per period at 100 kHz. The ADC can operate up to 1 MS/s per channel, giving 10 samples per period, but it cannot meet a strict 20-samples-per-period requirement at 100 kHz.]
 
       [-40 °C minimum operating temperature],
       [Compatible with WTT, but not fully compatible with the -65 °C FT requirement.],
