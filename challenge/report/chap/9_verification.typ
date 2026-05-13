@@ -1,3 +1,51 @@
+#let navy = rgb("#17324D")
+#let blue = rgb("#2F6F9F")
+#let light-blue = rgb("#EAF3F8")
+#let pale-blue = rgb("#F6FAFD")
+#let green = rgb("#3A7D44")
+#let light-green = rgb("#ECF7EF")
+#let orange = rgb("#B86B00")
+#let light-orange = rgb("#FFF4E3")
+#let red = rgb("#9B2C2C")
+#let light-red = rgb("#FDECEC")
+#let grey = rgb("#5A5A5A")
+#let light-grey = rgb("#F4F6F8")
+
+#let diagram-box(body) = align(center)[
+  #box(
+    width: 92%,
+    inset: 10pt,
+    stroke: 0.8pt + blue,
+    fill: pale-blue,
+    radius: 6pt,
+  )[
+    #text(font: "Courier", size: 8pt, fill: navy)[#body]
+  ]
+]
+
+#let equation-box(body, color: blue, fill-color: light-blue) = align(center)[
+  #box(
+    inset: 8pt,
+    stroke: 0.7pt + color,
+    fill: fill-color,
+    radius: 5pt,
+  )[
+    #body
+  ]
+]
+
+#let note-box(title, body, color: blue, fill-color: light-blue) = box(
+  width: 100%,
+  inset: 9pt,
+  stroke: 0.7pt + color,
+  fill: fill-color,
+  radius: 5pt,
+)[
+  #text(fill: color, weight: "bold")[#title] \
+  #body
+]
+
+#set heading(numbering: "1.1")
 = Verification of requirements
 
 == Acquisition-stage conclusion
