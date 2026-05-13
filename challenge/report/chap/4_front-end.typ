@@ -349,6 +349,8 @@ $
   caption: [Estimated raw MEMS output voltage at the minimum and maximum WTT SPL levels.]
 ) <table:mems_output_range>
 
+These voltages are worst-case linear extrapolations obtained from the nominal MEMS sensitivities. They should not be interpreted as guaranteed linear sensor output voltages over the complete acoustic range. In practice, the MEMS mechanical response, the piezoelectric interface, the LNA input range, the protection network and the ADC input range may limit the usable voltage before these values are reached. Therefore, this calculation is mainly used to justify the need for selectable gain, attenuation and input protection.
+
 This calculation shows that the analog front-end cannot be a fixed-gain amplifier only. At low SPL, the signals are very small and require low-noise amplification. At high SPL, the raw MEMS output may exceed the ADC input range and requires attenuation or a lower gain state.
 
 == Gain and attenuation strategy
@@ -423,6 +425,8 @@ A low-noise instrumentation amplifier is required close to the MEMS output. A su
 - 15 MHz small-signal bandwidth at gain 1.
 - 1.2 MHz bandwidth at gain 100.
 - Operation over the industrial temperature range from -40 °C to +125 °C.
+
+However, the AD8429 requires bipolar analog supplies because it is specified for ±4 V to ±18 V operation. Therefore, if this amplifier is finally selected, the power architecture must include positive and negative analog rails, for example ±5 V_A or ±12 V_A. If the final power tree only provides a single 5 V_A rail, then the AD8429 should be treated only as a representative low-noise candidate and replaced by a single-supply low-noise amplifier compatible with the final supply architecture.
 
 The gain of the AD8429 is set by a resistor according to:
 
