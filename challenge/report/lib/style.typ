@@ -38,6 +38,7 @@
   )
 
   set text(font: "Libertinus Serif", size: 10.5pt)
+  set heading(numbering: "1.")
   set par(justify: true)
 
   counter(page).update(1)

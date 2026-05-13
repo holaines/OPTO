@@ -112,7 +112,7 @@ Using the components listed in @table:component_list, the input stage provides r
 
 #figure(
   table(
-    columns: (1fr, 1.8fr, 3fr),
+    columns: (1.4fr, 2.3fr, 2.5fr),
     fill: (col, row) => { if row == 0 { gray.lighten(50%) } else { if col == 0 { gray.lighten(80%) } } },
     inset: 6pt,
     align: left,
@@ -164,7 +164,7 @@ The input capacitors provide local energy storage and differential-mode noise re
 
 #figure(
   table(
-    columns: (1.3fr, 2.1fr, 3fr),
+    columns: (1.1fr, 2.1fr, 3fr),
     fill: (col, row) => { if row == 0 { gray.lighten(50%) } else { if col == 0 { gray.lighten(80%) } } },
     inset: 6pt,
     align: left,
