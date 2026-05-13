@@ -2,14 +2,6 @@
 #let blue = rgb("#2F6F9F")
 #let light-blue = rgb("#EAF3F8")
 #let pale-blue = rgb("#F6FAFD")
-#let green = rgb("#3A7D44")
-#let light-green = rgb("#ECF7EF")
-#let orange = rgb("#B86B00")
-#let light-orange = rgb("#FFF4E3")
-#let red = rgb("#9B2C2C")
-#let light-red = rgb("#FDECEC")
-#let grey = rgb("#5A5A5A")
-#let light-grey = rgb("#F4F6F8")
 
 #let diagram-box(body) = align(center)[
   #box(

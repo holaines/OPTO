@@ -1,4 +1,7 @@
+
 #let block-w = 4.0cm
+#let navy = rgb("#17324D")
+#let pale-blue = rgb("#F6FAFD")
 
 #let table-fill = (col, row) => {
   if row == 0 {
@@ -135,38 +138,47 @@ This is a compromise between the minimum-pin configuration, using one DOUT per A
 The main shared and per-device signals are listed in @tab-adc-fpga-signals.
 
 #figure(
-  table(
-    columns: (1.4fr, 1fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    align: left,
-    fill: table-fill,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.4fr, 1fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Signal*], [*Direction*], [*Function*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Signal]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Direction]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Function]],
 
-    [CONVST],
-    [FPGA → ADC],
-    [Common conversion start signal. It synchronizes the sampling instant of all ADC devices.],
+      [CONVST],
+      [FPGA → ADC],
+      [Common conversion start signal. It synchronizes the sampling instant of all ADC devices.],
 
-    [SCLK],
-    [FPGA → ADC],
-    [Serial clock used to read the conversion data.],
+      [SCLK],
+      [FPGA → ADC],
+      [Serial clock used to read the conversion data.],
 
-    [CS],
-    [FPGA → ADC],
-    [Chip-select signal. One independent CS line is assigned to each ADC device.],
+      [CS],
+      [FPGA → ADC],
+      [Chip-select signal. One independent CS line is assigned to each ADC device.],
 
-    [DOUT[3:0]],
-    [ADC → FPGA],
-    [Four serial data outputs per ADC device.],
+      [DOUT[3:0]],
+      [ADC → FPGA],
+      [Four serial data outputs per ADC device.],
 
-    [BUSY],
-    [ADC → FPGA],
-    [Indicates that the conversion is still in progress. It is used to start readout only after valid data are available.],
+      [BUSY],
+      [ADC → FPGA],
+      [Indicates that the conversion is still in progress. It is used to start readout only after valid data are available.],
 
-    [RESET],
-    [FPGA → ADC],
-    [Common reset signal for ADC initialization.]
-  ),
+      [RESET],
+      [FPGA → ADC],
+      [Common reset signal for ADC initialization.],
+    )
+  ],
   caption: [Main digital signals between the AD7606C-18 devices and the FPGA.],
 ) <tab-adc-fpga-signals>
 
@@ -175,41 +187,31 @@ The main shared and per-device signals are listed in @tab-adc-fpga-signals.
 With four data outputs per AD7606C-18, the estimated FPGA I/O requirement is summarized in @tab-fpga-io-requirements.
 
 #figure(
-  table(
-    columns: (2fr, 1.2fr, 1.2fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: center,
-    table.header([*Signal group*], [*Count*], [*Direction*]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (2fr, 1.2fr, 1.2fr),
+      inset: 7pt,
+      align: center,
 
-    [ADC data lines],
-    [20 x 4 = 80],
-    [input],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Signal group]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Count]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Direction]],
 
-    [BUSY lines],
-    [20],
-    [input],
-
-    [CS lines],
-    [20],
-    [output],
-
-    [Common CONVST],
-    [1],
-    [output],
-
-    [Common SCLK],
-    [1],
-    [output],
-
-    [Common RESET],
-    [1],
-    [output],
-
-    [#strong[Total]],
-    [#strong[123]],
-    [#strong[input/output]],
-  ),
+      [ADC data lines], [20 x 4 = 80], [input],
+      [BUSY lines], [20], [input],
+      [CS lines], [20], [output],
+      [Common CONVST], [1], [output],
+      [Common SCLK], [1], [output],
+      [Common RESET], [1], [output],
+      [#strong[Total]], [#strong[123]], [#strong[input/output]],
+    )
+  ],
   caption: [Estimated FPGA I/O requirement for the selected four-DOUT ADC interface.],
 ) <tab-fpga-io-requirements>
 
@@ -235,23 +237,27 @@ The FPGA generates the conversion start signals for the ADCs. Within each branch
 The proposed sampling plan is shown in @tab-sampling-plan.
 
 #figure(
-  table(
-    columns: (1.2fr, 1.3fr, 1.5fr, 1.5fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: center,
-    table.header([*Branch*], [*ADC devices*], [*Selected sampling rate*], [*Conversion trigger*]),
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.2fr, 1.3fr, 1.5fr, 1.5fr),
+      inset: 7pt,
+      align: center,
 
-    [LF],
-    [10],
-    [51.2 kS/s],
-    [CONVST_LF],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Branch]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[ADC devices]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Selected sampling rate]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Conversion trigger]],
 
-    [HF],
-    [10],
-    [256 kS/s],
-    [CONVST_HF],
-  ),
+      [LF], [10], [51.2 kS/s], [CONVST_LF],
+      [HF], [10], [256 kS/s], [CONVST_HF],
+    )
+  ],
   caption: [Preliminary sampling rates and conversion trigger groups.]
 ) <tab-sampling-plan>
 
@@ -304,26 +310,34 @@ The ADC readout controller generates the digital control signals required by the
 The readout process is performed in parallel for all ADC devices in the active branch. This avoids sequential polling from the PC and ensures that all samples belonging to the same acquisition instant are grouped together inside the FPGA.
 
 #figure(
-  table(
-    columns: (1.6fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.6fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*FPGA block*], [*Function*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[FPGA block]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Function]],
 
-    [Conversion control],
-    [Generates CONVST_LF and CONVST_HF from the FPGA acquisition clock.],
+      [Conversion control],
+      [Generates CONVST_LF and CONVST_HF from the FPGA acquisition clock.],
 
-    [ADC status check],
-    [Monitors BUSY signals and starts readout only when conversion data are valid.],
+      [ADC status check],
+      [Monitors BUSY signals and starts readout only when conversion data are valid.],
 
-    [Serial readout],
-    [Reads the 20 ADC devices using four serial data outputs per device.],
+      [Serial readout],
+      [Reads the 20 ADC devices using four serial data outputs per device.],
 
-    [Sample grouping],
-    [Groups the samples belonging to the same acquisition instant before forwarding them to the frame builder.],
-  ),
+      [Sample grouping],
+      [Groups the samples belonging to the same acquisition instant before forwarding them to the frame builder.],
+    )
+  ],
   caption: [Main functions of the FPGA ADC readout controller.]
 ) <tab-adc-readout-controller>
 
@@ -387,29 +401,37 @@ The FIFO absorbs short-term variations in packet transmission time and prevents 
 Each transmitted frame includes basic status information generated by the FPGA. These flags allow the PC software to detect acquisition problems during the test instead of discovering them only during post-processing.
 
 #figure(
-  table(
-    columns: (1.5fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.5fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Status field*], [*Meaning*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Status field]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Meaning]],
 
-    [busy_timeout],
-    [One or more ADC devices did not finish conversion within the expected time.],
+      [busy_timeout],
+      [One or more ADC devices did not finish conversion within the expected time.],
 
-    [fifo_overflow],
-    [The acquisition FIFO overflowed and at least one frame was lost.],
+      [fifo_overflow],
+      [The acquisition FIFO overflowed and at least one frame was lost.],
 
-    [frame_counter],
-    [Monotonic counter used by the PC to detect missing frames.],
+      [frame_counter],
+      [Monotonic counter used by the PC to detect missing frames.],
 
-    [power_good],
-    [Indicates whether the monitored supply rails are within their valid range.],
+      [power_good],
+      [Indicates whether the monitored supply rails are within their valid range.],
 
-    [trigger_state],
-    [Reports whether the system is idle, armed or acquiring.],
-  ),
+      [trigger_state],
+      [Reports whether the system is idle, armed or acquiring.],
+    )
+  ],
   caption: [Status and error fields included in the FPGA data stream.]
 ) <tab-fpga-status-fields>
 
@@ -426,50 +448,33 @@ Each transmitted frame contains a fixed-size header, the acquired ADC samples, s
 The proposed structure is shown in @tab-frame-structure.
 
 #figure(
-  table(
-    columns: (1.4fr, 1.2fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.4fr, 1.2fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Field*], [*Size*], [*Description*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Field]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Size]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Description]],
 
-    [sync_word],
-    [32 bit],
-    [Fixed marker used to identify the beginning of a frame.],
-
-    [frame_counter],
-    [32 bit],
-    [Monotonic counter incremented for every transmitted frame.],
-
-    [timestamp_start],
-    [64 bit],
-    [FPGA timebase counter associated with the first sample in the frame.],
-
-    [frame_type],
-    [8 bit],
-    [Identifies whether the payload contains LF data, HF data or status-only information.],
-
-    [samples_per_frame],
-    [16 bit],
-    [Number of acquisition instants grouped in the payload.],
-
-    [payload_length],
-    [16 bit],
-    [Number of payload bytes following the header.],
-
-    [status_flags],
-    [32 bit],
-    [FIFO, ADC, trigger and power-status flags.],
-
-    [payload],
-    [variable],
-    [Packed ADC samples ordered according to the channel map.],
-
-    [crc32],
-    [32 bit],
-    [Frame integrity check computed over header and payload.],
-  ),
+      [sync_word], [32 bit], [Fixed marker used to identify the beginning of a frame.],
+      [frame_counter], [32 bit], [Monotonic counter incremented for every transmitted frame.],
+      [timestamp_start], [64 bit], [FPGA timebase counter associated with the first sample in the frame.],
+      [frame_type], [8 bit], [Identifies whether the payload contains LF data, HF data or status-only information.],
+      [samples_per_frame], [16 bit], [Number of acquisition instants grouped in the payload.],
+      [payload_length], [16 bit], [Number of payload bytes following the header.],
+      [status_flags], [32 bit], [FIFO, ADC, trigger and power-status flags.],
+      [payload], [variable], [Packed ADC samples ordered according to the channel map.],
+      [crc32], [32 bit], [Frame integrity check computed over header and payload.],
+    )
+  ],
   caption: [Proposed acquisition frame structure.]
 ) <tab-frame-structure>
 
@@ -504,32 +509,29 @@ where `branch_offset` is 0 for LF and 80 for HF.
 Dynamic information required for stream validation is included in each frame. Static information such as sensor positions, calibration constants, ADC configuration and channel names is stored once in the acquisition metadata file.
 
 #figure(
-  table(
-    columns: (1.6fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.6fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Metadata*], [*Purpose*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Metadata]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Purpose]],
 
-    [frame_counter],
-    [Detects missing or duplicated frames.],
-
-    [timestamp_start],
-    [Reconstructs the time axis independently from Ethernet packet arrival time.],
-
-    [frame_type],
-    [Distinguishes LF, HF and status frames.],
-
-    [samples_per_frame],
-    [Defines how many acquisition instants are included in the payload.],
-
-    [status_flags],
-    [Reports acquisition errors and power/trigger state.],
-
-    [payload_length],
-    [Allows the receiver to validate the expected frame size.],
-  ),
+      [frame_counter], [Detects missing or duplicated frames.],
+      [timestamp_start], [Reconstructs the time axis independently from Ethernet packet arrival time.],
+      [frame_type], [Distinguishes LF, HF and status frames.],
+      [samples_per_frame], [Defines how many acquisition instants are included in the payload.],
+      [status_flags], [Reports acquisition errors and power/trigger state.],
+      [payload_length], [Allows the receiver to validate the expected frame size.],
+    )
+  ],
   caption: [Minimum metadata fields included in each frame.]
 ) <tab-frame-metadata>
 
@@ -564,29 +566,28 @@ $
 For separate LF and HF sampling groups, the result is shown in @tab-raw-data-rate.
 
 #figure(
-  table(
-    columns: (1.1fr, 1.3fr, 1.2fr, 1.6fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: center,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.1fr, 1.3fr, 1.2fr, 1.6fr),
+      inset: 7pt,
+      align: center,
 
-    table.header([*Branch*], [*Channels*], [*Sample size*], [*Raw rate*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Branch]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Channels]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Sample size]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Raw rate]],
 
-    [LF],
-    [80],
-    [18 bit],
-    [73.7 Mbit/s],
-
-    [HF],
-    [80],
-    [18 bit],
-    [368.6 Mbit/s],
-
-    [#strong[Total]],
-    [#strong[160]],
-    [#strong[18 bit]],
-    [#strong[442.4 Mbit/s]],
-  ),
+      [LF], [80], [18 bit], [73.7 Mbit/s],
+      [HF], [80], [18 bit], [368.6 Mbit/s],
+      [#strong[Total]], [#strong[160]], [#strong[18 bit]], [#strong[442.4 Mbit/s]],
+    )
+  ],
   caption: [Raw data-rate estimate for the selected sampling rates.]
 ) <tab-raw-data-rate>
 
@@ -595,29 +596,28 @@ For separate LF and HF sampling groups, the result is shown in @tab-raw-data-rat
 In the FPGA and PC software, samples are packed into 32-bit words. This avoids bit-level unpacking in the receiver and simplifies memory alignment, at the cost of a higher transport rate.
 
 #figure(
-  table(
-    columns: (1.1fr, 1.3fr, 1.2fr, 1.8fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: center,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.1fr, 1.3fr, 1.2fr, 1.8fr),
+      inset: 7pt,
+      align: center,
 
-    table.header([*Branch*], [*Channels*], [*Packed size*], [*Packed rate*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Branch]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Channels]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Packed size]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Packed rate]],
 
-    [LF],
-    [80],
-    [32 bit],
-    [131.1 Mbit/s],
-
-    [HF],
-    [80],
-    [32 bit],
-    [655.4 Mbit/s],
-
-    [#strong[Total]],
-    [#strong[160]],
-    [#strong[32 bit]],
-    [#strong[786.4 Mbit/s]],
-  ),
+      [LF], [80], [32 bit], [131.1 Mbit/s],
+      [HF], [80], [32 bit], [655.4 Mbit/s],
+      [#strong[Total]], [#strong[160]], [#strong[32 bit]], [#strong[786.4 Mbit/s]],
+    )
+  ],
   caption: [Packed data-rate estimate using 32-bit sample words.]
 ) <tab-packed-data-rate>
 
@@ -632,26 +632,27 @@ $
 Standard Gigabit Ethernet is therefore too close to the expected upper limit. The selected 2.5G Ethernet link provides enough margin while avoiding the complexity and power consumption of a 10G interface.
 
 #figure(
-  table(
-    columns: (1.5fr, 1.6fr, 2.4fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.5fr, 1.6fr, 2.4fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Interface*], [*Nominal bandwidth*], [*Assessment*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Interface]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Nominal bandwidth]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Assessment]],
 
-    [1G Ethernet],
-    [1 Gbit/s],
-    [Technically possible only with tight packing and little margin. Not selected.],
-
-    [2.5G Ethernet],
-    [2.5 Gbit/s],
-    [Selected option. Provides sufficient margin for packed data and protocol overhead.],
-
-    [10G Ethernet],
-    [10 Gbit/s],
-    [High margin, but higher cost, power and FPGA complexity. Not required for this design.],
-  ),
+      [1G Ethernet], [1 Gbit/s], [Technically possible only with tight packing and little margin. Not selected.],
+      [2.5G Ethernet], [2.5 Gbit/s], [Selected option. Provides sufficient margin for packed data and protocol overhead.],
+      [10G Ethernet], [10 Gbit/s], [High margin, but higher cost, power and FPGA complexity. Not required for this design.],
+    )
+  ],
   caption: [Output-interface bandwidth comparison.]
 ) <tab-interface-bandwidth>
 
@@ -682,22 +683,26 @@ The raw data stream uses UDP because it has low overhead and allows continuous s
 The selected output interface is 2.5G Ethernet. The data link is divided into two logical channels:
 
 #figure(
-  table(
-    columns: (1.5fr, 1.7fr, 2.4fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.5fr, 1.7fr, 2.4fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Channel*], [*Protocol*], [*Purpose*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Channel]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Protocol]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Purpose]],
 
-    [Data stream],
-    [UDP],
-    [Continuous transmission of acquisition frames from FPGA to PC.],
-
-    [Control/status],
-    [TCP or UDP commands],
-    [Configuration, start/stop control, gain/range settings and status monitoring.],
-  ),
+      [Data stream], [UDP], [Continuous transmission of acquisition frames from FPGA to PC.],
+      [Control/status], [TCP or UDP commands], [Configuration, start/stop control, gain/range settings and status monitoring.],
+    )
+  ],
   caption: [Logical communication channels over the selected Ethernet link.]
 ) <tab-ethernet-logical-channels>
 
@@ -763,29 +768,28 @@ A possible file structure is:
 The metadata must be stored with the raw samples. At minimum, the file should contain the channel map, zone map, LF/HF branch assignment, sampling rates, ADC configuration, gain/range configuration, timestamp origin and calibration constants.
 
 #figure(
-  table(
-    columns: (1.6fr, 3fr),
+  box(
+    width: 100%,
     inset: 6pt,
-    fill: table-fill,
-    align: left,
+    stroke: 0.7pt + navy,
+    fill: pale-blue,
+    radius: 5pt,
+  )[
+    #table(
+      columns: (1.6fr, 3fr),
+      inset: 7pt,
+      align: left,
 
-    table.header([*Metadata group*], [*Contents*]),
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Metadata group]],
+      table.cell(fill: navy)[#text(fill: white, weight: "bold")[Contents]],
 
-    [Channel map],
-    [Relationship between branch, zone, sensor index and stored channel index.],
-
-    [Geometry],
-    [Physical position of each MEMS sensor in the array.],
-
-    [Acquisition setup],
-    [Sampling rates, frame size, trigger mode and selected data interface.],
-
-    [ADC configuration],
-    [Input range, digital interface mode and status/error configuration.],
-
-    [Calibration],
-    [Sensitivity, correction factors and calibration date for each channel.],
-  ),
+      [Channel map], [Relationship between branch, zone, sensor index and stored channel index.],
+      [Geometry], [Physical position of each MEMS sensor in the array.],
+      [Acquisition setup], [Sampling rates, frame size, trigger mode and selected data interface.],
+      [ADC configuration], [Input range, digital interface mode and status/error configuration.],
+      [Calibration], [Sensitivity, correction factors and calibration date for each channel.],
+    )
+  ],
   caption: [Metadata groups stored with the acquired data.]
 ) <tab-storage-metadata>
 
