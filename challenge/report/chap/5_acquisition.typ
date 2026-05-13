@@ -600,6 +600,13 @@ In this design:
 
 The analog and digital supplies must be decoupled locally. Each ADC must have local ceramic decoupling capacitors close to its supply pins. The reference node must be routed carefully and kept away from fast digital lines.
 
+== Physical layout and package considerations
+
+The AD7606C-18 is supplied in a 64-lead LQFP package. According to the package outline in the datasheet, the package body is approximately 10 mm × 10 mm, with an overall size close to 12 mm × 12 mm including the leads, and a lead pitch of 0.5 mm. The maximum package height is approximately 1.60 mm.
+
+The AD7606C-18 package is compatible with the 2 mm thickness target of the flexible PCB integration. Since the maximum package height is below 2 mm, the selected ADC does not violate the thickness constraint from the package point of view. However, the final compliance with the 2 mm mechanical requirement must be verified at PCB level, including PCB thickness, solder joint height, decoupling capacitors, reference capacitors, protection components and any connectors placed in the acquisition zone.
+
+
 == Thermal and operating-temperature compatibility
 
 The AD7606C-18 is specified for operation from -40 °C to +125 °C. This is compatible with the wind tunnel test temperature range of -20 °C to +70 °C.

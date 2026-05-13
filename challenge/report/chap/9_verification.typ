@@ -78,4 +78,8 @@
   ],
   color: navy,
   fill-color: light-grey,
+
+  
 )
+
+At system level, the use of 20 AD7606C-18 devices means that the physical layout is not only an electrical problem but also an integration constraint. The final PCB must allocate space for the ADCs, the analog front-end, local filtering, decoupling, connectors and routing between the 10 acquisition zones and the FPGA.

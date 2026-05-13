@@ -1,5 +1,4 @@
 = FPGA and digital acquisition
-
 == Purpose of the digital acquisition stage
 
 The FPGA is the central digital element of the proposed acquisition system. Its function is not only to receive digital data from the ADCs, but to guarantee that the complete 160-channel microphone array is acquired with a common timing reference and that the data are delivered to the host computer in an ordered and lossless way.
@@ -87,7 +86,7 @@ The selected FPGA family is Artix-7. It is appropriate for this system for four 
 
 The Artix-7 is therefore selected as the digital timing and concentration device. The exact package must expose enough user I/O pins for the selected ADC interface and for the PC communication interface. For this reason, the final PCB implementation must verify the user I/O count in the Xilinx package and pinout documentation for the selected part, for example XC7A35T-1FTG256I.
 
-This distinction is important: the Artix-7 family is electrically and functionally suitable, but the final package must still be checked against the I/O budget calculated in @sec:fpga-io-budget.
+This distinction is important: the Artix-7 family is electrically and functionally suitable, but the final package must still be checked against the I/O budget calculated in the FPGA I/O budget section.
 
 == ADC digital interface strategy
 
@@ -133,7 +132,7 @@ If only one DOUT line is used, the 144 bits must be shifted sequentially through
 
 The selected configuration is #strong[4 DOUT lines per ADC]. This matches the data-handling architecture and provides enough timing margin for the 256 kS/s HF branch while avoiding the excessive pin usage of the 8-DOUT option.
 
-== FPGA I/O budget <sec:fpga-io-budget>
+== FPGA I/O budget 
 
 The I/O budget depends mainly on the number of DOUT lines selected per ADC and on the host communication interface. The following calculation assumes a shared sampling and clocking structure:
 
